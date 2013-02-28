@@ -46,6 +46,7 @@
   <!-- Everything below here is custom to .NET MF / Gadgeteer template-->
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="NetworkController.cs" />
     <Compile Include="Program.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -58,7 +59,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SensorReading.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Gadgeteer">
@@ -116,11 +116,5 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.Zumo.MicroFramework\Microsoft.Azure.Zumo.MicroFramework.csproj">
-      <Project>{06DCF1E5-6DF6-49F4-BF1C-83F301999665}</Project>
-      <Name>Microsoft.Azure.Zumo.MicroFramework</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

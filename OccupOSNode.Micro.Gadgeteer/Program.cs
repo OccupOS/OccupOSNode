@@ -1,6 +1,5 @@
-using System;
+using GHI.Premium.Net;
 using Microsoft.SPOT;
-using OccupOSNode.Micro.Gadgeteer;
 using GT = Gadgeteer;
 
 namespace GadgeteerDemo
@@ -8,6 +7,7 @@ namespace GadgeteerDemo
     public partial class Program
     {
         private readonly GT.Timer timer = new GT.Timer(2000);
+        private NetworkController networkController;
 
         // This method is run when the mainboard is powered up or reset.   
         void ProgramStarted()
@@ -15,25 +15,38 @@ namespace GadgeteerDemo
             wifi_RS21.DebugPrintEnabled = true;
 
             wifi_RS21.Interface.Open();
-            
+
+            NetworkInterfaceExtension.AssignNetworkingStackTo(wifi_RS21.Interface);
+
             wifi_RS21.Interface.NetworkInterface.EnableDhcp();
             wifi_RS21.Interface.NetworkInterface.EnableDynamicDns();
-            wifi_RS21.Interface.NetworkInterface.EnableStaticIP("192.168.1.117", "255.255.255.0", "192.168.1.254");
+         //   wifi_RS21.Interface.NetworkInterface.EnableStaticIP("192.168.1.202", "255.255.255.0", "192.168.12.1");
+            if(wifi_RS21.Interface.NetworkInterface.IsDhcpEnabled) Debug.Print("DHCP enables");
+            
 
             Debug.Print("Scanning for WiFi networks");
             GHI.Premium.Net.WiFiNetworkInfo[] wiFiNetworkInfo = wifi_RS21.Interface.Scan();
             if (wiFiNetworkInfo != null)
             {
-                Debug.Print("Found WiFi network");
-                Debug.Print("0: " + wiFiNetworkInfo[0].SSID);
-                Debug.Print("Joining " + wiFiNetworkInfo[0].SSID);
-                wifi_RS21.Interface.Join(wiFiNetworkInfo[0], "69B3625573");
-                Debug.Print("Connected?: " + wifi_RS21.Interface.IsLinkConnected.ToString());
+                Debug.Print("Found WiFi network(s)");
+                for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++) {
+                    if (wiFiNetworkInfo[i].SSID == "MorrisonN4") {
+                        Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
+                        wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "GadgeteerSucks");
+                    } else {
+                        Debug.Print("Skipping: " + wiFiNetworkInfo[i].SSID);
+                    }
+                }
+
+                Debug.Print(wifi_RS21.Interface.IsLinkConnected ? "Connection successful!" : "Connection failed!");
             }
             else
             {
                 Debug.Print("Didn't find any WiFi networks");
             }
+
+            networkController = new NetworkController("192.168.43.250", 1333);
+            networkController.connect();
 
             timer.Tick += timer_Tick;
             timer.Start();
@@ -44,7 +57,12 @@ namespace GadgeteerDemo
         void timer_Tick(GT.Timer timer)
         {
             var lightPercentage = (int) lightSensor.ReadLightSensorPercentage();
-            Debug.Print(lightPercentage);
+            Debug.Print(lightPercentage.ToString());
+
+            networkController.sendData(lightPercentage.ToString());
+            Debug.Print("(Data sent: light percentage - " + lightPercentage.ToString());
+
+            System.Threading.Thread.Sleep(10000);
         }
     }
 }
