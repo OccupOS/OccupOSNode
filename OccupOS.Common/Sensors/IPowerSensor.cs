@@ -1,6 +1,3 @@
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public interface IPowerSensor
-    {
-    }
+namespace OccupOS.CommonLibrary.Sensors {
+    public interface IPowerSensor { }
 }

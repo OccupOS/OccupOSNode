@@ -1,6 +1,3 @@
-namespace OccupOSNode.Micro.HardwareControllers
-{
-    class HardwareController
-    {
-    }
+namespace OccupOSNode.Micro.HardwareControllers {
+    internal class HardwareController { }
 }

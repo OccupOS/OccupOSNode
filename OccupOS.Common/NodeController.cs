@@ -1,19 +1,16 @@
 using System;
 using System.Collections;
 using OccupOS.CommonLibrary.Sensors;
-using Microsoft.SPOT;
 
 namespace OccupOS.CommonLibrary.NodeControllers {
-
     public class StorageDeviceMissingException : Exception {
         public StorageDeviceMissingException(string message)
             : base(message) { }
     }
 
     public abstract class NodeController {
-
-        private ArrayList sensors = new ArrayList();
-        private ArrayList sensorDataBuffer = new ArrayList();
+        private readonly ArrayList sensorDataBuffer = new ArrayList();
+        private readonly ArrayList sensors = new ArrayList();
 
         public void AddSensor(Sensor sensor) {
             if (sensor != null) {
@@ -22,15 +19,21 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         }
 
         public Sensor GetSensor(int index) {
-            if (index <= sensors.Count-1) {
+            if (index <= sensors.Count - 1) {
                 if (sensors[index] is Sensor) {
                     return (Sensor)sensors[index];
-                } else throw new ArgumentNullException();
-            } else throw new IndexOutOfRangeException();
+                }
+                else {
+                    throw new ArgumentNullException();
+                }
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
 
         public void RemoveSensor(String id) {
-            foreach (var sensor in sensors) {
+            foreach (object sensor in sensors) {
                 if (sensor is Sensor) {
                     if (id == ((Sensor)sensor).ID) {
                         sensors.Remove(sensor);
@@ -42,12 +45,13 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         public void RemoveSensor(int index) {
             if (index <= sensors.Count - 1) {
                 sensors.RemoveAt(index);
-            } else throw new IndexOutOfRangeException();
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
 
-        public int GetSensorCount() {
-            return sensors.Count;
-        }
+        public int GetSensorCount() { return sensors.Count; }
 
         public void AddSensorReading(SensorData data) {
             if (data != null) {
@@ -56,32 +60,45 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         }
 
         public SensorData GetSensorReading(int index) {
-            if (index <= sensorDataBuffer.Count-1) {
+            if (index <= sensorDataBuffer.Count - 1) {
                 if (sensorDataBuffer[index] is SensorData) {
                     return (SensorData)sensorDataBuffer[index];
-                } else throw new ArgumentNullException();
-            } else throw new IndexOutOfRangeException();
+                }
+                else {
+                    throw new ArgumentNullException();
+                }
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
 
         public SensorData PollSensorReading(int index) {
             if (index <= sensorDataBuffer.Count - 1) {
                 if (sensorDataBuffer[index] is SensorData) {
-                    SensorData data = (SensorData)sensorDataBuffer[index];
+                    var data = (SensorData)sensorDataBuffer[index];
                     sensorDataBuffer.RemoveAt(index);
                     return data;
-                } else throw new ArgumentNullException();
-            } else throw new IndexOutOfRangeException();
+                }
+                else {
+                    throw new ArgumentNullException();
+                }
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
 
         public void RemoveSensorReading(int index) {
             if (index <= sensorDataBuffer.Count - 1) {
                 sensorDataBuffer.RemoveAt(index);
-            } else throw new IndexOutOfRangeException();
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
 
-        public int GetSensorDataBufferCount() {
-            return sensorDataBuffer.Count;
-        }
+        public int GetSensorDataBufferCount() { return sensorDataBuffer.Count; }
 
         protected abstract void LoadConfiguration();
     }

@@ -1,6 +1,3 @@
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public interface IVibrationSensor
-    {
-    }
+namespace OccupOS.CommonLibrary.Sensors {
+    public interface IVibrationSensor { }
 }

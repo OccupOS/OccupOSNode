@@ -1,6 +1,3 @@
 namespace OccupOSNode.Micro.NetworkControllers.Arduino {
-    using OccupOS.CommonLibrary.NetworkControllers;
-
-    class ArduinoWirelessShieldController : NetworkController {
-    }
+    internal class ArduinoWirelessShieldController : OccupOS.CommonLibrary.NetworkControllers.NetworkController { }
 }

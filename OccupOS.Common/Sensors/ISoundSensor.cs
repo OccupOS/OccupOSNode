@@ -1,6 +1,3 @@
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public interface ISoundSensor
-    {
-    }
+namespace OccupOS.CommonLibrary.Sensors {
+    public interface ISoundSensor { }
 }

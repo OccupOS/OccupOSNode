@@ -1,15 +1,9 @@
 using System;
 
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public abstract class Sensor 
-    {
+namespace OccupOS.CommonLibrary.Sensors {
+    public abstract class Sensor {
+        protected Sensor(String id) { ID = id; }
         public string ID { get; private set; }
-
-        protected Sensor(String id) 
-        {
-            ID = id;
-        }
 
         public abstract SensorData GetData();
     }

@@ -1,7 +1,5 @@
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public interface IPressureSensor
-    {
+namespace OccupOS.CommonLibrary.Sensors {
+    public interface IPressureSensor {
         float GetPressure();
     }
 }

@@ -1,7 +1,5 @@
-namespace OccupOS.CommonLibrary.Sensors
-{
-    public interface ILightSensor
-    {
+namespace OccupOS.CommonLibrary.Sensors {
+    public interface ILightSensor {
         float GetAnalogLightValue();
     }
 }

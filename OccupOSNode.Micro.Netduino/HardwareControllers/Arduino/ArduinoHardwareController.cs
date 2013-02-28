@@ -1,6 +1,3 @@
 namespace OccupOSNode.Micro.HardwareControllers.Arduino {
-    using OccupOS.CommonLibrary.HardwareControllers;
-
-    class ArduinoHardwareController : HardwareController {
-    }
+    internal class ArduinoHardwareController : OccupOS.CommonLibrary.HardwareControllers.HardwareController { }
 }
