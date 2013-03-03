@@ -36,8 +36,9 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="NetworkControllers\Arduino\ArduinoWirelessShieldController.cs" />
     <Compile Include="NetworkControllers\Arduino\ArduinoEthernetController.cs" />
+    <Compile Include="NetworkControllers\Arduino\ArduinoWirelessNetworkController.cs" />
+    <Compile Include="NetworkControllers\Arduino\WiFlyGSX.cs" />
     <Compile Include="Sensors\Arduino\ArduinoMLX90620Sensor.cs" />
     <Compile Include="HardwareControllers\Arduino\ArduinoHardwareController.cs" />
     <Compile Include="NetworkControllers\NetworkController.cs" />
