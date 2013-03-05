@@ -27,7 +27,7 @@ namespace OccupOSNode.Sensors.Kinect {
             this.sensornum = sensornum;
         }
 
-        public static int GetDeviceCount() {
+        public int GetDeviceCount() {
             return KinectSensor.KinectSensors.Count;
         }
 
