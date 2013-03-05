@@ -11,7 +11,7 @@ using System.Math;
 // @author Jisang Choi <7517choi@armymail.mod.uk> 
 
 namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
-    class ArduinoMLX90620Driver : I2CDevice {
+    unsafe class ArduinoMLX90620Driver : I2CDevice {
 
         int freq = 16;
 

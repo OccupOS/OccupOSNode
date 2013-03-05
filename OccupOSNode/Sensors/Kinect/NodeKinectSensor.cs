@@ -23,11 +23,7 @@ namespace OccupOSNode.Sensors.Kinect {
         private static int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
 
         public NodeKinectSensor(String id) : base(id) {
-            Boolean connected = false;
-            for (int k = 0; k < MAX_AUTO_CONNECTION_ATTEMPTS; k++) {
-                connected = FindKinectSensor();
-                if (connected) break;
-            }
+            this.Connect();
         }
 
         public override SensorData GetData() {
@@ -36,6 +32,31 @@ namespace OccupOSNode.Sensors.Kinect {
                 EntityPositions = GetEntityPositions()
             };
             return sensorData;
+        }
+
+        public override ConnectionStatus GetConnectionStatus() {
+            if (ksensor != null) {
+            switch (ksensor.Status) {
+                case KinectStatus.Connected: return ConnectionStatus.Connected;
+                case KinectStatus.Disconnected: return ConnectionStatus.Disconnected;
+                case KinectStatus.Initializing: return ConnectionStatus.Connecting;
+                default: return ConnectionStatus.Error;
+            }
+            } else return ConnectionStatus.Disconnected;
+        }
+
+        public override void Connect() { //could use better method
+            Boolean connected = false;
+            for (int k = 0; k < MAX_AUTO_CONNECTION_ATTEMPTS; k++) {
+                connected = FindKinectSensor();
+                if (connected) break;
+            }
+        }
+
+        public override void Disconnect() {
+            if (this.GetConnectionStatus() != ConnectionStatus.Disconnected) {
+                StopSensor(ksensor);
+            }
         }
 
         public int GetEntityCount() {
@@ -191,11 +212,6 @@ namespace OccupOSNode.Sensors.Kinect {
             if (sensor != null) {
                 sensor.Stop();
             }
-        }
-
-        public Boolean GetSensorConnectionStatus() {
-            if (ksensor != null && ksensor.Status == KinectStatus.Connected) return true;
-            else return false;
         }
     }
 }

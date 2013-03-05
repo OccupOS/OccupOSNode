@@ -14,4 +14,14 @@ namespace OccupOS.CommonLibrary.Sensors {
         public float Pressure;
         public float Temperature;
     }
+
+    public enum ConnectionStatus {
+        Connected,
+        Disconnected,
+        Connecting,
+        Disconnecting,
+        Error,
+        Unknown,
+        Inapplicable
+    }
 }
