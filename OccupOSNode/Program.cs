@@ -14,9 +14,7 @@ namespace OccupOSNode
 {
     using System;
     using System.Threading;
-
     using OccupOSCloud;
-
     using OccupOSNode.Sensors.Kinect;
 
     /// <summary>
@@ -34,9 +32,12 @@ namespace OccupOSNode
         /// </param>
         private static void Main(string[] args)
         {
-            var kinectrunner = new KinectRunner();
-            var kthread = new Thread(kinectrunner.DelayedPoll);
-            kthread.Start();
+            while (true) {
+                Console.WriteLine(NodeKinectSensor.GetDeviceCount());
+                }
+            //var kinectrunner = new KinectRunner();
+            //var kthread = new Thread(kinectrunner.DelayedPoll);
+            //kthread.Start();
         }
 
         #endregion

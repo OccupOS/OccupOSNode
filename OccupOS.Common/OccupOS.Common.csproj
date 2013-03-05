@@ -35,6 +35,7 @@
     <Compile Include="NodeController.cs" />
     <Compile Include="PacketFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sensors\IDynamicSensor.cs" />
     <Compile Include="Sensors\SensorNotFoundException.cs" />
     <Compile Include="Sensors\IEntityCountSensor.cs" />
     <Compile Include="Sensors\IEntityPositionSensor.cs" />
