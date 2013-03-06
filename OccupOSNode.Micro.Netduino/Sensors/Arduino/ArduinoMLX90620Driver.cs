@@ -11,7 +11,7 @@ using System.Math;
 // @author Jisang Choi <7517choi@armymail.mod.uk> 
 
 namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
-    unsafe class ArduinoMLX90620Driver : I2CDevice {
+    class ArduinoMLX90620Driver : I2CDevice {
 
         int freq = 16;
 
@@ -33,6 +33,7 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         I2CDevice mlx90620_0xC0 = new I2CDevice(new I2CDevice.Configuration(0xC0, 400));
         I2CDevice mlx90620_0xC1 = new I2CDevice(new I2CDevice.Configuration(0xC1, 400));
         I2CDevice mlx90620_0xA0 = new I2CDevice(new I2CDevice.Configuration(0xA0, 400));
+        I2CDevice mlx90620_0xA1 = new I2CDevice(new I2CDevice.Configuration(0xA1, 400));
 
         public void config_MLX90620_16Hz() {
             byte[] toWrite = { 0x03, 0xB5, 0x0A, 0x1F, 0x74 };
@@ -40,14 +41,21 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         }
 
         public void read_EEPROM_MLX90620() {
-            throw new NotImplementedException();
+            byte[] EEPROM_DATA = new byte[256];
+            byte[] toWrite = { 0x00 };
+            i2c_write(toWrite, 0xA0, mlx90620_0xA0);
+            i2c_readAck(EEPROM_DATA, 0xA1, mlx90620_0xA1);
+            byte[] toRead = new byte[256];
+            for(int i = 0; i <= 256; i++){
+                EEPROM_DATA[i] = toRead[i];
+            }
+            varInitialization(EEPROM_DATA);
+            write_trimming_value(EEPROM_DATA[247]);
         }
 
         public void write_trimming_value(byte val) {
-            byte newAddress = new byte();
-            int d = val - 0xAA;
-            String b = d.ToString();
-            newAddress = Convert.ToByte(b);
+            const byte OFFSET = 0xAA;
+            byte newAddress = (byte) (val - OFFSET);
 
             byte[] toWrite = { 0x04, newAddress, val, 0x56, 0x00 };
             i2c_write(toWrite, 0xC0, mlx90620_0xC0);
@@ -83,7 +91,37 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
             PTAT = ((uint)PTAT_MSB << 8) + PTAT_LSB;
         }
 
-        public void read_CPIX_Reg_MLX
+        public void read_CPIX_Reg_MLX90620() {
+            byte[] toWrite = { 0x02, 0x91, 0x00, 0x01 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
+            byte[] toRead = { 0, 0 };
+            i2c_readAck(toRead, 0xC1, mlx90620_0xC1);
+            CPIX_LSB = toRead[0];
+            CPIX_MSB = toRead[1];
+            CPIX = (CPIX_MSB << 8) + CPIX_LSB;
+        }
+
+        public void read_Config_Reg_MLX90620() {
+            byte[] toWrite = { 0x02, 0x92, 0x00, 0x01 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
+            byte[] toRead = { 0, 0 };
+            i2c_readAck(toRead, 0xC1, mlx90620_0xC1);
+            CFG_LSB = toRead[0];
+            CFG_MSB = toRead[1];
+        }
+
+        public void check_Config_Reg_MLX90620() {
+            read_Config_Reg_MLX90620();
+            if ((!CFG_MSB & 0x04) == 0x04) {
+                config_MLX90620_16Hz();
+            }
+        }
+
+        public void varInitialization(byte[] EEPROM_DATA) {
+            v_th = (EEPROM_DATA[219] << 8) + EEPROM_DATA[218];
+        }
+
+
 
         private void i2c_write(byte[] toWrite, byte address, I2CDevice startAddress) {
             I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
