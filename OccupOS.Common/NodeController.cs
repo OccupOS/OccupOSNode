@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using OccupOS.CommonLibrary.Sensors;
+using System.Reflection;
 
 namespace OccupOS.CommonLibrary.NodeControllers {
     public class StorageDeviceMissingException : Exception {
@@ -11,6 +12,26 @@ namespace OccupOS.CommonLibrary.NodeControllers {
     public abstract class NodeController {
         private readonly ArrayList sensorDataBuffer = new ArrayList();
         private readonly ArrayList sensors = new ArrayList();
+
+        public void CheckForSensors() {
+            var typfe = typeof(IDynamicSensor);
+
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
+                //if (type.GetInterfaces().Contains(typeof(IDynamicSensor)) {
+
+                //}
+            }
+
+
+            /*var instances = from t in Assembly.GetExecutingAssembly().GetTypes()
+                            where t.GetInterfaces().Contains(typeof(ISomething))
+                                     && t.GetConstructor(Type.EmptyTypes) != null
+                            select Activator.CreateInstance(t) as ISomething;
+
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => type.IsAssignableFrom(p));*/
+        }
 
         public void AddSensor(Sensor sensor) {
             if (sensor != null) {

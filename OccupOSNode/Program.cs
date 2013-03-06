@@ -14,10 +14,10 @@ namespace OccupOSNode
 {
     using System;
     using System.Threading;
-
     using OccupOSCloud;
-
     using OccupOSNode.Sensors.Kinect;
+    using System.Reflection;
+    using OccupOS.CommonLibrary.Sensors;
 
     /// <summary>
     ///     The program.
@@ -34,9 +34,22 @@ namespace OccupOSNode
         /// </param>
         private static void Main(string[] args)
         {
-            var kinectrunner = new KinectRunner();
-            var kthread = new Thread(kinectrunner.DelayedPoll);
-            kthread.Start();
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
+                if (type.IsClass) {
+                    foreach (var iface in type.GetInterfaces()) {
+                        if (iface.IsAssignableFrom(typeof(IDynamicSensor))) {
+                            var ds_class = Activator.CreateInstance(type) as IDynamicSensor;
+                            ds_class.GetDeviceCount();
+                        }
+                    }
+                }
+            }
+            while (true) {
+                
+                }
+            //var kinectrunner = new KinectRunner();
+            //var kthread = new Thread(kinectrunner.DelayedPoll);
+            //kthread.Start();
         }
 
         #endregion

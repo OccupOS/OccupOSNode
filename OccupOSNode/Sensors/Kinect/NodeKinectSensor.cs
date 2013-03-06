@@ -2,31 +2,57 @@ namespace OccupOSNode.Sensors.Kinect {
 
     using System;
     using Microsoft.Kinect;
-    using OccupOS.CommonLibrary.Sensors;
     using System.Collections;
+    using OccupOS.CommonLibrary.Sensors;
     using IndianaJones.NETMF.Json;
 
 /*===========================================================================================
  * NOTE: The KinectSensor class is not designed to work with the .NET Micro Framework!
  * When building for the Netduino you should not include this class.
  ============================================================================================*/
-    
-    internal class NodeKinectSensor : Sensor, ISoundSensor, IEntityPositionSensor, IEntityCountSensor
+
+    internal class NodeKinectSensor : Sensor, ISoundSensor, IEntityPositionSensor, IEntityCountSensor, IDynamicSensor
     {
         private struct SynchedFrames {
             public SkeletonFrame s_frame;
             public DepthImageFrame d_frame;
         }
         private KinectSensor ksensor;
+        private int sensornum;
         private static int QUEUE_MAX_LENGTH = 6;
         private static int MAX_TIME_DIFFERENCE = 200;
         private static int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
 
-        public NodeKinectSensor(String id) : base(id) {
+        public NodeKinectSensor(String id, int sensornum = 0) : base(id) {
+            this.sensornum = sensornum;
+        }
+
+        public int GetDeviceCount() {
+            return KinectSensor.KinectSensors.Count;
+        }
+
+        public ConnectionStatus GetConnectionStatus() {
+            if (ksensor != null) {
+            switch (ksensor.Status) {
+                case KinectStatus.Connected: return ConnectionStatus.Connected;
+                case KinectStatus.Disconnected: return ConnectionStatus.Disconnected;
+                case KinectStatus.Initializing: return ConnectionStatus.Connecting;
+                default: return ConnectionStatus.Error;
+            }
+            } else return ConnectionStatus.Disconnected;
+        }
+
+        public void Connect() { //could use better method
             Boolean connected = false;
             for (int k = 0; k < MAX_AUTO_CONNECTION_ATTEMPTS; k++) {
                 connected = FindKinectSensor();
                 if (connected) break;
+            }
+        }
+
+        public void Disconnect() {
+            if (this.GetConnectionStatus() != ConnectionStatus.Disconnected) {
+                StopSensor(ksensor);
             }
         }
 
@@ -68,8 +94,10 @@ namespace OccupOSNode.Sensors.Kinect {
 
         public Boolean FindKinectSensor() {
             if (KinectSensor.KinectSensors.Count > 0) {
-                ksensor = KinectSensor.KinectSensors[0];
-
+                if (sensornum > KinectSensor.KinectSensors.Count - 1)
+                    ksensor = KinectSensor.KinectSensors[KinectSensor.KinectSensors.Count - 1];
+                else
+                    ksensor = KinectSensor.KinectSensors[sensornum];
                 if (ksensor != null && ksensor.Status == KinectStatus.Connected) {
                     ksensor.ColorStream.Enable();
                     ksensor.DepthStream.Enable();
@@ -191,11 +219,6 @@ namespace OccupOSNode.Sensors.Kinect {
             if (sensor != null) {
                 sensor.Stop();
             }
-        }
-
-        public Boolean GetSensorConnectionStatus() {
-            if (ksensor != null && ksensor.Status == KinectStatus.Connected) return true;
-            else return false;
         }
     }
 }
