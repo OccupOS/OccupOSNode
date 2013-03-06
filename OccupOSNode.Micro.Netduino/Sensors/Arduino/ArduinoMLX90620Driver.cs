@@ -15,7 +15,7 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
 
         int freq = 16;
 
-        fixed int IRDATA[64];
+        int[] IRDATA = new int[64];
         byte CFG_LSB, CFG_MSB, PTAT_LSB, PTAT_MSB, CPIX_LSB, CPIX_MSB, PIX_LSB, PIX_MSB;
         int PIX, v_th, CPIX;
         float ta, to, emissivity, k_t1, k_t2;
@@ -30,16 +30,13 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         fixed double alpha_ij[64];
         fixed float v_ir_tgc_comp[64];
 
-        I2CDevice mlx90620 = new I2CDevice(new I2CDevice.Configuration(0xC0, 400));
+        I2CDevice mlx90620_0xC0 = new I2CDevice(new I2CDevice.Configuration(0xC0, 400));
+        I2CDevice mlx90620_0xC1 = new I2CDevice(new I2CDevice.Configuration(0xC1, 400));
+        I2CDevice mlx90620_0xA0 = new I2CDevice(new I2CDevice.Configuration(0xA0, 400));
 
         public void config_MLX90620_16Hz() {
-
-            i2c_write(0x03);
-            i2c_write(0xB5);
-            i2c_write(0x0A);
-            i2c_write(0x1F);
-            i2c_write(0x74);
-
+            byte[] toWrite = { 0x03, 0xB5, 0x0A, 0x1F, 0x74 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
         }
 
         public void read_EEPROM_MLX90620() {
@@ -47,15 +44,13 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         }
 
         public void write_trimming_value(byte val) {
-            i2c_write(0x04);
             byte newAddress = new byte();
             int d = val - 0xAA;
             String b = d.ToString();
             newAddress = Convert.ToByte(b);
-            i2c_write(newAddress);
-            i2c_write(val);
-            i2c_write(0x56);
-            i2c_write(0x00);
+
+            byte[] toWrite = { 0x04, newAddress, val, 0x56, 0x00 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
         }
 
         public void calculate_TA() {
@@ -67,32 +62,41 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         }
 
         public void read_IR_ALL_MLX90620() {
-            i2c_write(0x02);
-            i2c_write(0x00);
-            i2c_write(0x01);
-            i2c_write(0x40);
-            i2c_write(0x40);
+            byte[] toWrite = { 0x02, 0x00, 0x01, 0x40 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
+            byte[] toRead = { 0, 0 }; //Reads low byte and high byte
             for (int i = 0; i <= 63; i++) {
+                i2c_readAck(toRead, 0xC1, mlx90620_0xC1);
+                PIX_LSB = toRead[0];
+                PIX_MSB = toRead[1];
+                IRDATA[i] = (PIX_MSB << 8) + PIX_LSB;
             }
         }
 
-        private void i2c_write(byte address) {
-
-            byte[] cmd = { address };
-            I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
-                CreateWriteTransaction(cmd, address, 1)
-            };
-            int bytesRead = mlx90620.Execute(reading, 100);
+        public void read_PTAT_Reg_MLX09620() {
+            byte[] toWrite = { 0x02, 0x90, 0x00, 0x01 };
+            i2c_write(toWrite, 0xC0, mlx90620_0xC0);
+            byte[] toRead = { 0, 0 };
+            i2c_readAck(toRead, 0xC1, mlx90620_0xC1);
+            PTAT_LSB = toRead[0];
+            PTAT_MSB = toRead[1];
+            PTAT = ((uint)PTAT_MSB << 8) + PTAT_LSB;
         }
 
-        private int i2c_readAck(byte address) {
+        public void read_CPIX_Reg_MLX
 
-            byte[] cmd = { address };
+        private void i2c_write(byte[] toWrite, byte address, I2CDevice startAddress) {
             I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
-                CreateReadTransaction(cmd, address, 1)
+                CreateWriteTransaction(toWrite, address, 1)
             };
-            int bytesRead = mlx90620.Execute(reading, 100);
-            return bytesRead;
+            int bytesRead = startAddress.Execute(reading, 100);
+        }
+
+        private void i2c_readAck(byte[] toRead, byte address, I2CDevice startAddress) {
+            I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
+                CreateReadTransaction(toRead, address, 1)
+            };
+            int bytesRead = startAddress.Execute(reading, 100);
         }
 
         //Overridden read/write methods for I2C
