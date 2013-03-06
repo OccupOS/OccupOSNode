@@ -18,6 +18,7 @@ namespace OccupOSNode
     using OccupOSNode.Sensors.Kinect;
     using System.Reflection;
     using OccupOS.CommonLibrary.Sensors;
+    using OccupOS.CommonLibrary.NodeControllers;
 
     /// <summary>
     ///     The program.
@@ -34,7 +35,11 @@ namespace OccupOSNode
         /// </param>
         private static void Main(string[] args)
         {
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
+            FullNodeController controller = new FullNodeController();
+            int num = controller.CheckForSensors();
+            Console.WriteLine(num);
+            //Console.WriteLine(Int32.Parse("tst"));
+            /*foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
                 if (type.IsClass) {
                     foreach (var iface in type.GetInterfaces()) {
                         if (iface.IsAssignableFrom(typeof(IDynamicSensor))) {
@@ -43,7 +48,7 @@ namespace OccupOSNode
                         }
                     }
                 }
-            }
+            }*/
             while (true) {
                 
                 }

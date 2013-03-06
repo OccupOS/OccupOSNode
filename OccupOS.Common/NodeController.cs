@@ -13,24 +13,22 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         private readonly ArrayList sensorDataBuffer = new ArrayList();
         private readonly ArrayList sensors = new ArrayList();
 
-        public void CheckForSensors() {
-            var typfe = typeof(IDynamicSensor);
-
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
-                //if (type.GetInterfaces().Contains(typeof(IDynamicSensor)) {
-
-                //}
+        public int CheckForSensors() {
+            int test = -1;
+            foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes()) {
+                if (type.IsClass) {
+                    foreach (var iface in type.GetInterfaces()) {
+                        if (iface.Name.Equals("IDynamicSensor")) {
+                            ConstructorInfo constructor = type.GetConstructor(new Type[] {typeof(String)});
+                            if (constructor != null) {
+                                IDynamicSensor dsensor = constructor.Invoke(new Object[] {"test"}) as IDynamicSensor;
+                                test = dsensor.GetDeviceCount();
+                            }
+                        }
+                    }
+                }
             }
-
-
-            /*var instances = from t in Assembly.GetExecutingAssembly().GetTypes()
-                            where t.GetInterfaces().Contains(typeof(ISomething))
-                                     && t.GetConstructor(Type.EmptyTypes) != null
-                            select Activator.CreateInstance(t) as ISomething;
-
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p));*/
+            return test;
         }
 
         public void AddSensor(Sensor sensor) {

@@ -18,13 +18,13 @@ namespace OccupOSNode.Sensors.Kinect {
             public DepthImageFrame d_frame;
         }
         private KinectSensor ksensor;
-        private int sensornum;
+        int sensornum = 0;
         private static int QUEUE_MAX_LENGTH = 6;
         private static int MAX_TIME_DIFFERENCE = 200;
         private static int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
 
-        public NodeKinectSensor(String id, int sensornum = 0) : base(id) {
-            this.sensornum = sensornum;
+        public NodeKinectSensor(String id) : base(id) {
+            int.TryParse(id, out sensornum);
         }
 
         public int GetDeviceCount() {
@@ -94,10 +94,10 @@ namespace OccupOSNode.Sensors.Kinect {
 
         public Boolean FindKinectSensor() {
             if (KinectSensor.KinectSensors.Count > 0) {
-                if (sensornum > KinectSensor.KinectSensors.Count - 1)
+                if (4 > KinectSensor.KinectSensors.Count - 1)
                     ksensor = KinectSensor.KinectSensors[KinectSensor.KinectSensors.Count - 1];
                 else
-                    ksensor = KinectSensor.KinectSensors[sensornum];
+                    ksensor = KinectSensor.KinectSensors[4];
                 if (ksensor != null && ksensor.Status == KinectStatus.Connected) {
                     ksensor.ColorStream.Enable();
                     ksensor.DepthStream.Enable();
