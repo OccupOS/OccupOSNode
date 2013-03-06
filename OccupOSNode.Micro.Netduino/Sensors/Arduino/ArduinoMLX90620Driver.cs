@@ -4,7 +4,6 @@ using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 using System.Reflection;
 using System.Threading;
-using System.Math;
 
 // Improved implementation of the MLX90620 driver for Micro .NET Framework
 // Based on the Arduino implementation by IlBaboomba and I2C repeated start methods by Chris Walker @secretlabs
@@ -19,16 +18,16 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         byte CFG_LSB, CFG_MSB, PTAT_LSB, PTAT_MSB, CPIX_LSB, CPIX_MSB, PIX_LSB, PIX_MSB;
         int PIX, v_th, CPIX;
         float ta, to, emissivity, k_t1, k_t2;
-        fixed float temperatures[64];
+        float[] temperatures = new float[64];
         int count = 0;
         uint PTAT;
         int a_cp, b_cp, tgc, b_i_scale;
 
-        fixed int a_ij[64];
-        fixed int b_ij[64];
+        int[] a_ij = new int[64];
+        int[] b_ij = new int[64];
 
-        fixed double alpha_ij[64];
-        fixed float v_ir_tgc_comp[64];
+        double[] alpha_ij = new double[64];
+        float[] v_ir_tgc_comp = new float[64];
 
         I2CDevice mlx90620_0xC0 = new I2CDevice(new I2CDevice.Configuration(0xC0, 400));
         I2CDevice mlx90620_0xC1 = new I2CDevice(new I2CDevice.Configuration(0xC1, 400));
@@ -112,16 +111,51 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
 
         public void check_Config_Reg_MLX90620() {
             read_Config_Reg_MLX90620();
-            if ((!CFG_MSB & 0x04) == 0x04) {
+            if (!((CFG_MSB & 0x04) == 0x04)) {
                 config_MLX90620_16Hz();
             }
         }
 
         public void varInitialization(byte[] EEPROM_DATA) {
             v_th = (EEPROM_DATA[219] << 8) + EEPROM_DATA[218];
+            k_t1 = ((EEPROM_DATA[221] << 8) + EEPROM_DATA[220]) / 1024;
+            k_t2 = ((EEPROM_DATA[223] << 8) + EEPROM_DATA[222]) / 1048576;
+
+            a_cp = EEPROM_DATA[212];
+            if (a_cp > 127) {
+                a_cp = a_cp - 256;
+            }
+
+            b_cp = EEPROM_DATA[213];
+            if (b_cp > 127) {
+                b_cp = b_cp - 256;
+            }
+            tgc = EEPROM_DATA[216];
+            if (tgc > 127) {
+                tgc = tgc - 256;
+            }
+
+            b_i_scale = EEPROM_DATA[217];
+            emissivity = (((uint)EEPROM_DATA[229] << 8) + EEPROM_DATA[228]) / 32768;
+
+            for (int i = 0; i <= 63; i++) {
+                a_ij[i] = EEPROM_DATA[i];
+                if (a_ij[i] > 127) {
+                    a_ij[i] = a_ij[i] - 256;
+                }
+                b_ij[i] = EEPROM_DATA[64 + i];
+                if (b_ij[i] > 127) {
+                    b_ij[i] = b_ij[i] - 256;
+                }
+            }
+            //Calculates EEPROM alpha_ij constant values directly instead of using a spreadsheet. Taken from code from rmie.
+            double da0_scale = System.Math.Pow(2, -EEPROM_DATA[0xe3]);
+            double alpha_const = (double)(((uint)EEPROM_DATA[0xe1] << 8) + (uint)EEPROM_DATA[0xe0] * (System.Math.Pow(2, -EEPROM_DATA[0xe2]);
+            for(int i=0; i<=63; i++) {
+                double alpha_var = (double)EEPROM_DATA[0x80 + i] * da0_scale;
+                alpha_ij[i] = (alpha_const + alpha_var);
+            }
         }
-
-
 
         private void i2c_write(byte[] toWrite, byte address, I2CDevice startAddress) {
             I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
