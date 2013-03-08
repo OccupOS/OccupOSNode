@@ -5,8 +5,7 @@
 
     internal class FullNodeController : NodeController {
 
-        public FullNodeController() {
-        }
+        public FullNodeController() { }
 
         public void PollSensors() {
         }

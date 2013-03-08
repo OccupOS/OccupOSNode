@@ -36,8 +36,8 @@ namespace OccupOSNode
         private static void Main(string[] args)
         {
             FullNodeController controller = new FullNodeController();
-            int num = controller.CheckForSensors();
-            Console.WriteLine(num);
+            controller.CheckForSensors();
+
             //Console.WriteLine(Int32.Parse("tst"));
             /*foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
                 if (type.IsClass) {

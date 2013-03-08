@@ -13,22 +13,62 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         private readonly ArrayList sensorDataBuffer = new ArrayList();
         private readonly ArrayList sensors = new ArrayList();
 
-        public int CheckForSensors() {
-            int test = -1;
+        public void CheckForSensors() {
             foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes()) {
                 if (type.IsClass) {
                     foreach (var iface in type.GetInterfaces()) {
                         if (iface.Name.Equals("IDynamicSensor")) {
                             ConstructorInfo constructor = type.GetConstructor(new Type[] {typeof(String)});
                             if (constructor != null) {
-                                IDynamicSensor dsensor = constructor.Invoke(new Object[] {"test"}) as IDynamicSensor;
-                                test = dsensor.GetDeviceCount();
+                                IDynamicSensor dsensor = constructor.Invoke(new Object[] {"temp"}) as IDynamicSensor;
+                                int sensors_connected = dsensor.GetDeviceCount();
+                                int sensors_store = GetSensorCount(type);
+                                if (sensors_connected > sensors_store) {
+                                    AddDynamicSensors(type, sensors_connected - sensors_store);
+                                }
+                                else {
+                                    if (sensors_connected < sensors_store)
+                                        RemoveInactiveSensors(type);
+                                }
                             }
                         }
                     }
                 }
             }
-            return test;
+        }
+
+        private void AddDynamicSensors(Type stype, int number) {
+            ArrayList actives = GetAllSensors(stype);
+            for (int k = 0; k < number; k++) {
+                ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(String) });
+                if (constructor != null)
+                    AddSensor(constructor.Invoke(new Object[] {
+                        FindLowestNumID(GetAllSensors(stype), stype, 0) 
+                    }) as Sensor);
+            }
+        }
+
+        private void RemoveInactiveSensors(Type stype) {
+            ArrayList actives = GetAllSensors(stype);
+            foreach (Sensor current_active in actives) {
+                try { 
+                    current_active.GetData();
+                } 
+                catch (SensorNotFoundException) {
+                    RemoveSensor(current_active.ID);
+                }
+            }
+        }
+
+        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) {
+            if (sensorlist.Count > 0) {
+                foreach (Sensor current_active in sensorlist) {
+                    if (startID.ToString().Equals(current_active.ID))
+                        FindLowestNumID(sensorlist, stype, startID + 1);
+                }
+            }
+
+            return startID;
         }
 
         public void AddSensor(Sensor sensor) {
@@ -71,6 +111,30 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         }
 
         public int GetSensorCount() { return sensors.Count; }
+
+        public int GetSensorCount(Type stype) {
+            int count = 0;
+            foreach (object sensor in sensors) {
+                if (sensor is Sensor) {
+                    if (sensor.GetType() == stype) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        public ArrayList GetAllSensors(Type stype) {
+            ArrayList matches = new ArrayList();
+            foreach (object sensor in sensors) {
+                if (sensor is Sensor) {
+                    if (sensor.GetType() == stype) {
+                        matches.Add(sensor);
+                    }
+                }
+            }
+            return matches;
+        }
 
         public void AddSensorReading(SensorData data) {
             if (data != null) {
