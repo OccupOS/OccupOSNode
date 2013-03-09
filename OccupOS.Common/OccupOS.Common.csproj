@@ -51,9 +51,10 @@
     <Compile Include="Sensors\SensorData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Gadgeteer, Version=2.42.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SPOT.Native">
+    <Reference Include="Gadgeteer">
+      <HintPath>..\..\lib\Gadgeteer\Microsoft .NET Gadgeteer\Core\Assemblies\.NET Micro Framework 4.2\Gadgeteer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SPOT.Native" />
     <Reference Include="System" />
   </ItemGroup>
 </Project>
