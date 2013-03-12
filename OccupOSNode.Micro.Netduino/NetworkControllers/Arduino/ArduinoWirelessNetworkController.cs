@@ -17,7 +17,7 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
             WifiModule.JoinNetwork(hostName);
 
             SimpleSocket socket = new WiFlySocket(hostName, 80, WifiModule);
-            socket.connect();
+            socket.Connect();
 
         }
 
