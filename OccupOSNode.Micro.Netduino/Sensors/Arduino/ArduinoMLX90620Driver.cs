@@ -10,7 +10,7 @@ using System.Threading;
 // @author Jisang Choi <7517choi@armymail.mod.uk> 
 
 namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
-    class ArduinoMLX90620Driver : I2CDevice {
+    class ArduinoMLX90620Driver {
 
         int freq = 16;
 
@@ -150,7 +150,7 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
             }
             //Calculates EEPROM alpha_ij constant values directly instead of using a spreadsheet. Taken from code from rmie.
             double da0_scale = System.Math.Pow(2, -EEPROM_DATA[0xe3]);
-            double alpha_const = (double)(((uint)EEPROM_DATA[0xe1] << 8) + (uint)EEPROM_DATA[0xe0] * (System.Math.Pow(2, -EEPROM_DATA[0xe2]);
+            double alpha_const = (double)(((uint)EEPROM_DATA[0xe1] << 8) + (uint)EEPROM_DATA[0xe0] * (System.Math.Pow(2, -EEPROM_DATA[0xe2])));
             for(int i=0; i<=63; i++) {
                 double alpha_var = (double)EEPROM_DATA[0x80 + i] * da0_scale;
                 alpha_ij[i] = (alpha_const + alpha_var);

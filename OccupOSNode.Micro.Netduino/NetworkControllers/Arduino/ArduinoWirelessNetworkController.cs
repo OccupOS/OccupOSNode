@@ -16,15 +16,15 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
             WifiModule.EnableDHCP();
             WifiModule.JoinNetwork(hostName);
 
-            SimpleSocket socket = new WiFlySocket(hostName, 80, WifiModule);
+            socket = new WiFlySocket(hostName, 80, WifiModule);
             socket.Connect();
 
         }
 
-        public int sendData(string data) {
+        public void sendData(string data) {
 
-            byte[] buffer = Encoding.UTF8.GetBytes(data);
-            return socket.Send(buffer);
+            //byte[] buffer = Encoding.UTF8.GetBytes(data);
+            socket.Send(data);
         }
 
         public void disconnect() {
