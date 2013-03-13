@@ -28,8 +28,7 @@ namespace OccupOSNode.Sensors.Kinect {
         }
 
         public int GetDeviceCount() {
-            return sensornum;
-            //return KinectSensor.KinectSensors.Count;
+            return KinectSensor.KinectSensors.Count;
         }
 
         public ConnectionStatus GetConnectionStatus() {

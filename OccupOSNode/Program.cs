@@ -36,7 +36,7 @@ namespace OccupOSNode
         private static void Main(string[] args)
         {
             FullNodeController controller = new FullNodeController();
-            controller.CheckForSensors();
+            controller.StartListening();
 
             //Console.WriteLine(Int32.Parse("tst"));
             /*foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
@@ -50,7 +50,7 @@ namespace OccupOSNode
                 }
             }*/
             while (true) {
-                
+                controller.GetSensorCount();
                 }
             //var kinectrunner = new KinectRunner();
             //var kthread = new Thread(kinectrunner.DelayedPoll);
