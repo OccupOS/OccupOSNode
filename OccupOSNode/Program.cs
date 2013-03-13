@@ -50,7 +50,7 @@ namespace OccupOSNode
                 }
             }*/
             while (true) {
-                
+                controller.GetSensorCount();
                 }
             //var kinectrunner = new KinectRunner();
             //var kthread = new Thread(kinectrunner.DelayedPoll);
