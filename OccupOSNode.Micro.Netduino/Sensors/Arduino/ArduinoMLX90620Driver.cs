@@ -164,20 +164,7 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
             int bytesRead = startAddress.Execute(reading, 100);
         }
 
-        /// <summary>
-        /// The i 2 c_read ack.
-        /// </summary>
-        /// <param name="toRead">
-        /// The to read.
-        /// </param>
-        /// <param name="address">
-        /// The address.
-        /// </param>
-        /// <param name="startAddress">
-        /// The start address.
-        /// </param>
-        private void i2c_readAck(byte[] toRead, byte address, I2CDevice startAddress) 
-        {
+        private void i2c_readAck(byte[] toRead, byte address, I2CDevice startAddress) {
             I2CDevice.I2CTransaction[] reading = new I2CDevice.I2CTransaction[]{
                 CreateReadTransaction(toRead, address, 1)
             };
