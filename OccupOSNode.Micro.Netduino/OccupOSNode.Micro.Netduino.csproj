@@ -76,14 +76,17 @@
     <Reference Include="Toolbox.NETMF.Core, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Toolbox.NETMF.NET.Core, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.NET.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
