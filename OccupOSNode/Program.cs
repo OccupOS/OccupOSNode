@@ -36,7 +36,7 @@ namespace OccupOSNode
         private static void Main(string[] args)
         {
             FullNodeController controller = new FullNodeController();
-            controller.CheckForSensors();
+            controller.StartListening();
 
             //Console.WriteLine(Int32.Parse("tst"));
             /*foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
