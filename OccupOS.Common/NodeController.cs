@@ -24,13 +24,15 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         }
 
         private void AddSensor(Type stype, int count) {
-            ArrayList actives = GetAllSensors(stype);
             for (int k = 0; k < count; k++) {
                 ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(String) });
-                if (constructor != null)
-                    AddSensor(constructor.Invoke(new Object[] {
-                        FindLowestNumID(GetAllSensors(stype), stype, 0).ToString() 
-                    }) as Sensor);
+                if (constructor != null) {
+                    Sensor newsensor = constructor.Invoke(new Object[] {
+                        FindLowestNumID(GetAllSensors(stype), stype, 0).ToString() }) as Sensor;
+                    AddSensor(newsensor);
+                    if (newsensor is IDynamicSensor)
+                        ((IDynamicSensor) newsensor).Connect();
+                }
             }
         }
 
@@ -49,7 +51,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         }
 
         public void RemoveSensor(String id) {
-            foreach (object sensor in sensors) {
+            foreach (object sensor in sensors) { //Invalid operation exception was unhandled; collection was modified, enum op may not execute (check connectionStatus)
                 if (sensor is Sensor) {
                     if (id == ((Sensor)sensor).ID) {
                         sensors.Remove(sensor);
@@ -72,9 +74,14 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             foreach (Sensor current_active in actives) {
                 try {
                     SensorData data_try = current_active.GetData();
-                    if (data_try == null)
+                    if (data_try == null) {
+                        if (current_active is IDynamicSensor)
+                            ((IDynamicSensor)current_active).Disconnect();
                         RemoveSensor(current_active.ID);
+                    }
                 } catch (SensorNotFoundException) {
+                    if (current_active is IDynamicSensor)
+                        ((IDynamicSensor)current_active).Disconnect();
                     RemoveSensor(current_active.ID);
                 }
             }
