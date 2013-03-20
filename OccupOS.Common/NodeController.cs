@@ -224,6 +224,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         private class DynamicSensorController {
             private NodeController master = null;
             private Boolean enabled = false;
+            private ManualResetEvent test = new ManualResetEvent(false);
 
             public DynamicSensorController(NodeController master) {
                     this.master = master;
@@ -232,7 +233,8 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             public void UpdateCycle() {
                 while (true) {
                     if (!enabled) {
-                        Thread.CurrentThread.Suspend();
+                        test.WaitOne();
+                        //Thread.CurrentThread.Suspend();
                     } 
                     else {
                         master.UpdateSensors();
@@ -242,6 +244,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
 
             public void Enable() {
                 this.enabled = true;
+                test.Set();
             }
 
             public void Disable() {

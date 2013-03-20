@@ -14,7 +14,6 @@ namespace OccupOSNode
 {
     using System;
     using System.Threading;
-    using OccupOSCloud;
     using OccupOSNode.Sensors.Kinect;
     using System.Reflection;
     using OccupOS.CommonLibrary.Sensors;
@@ -49,6 +48,9 @@ namespace OccupOSNode
                     }
                 }
             }*/
+            controller.StopListening();
+            for (int k = 0; k < 100000; k++) { Console.Write("k: " + k + ": ");  Console.WriteLine(controller.GetSensorCount()); }
+            controller.StartListening();
             while (true) {
                 Console.WriteLine(controller.GetSensorCount());
                 }
@@ -79,13 +81,13 @@ namespace OccupOSNode
                 Thread.Sleep(5000);
                 int count = testsensor.GetEntityCount();
                 Console.WriteLine("Sending: " + count);
-                var test = new SQLServerHelper(
+                /*var test = new SQLServerHelper(
                     "tcp:dndo40zalb.database.windows.net,1433", "comp2014@dndo40zalb", "20041908kjH", "TestSQLDB");
                 test.insertSensorData(
                     1, 1, count.ToString(), DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 
-                // test.insertSensorData(1, 1, "7", DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now); 
-                // fix timeout expired, keep sending even after error
+                test.insertSensorData(1, 1, "7", DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now); 
+                fix timeout expired, keep sending even after error*/
             }
         }
 
