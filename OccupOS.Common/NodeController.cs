@@ -25,10 +25,10 @@ namespace OccupOS.CommonLibrary.NodeControllers {
 
         private void AddSensor(Type stype, int count) {
             for (int k = 0; k < count; k++) {
-                ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(String) });
+                ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(int) });
                 if (constructor != null) {
                     Sensor newsensor = constructor.Invoke(new Object[] {
-                        FindLowestNumID(GetAllSensors(stype), stype, 0).ToString() }) as Sensor;
+                        FindLowestNumID(GetAllSensors(stype), stype, 0) }) as Sensor;
                     AddSensor(newsensor);
                     if (newsensor is IDynamicSensor)
                         ((IDynamicSensor) newsensor).Connect();
@@ -50,13 +50,17 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             }
         }
 
-        public void RemoveSensor(String id) {
-            foreach (object sensor in sensors) { //Invalid operation exception was unhandled; collection was modified, enum op may not execute (check connectionStatus)
+        public void RemoveSensorByID(int id) {
+            int sensornum = 0;
+            for (int k = 0; k < sensors.Count; k++) {
+                var sensor = sensors[sensornum];
                 if (sensor is Sensor) {
                     if (id == ((Sensor)sensor).ID) {
                         sensors.Remove(sensor);
+                        sensornum--;
                     }
                 }
+                sensornum++;
             }
         }
 
@@ -73,21 +77,24 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             ArrayList actives = GetAllSensors(stype);
             foreach (Sensor current_active in actives) {
                 try {
-                    SensorData data_try = current_active.GetData();
-                    if (data_try == null) {
-                        if (current_active is IDynamicSensor)
-                            ((IDynamicSensor)current_active).Disconnect();
-                        RemoveSensor(current_active.ID);
+                    if (current_active is IDynamicSensor) {
+                        if (((IDynamicSensor)current_active).GetConnectionStatus()
+                            == ConnectionStatus.Disconnected)
+                            DisconnectSensor(current_active);
                     }
                 } catch (SensorNotFoundException) {
-                    if (current_active is IDynamicSensor)
-                        ((IDynamicSensor)current_active).Disconnect();
-                    RemoveSensor(current_active.ID);
+                    DisconnectSensor(current_active);
                 }
             }
         }
 
-        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) {
+        private void DisconnectSensor(Sensor sensor) {
+            if (sensor is IDynamicSensor)
+                ((IDynamicSensor)sensor).Disconnect();
+            RemoveSensorByID(sensor.ID);
+        }
+
+        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) { //todo: replace with check database
             if (sensorlist.Count > 0) {
                 foreach (Sensor current_active in sensorlist) {
                     if (startID.ToString().Equals(current_active.ID))
@@ -196,9 +203,9 @@ namespace OccupOS.CommonLibrary.NodeControllers {
                 if (type.IsClass) {
                     foreach (var iface in type.GetInterfaces()) {
                         if (iface.Name.Equals("IDynamicSensor")) {
-                            ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(String) });
+                            ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(int) });
                             if (constructor != null) {
-                                IDynamicSensor dsensor = constructor.Invoke(new Object[] { "temp" }) as IDynamicSensor;
+                                IDynamicSensor dsensor = constructor.Invoke(new Object[] { -1 }) as IDynamicSensor;
                                 int sensors_connected = dsensor.GetDeviceCount();
                                 int sensors_store = GetSensorCount(type);
                                 if (sensors_connected > sensors_store) {

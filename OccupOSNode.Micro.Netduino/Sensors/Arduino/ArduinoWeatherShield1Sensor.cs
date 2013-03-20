@@ -6,7 +6,7 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         private readonly ArduinoWeatherShield1Controller controller;
         private byte[] data;
 
-        public ArduinoWeatherShield1Sensor(String id)
+        public ArduinoWeatherShield1Sensor(int id)
             : base(id) {
             controller = new ArduinoWeatherShield1Controller();
             data = new byte[4];

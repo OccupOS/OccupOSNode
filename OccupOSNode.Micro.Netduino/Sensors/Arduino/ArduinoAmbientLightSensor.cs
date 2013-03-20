@@ -10,7 +10,7 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         private readonly Hashtable ports = new Hashtable();
         private float analogValue, digitalValue;
 
-        public LightSensor(String id, int portNumber)
+        public LightSensor(int id, int portNumber)
             : base(id) {
             Setup();
 
