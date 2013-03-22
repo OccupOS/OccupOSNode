@@ -9,15 +9,15 @@ namespace OccupOSNode.Micro {
 
         public static void Main() {
             blink();
-            var controller = new ArduinoEthernetController("192.168.1.127", 1333);
-            blink1();
-            if (controller.connect() == null) {
+            //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
+            
+            /*if (controller.connect() == null) {
                 blink();
             }
             else {
                 blink1();
             }
-            while (true) {
+            /*while (true) {
                 if (controller.sendData("test") > 1) {
                     blink3();
                 }
