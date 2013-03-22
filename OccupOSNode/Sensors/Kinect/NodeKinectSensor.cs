@@ -18,14 +18,11 @@ namespace OccupOSNode.Sensors.Kinect {
             public DepthImageFrame d_frame;
         }
         private KinectSensor ksensor;
-        int sensornum = 0;
         private static int QUEUE_MAX_LENGTH = 6;
         private static int MAX_TIME_DIFFERENCE = 200;
         private static int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
 
-        public NodeKinectSensor(String id) : base(id) {
-            int.TryParse(id, out sensornum);
-        }
+        public NodeKinectSensor(int id) : base(id) { }
 
         public int GetDeviceCount() {
             return KinectSensor.KinectSensors.Count;
@@ -42,7 +39,7 @@ namespace OccupOSNode.Sensors.Kinect {
             } else return ConnectionStatus.Disconnected;
         }
 
-        public void Connect() { //could use better method
+        public void Connect() {
             Boolean connected = false;
             for (int k = 0; k < MAX_AUTO_CONNECTION_ATTEMPTS; k++) {
                 connected = FindKinectSensor();
@@ -51,9 +48,7 @@ namespace OccupOSNode.Sensors.Kinect {
         }
 
         public void Disconnect() {
-            if (this.GetConnectionStatus() != ConnectionStatus.Disconnected) {
-                StopSensor(ksensor);
-            }
+            StopSensor(ksensor);
         }
 
         public override SensorData GetData() {
@@ -94,10 +89,10 @@ namespace OccupOSNode.Sensors.Kinect {
 
         public Boolean FindKinectSensor() {
             if (KinectSensor.KinectSensors.Count > 0) {
-                if (4 > KinectSensor.KinectSensors.Count - 1)
+                if (ID > KinectSensor.KinectSensors.Count - 1)
                     ksensor = KinectSensor.KinectSensors[KinectSensor.KinectSensors.Count - 1];
                 else
-                    ksensor = KinectSensor.KinectSensors[4];
+                    ksensor = KinectSensor.KinectSensors[ID];
                 if (ksensor != null && ksensor.Status == KinectStatus.Connected) {
                     ksensor.ColorStream.Enable();
                     ksensor.DepthStream.Enable();

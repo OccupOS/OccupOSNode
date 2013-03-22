@@ -48,8 +48,11 @@ namespace OccupOSNode
                     }
                 }
             }*/
+            controller.StopListening();
+            for (int k = 0; k < 100000; k++) { Console.Write("k: " + k + ": ");  Console.WriteLine(controller.GetSensorCount()); }
+            controller.StartListening();
             while (true) {
-                controller.GetSensorCount();
+                Console.WriteLine(controller.GetSensorCount());
                 }
             //var kinectrunner = new KinectRunner();
             //var kthread = new Thread(kinectrunner.DelayedPoll);
@@ -71,7 +74,7 @@ namespace OccupOSNode
         /// </summary>
         public void DelayedPoll()
         {
-            var testsensor = new NodeKinectSensor("testsensor");
+            var testsensor = new NodeKinectSensor(100);
 
             while (true)
             {
