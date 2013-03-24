@@ -189,7 +189,6 @@ namespace OccupOS.CommonLibrary.NodeControllers {
                 ds_thread.Start();
             }
             ds_controller.Enable();
-            //ds_thread.Resume();
         }
 
         public void StopListening() {
@@ -198,7 +197,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             }
         }
 
-        public void UpdateSensors() {
+        public void UpdateDynamicSensors() {
             foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes()) {
                 if (type.IsClass) {
                     foreach (var iface in type.GetInterfaces()) {
@@ -224,7 +223,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         private class DynamicSensorController {
             private NodeController master = null;
             private Boolean enabled = false;
-            private ManualResetEvent test = new ManualResetEvent(false);
+            private ManualResetEvent event_waiter = new ManualResetEvent(false);
 
             public DynamicSensorController(NodeController master) {
                     this.master = master;
@@ -233,18 +232,18 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             public void UpdateCycle() {
                 while (true) {
                     if (!enabled) {
-                        test.WaitOne();
-                        //Thread.CurrentThread.Suspend();
+                        //Ensures thread waits only between update cycles
+                        event_waiter.WaitOne();
                     } 
                     else {
-                        master.UpdateSensors();
+                        master.UpdateDynamicSensors();
                     }
                 }
             }
 
             public void Enable() {
                 this.enabled = true;
-                test.Set();
+                event_waiter.Set();
             }
 
             public void Disable() {

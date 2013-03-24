@@ -35,43 +35,24 @@ namespace OccupOSNode
         private static void Main(string[] args)
         {
             FullNodeController controller = new FullNodeController();
-            controller.StartListening();
-
-            //Console.WriteLine(Int32.Parse("tst"));
-            /*foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
-                if (type.IsClass) {
-                    foreach (var iface in type.GetInterfaces()) {
-                        if (iface.IsAssignableFrom(typeof(IDynamicSensor))) {
-                            var ds_class = Activator.CreateInstance(type) as IDynamicSensor;
-                            ds_class.GetDeviceCount();
-                        }
-                    }
-                }
-            }*/
-            controller.StopListening();
-            for (int k = 0; k < 100000; k++) { Console.Write("k: " + k + ": ");  Console.WriteLine(controller.GetSensorCount()); }
-            controller.StartListening();
             while (true) {
-                Console.WriteLine(controller.GetSensorCount());
-                }
+                controller.StopListening();
+                for (int k = 0; k < 60000; k++) { Console.Write("Off: " + k + ": "); Console.WriteLine(controller.GetSensorCount()); }
+                controller.StartListening();
+                for (int k = 0; k < 60000; k++) { Console.Write("On: " + k + ": "); Console.WriteLine(controller.GetSensorCount()); }
+            }
+
             //var kinectrunner = new KinectRunner();
             //var kthread = new Thread(kinectrunner.DelayedPoll);
             //kthread.Start();
         }
-
         #endregion
     }
 
-    /// <summary>
-    ///     The kinect runner.
-    /// </summary>
     public class KinectRunner
     {
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     The delayed poll.
-        /// </summary>
         public void DelayedPoll()
         {
             var testsensor = new NodeKinectSensor(100);
