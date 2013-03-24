@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using Microsoft.SPOT.Hardware;
-using OccupOSNode.Micro.NetworkControllers.Arduino;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
 namespace OccupOSNode.Micro {

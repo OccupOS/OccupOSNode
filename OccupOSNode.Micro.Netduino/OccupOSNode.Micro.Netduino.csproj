@@ -36,25 +36,27 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="NetworkControllers\Arduino\ArduinoEthernetController.cs" />
-    <Compile Include="NetworkControllers\Arduino\ArduinoWirelessNetworkController.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoMLX90620Driver.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoMLX90620Sensor.cs" />
     <Compile Include="HardwareControllers\Arduino\ArduinoHardwareController.cs" />
+    <Compile Include="NetworkControllers\Arduino\ArduinoEthernetController.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="NetworkControllers\NetworkController.cs" />
     <Compile Include="HardwareControllers\HardwareController.cs" />
     <Compile Include="ArduinoNodeController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Sensors\Arduino\ArduinoAmbientLightSensor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Sensors\Arduino\ArduinoMLX90620Driver.cs" />
+    <Compile Include="Sensors\Arduino\ArduinoMLX90620Sensor.cs" />
     <Compile Include="Sensors\Arduino\ArduinoWeatherShield1Controller.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Sensors\Arduino\ArduinoWeatherShield1Sensor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sensors\Gadgeteer\GadgeteerLightSense.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Hardware" />
@@ -73,21 +75,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO" />
-    <Reference Include="Toolbox.NETMF.Core, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Toolbox.NETMF.NET.Core, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Tools\Toolbox.NETMF.NET.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\IndianaJones.NETMF.Json\IndianaJones.NETMF.Json.csproj">
