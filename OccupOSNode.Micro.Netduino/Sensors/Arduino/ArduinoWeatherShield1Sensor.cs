@@ -2,38 +2,36 @@
 using OccupOS.CommonLibrary.Sensors;
 
 namespace OccupOSNode.Micro.Sensors.Arduino {
+    using SecretLabs.NETMF.Hardware.NetduinoPlus;
+
     internal class ArduinoWeatherShield1Sensor : Sensor, IHumiditySensor, IPressureSensor, ITemperatureSensor {
         private readonly ArduinoWeatherShield1Controller controller;
         private byte[] data;
 
+        private float humidity, pressure, temp;
+
         public ArduinoWeatherShield1Sensor(int id)
             : base(id) {
-            controller = new ArduinoWeatherShield1Controller();
+                controller = new ArduinoWeatherShield1Controller(Pins.GPIO_PIN_D7, Pins.GPIO_PIN_D2, ArduinoWeatherShield1Controller.DEFAULTADDRESS);
             data = new byte[4];
         }
 
-        public float GetHumidity() {
-            return controller.sendCommand(ArduinoWeatherShield1Controller.CMD_GETHUM_RAW,
-                                          ArduinoWeatherShield1Controller.PAR_GET_LAST_SAMPLE,
-                                          ref data)
-                       ? controller.decodeShortValue(data)
-                       : 0f;
+        public float GetHumidity()
+        {
+            humidity = controller.readAveragedValue(ArduinoWeatherShield1Controller.units.HUMIDITY);
+            return humidity;
         }
 
-        public float GetPressure() {
-            return controller.sendCommand(ArduinoWeatherShield1Controller.CMD_GETPRESS_RAW,
-                                          ArduinoWeatherShield1Controller.PAR_GET_LAST_SAMPLE,
-                                          ref data)
-                       ? controller.decodeShortValue(data)
-                       : 0f;
+        public float GetPressure()
+        {
+            pressure = controller.readAveragedValue(ArduinoWeatherShield1Controller.units.PRESSURE);
+            return pressure;
         }
 
-        public float GetTemperature() {
-            return controller.sendCommand(ArduinoWeatherShield1Controller.CMD_GETTEMP_C_RAW,
-                                          ArduinoWeatherShield1Controller.PAR_GET_LAST_SAMPLE,
-                                          ref data)
-                       ? controller.decodeShortValue(data)
-                       : 0f;
+        public float GetTemperature()
+        {
+            temp = controller.readAveragedValue(ArduinoWeatherShield1Controller.units.TEMPERATURE);
+            return temp;
         }
 
         public override SensorData GetData() {

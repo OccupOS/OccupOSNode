@@ -3,13 +3,22 @@ using Microsoft.SPOT.Hardware;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
 namespace OccupOSNode.Micro {
+    using OccupOSNode.Micro.Sensors.Arduino;
+
     public class Program {
         private static readonly OutputPort outPrt = new OutputPort(Pins.ONBOARD_LED, false);
 
-        public static void Main() {
-            blink();
+        public static void Main()
+        {
+            var controller = new ArduinoWeatherShield1Sensor(43110);
+            float temp = controller.GetTemperature();
+
+            if (temp != 0)
+            {
+                blink3();
+            }
             //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
-            
+
             /*if (controller.connect() == null) {
                 blink();
             }

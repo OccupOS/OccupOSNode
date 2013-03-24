@@ -5,252 +5,279 @@ using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
 namespace OccupOSNode.Micro.Sensors.Arduino {
     public class ArduinoWeatherShield1Controller {
-        public const byte CMD_UNKNOWN = 0x00,
-                          CMD_SETADDRESS = 0x01,
-                          CMD_ECHO_PAR = 0x02,
-                          CMD_SET_SAMPLETIME = 0x03,
-                          CMD_GETTEMP_C_AVG = 0x04,
-                          CMD_GETTEMP_C_RAW = 0x05,
-                          CMD_GETPRESS_AVG = 0x06,
-                          CMD_GETPRESS_RAW = 0x07,
-                          CMD_GETHUM_AVG = 0x08,
-                          CMD_GETHUM_RAW = 0x09,
-                          PAR_GET_LAST_SAMPLE = 0x80,
-                          PAR_GET_AVG_SAMPLE = 0x81;
+        public static Cpu.Pin DEFAULTCLOCK_PIN = Cpu.Pin.GPIO_Pin7;
+        public static Cpu.Pin DEFAULTIODATA_PIN = Cpu.Pin.GPIO_Pin2;
+        public static Byte DEFAULTADDRESS = 0x01;
 
-        private const int RXCOMMANDPOS = 3,
-                          RXPAR1POS = 2,
-                          RXPAR2POS = 1,
-                          RXPAR3POS = 0,
-                          RXBUFFERLENGTH = 4,
-                          WEATHERSHIELD_DEFAULTIODATA_PIN = 2,
-                          WEATHERSHIELD_DEFAULTCLOCK_PIN = 7;
+        public enum units {
+            TEMPERATURE,
+            PRESSURE,
+            HUMIDITY
+        };
 
-        private const byte WEATHERSHIELD_DEFAULTADDRESS = 0x01;
-        private readonly InputPort dataIn;
-        private readonly byte m_deviceAddress;
-        private readonly OutputPort portClock;
-        private readonly OutputPort portData;
-        private byte m_clockPin, m_dataPin;
+        public enum sample {
+            SAMPLE_ONE = 0x00,
+            SAMPLE_TWO = 0x01,
+            SAMPLE_THREE = 0x02,
+            SAMPLE_FOUR = 0x03,
+            SAMPLE_FIVE = 0x04,
+            SAMPLE_SIX = 0x05,
+            SAMPLE_SEVEN = 0x06,
+            SAMPLE_EIGHT = 0x07,
+            LAST_SAMPLE = 0x80,
+            AVG_SAMPLE = 0x81
+        };
 
-        public ArduinoWeatherShield1Controller() {
-            m_clockPin = WEATHERSHIELD_DEFAULTCLOCK_PIN;
-            m_dataPin = WEATHERSHIELD_DEFAULTIODATA_PIN;
-            m_deviceAddress = WEATHERSHIELD_DEFAULTADDRESS;
-            portClock = new OutputPort(Pins.GPIO_PIN_D7, false);
-            portData = new OutputPort(Pins.GPIO_PIN_D2, false);
-            dataIn = new InputPort(Pins.GPIO_PIN_D2, true, Port.ResistorMode.Disabled);
-            resetConnection();
+        private enum commands {
+            CMD_UNKNOWN = 0x00,
+            CMD_SETADDRESS = 0x01,
+            CMD_ECHO_PAR = 0x02,
+            CMD_SET_SAMPLETIME = 0x03,
+            CMD_GETTEMP_C_AVG = 0x04,
+            CMD_GETTEMP_C_RAW = 0x05,
+            CMD_GETPRESS_AVG = 0x06,
+            CMD_GETPRESS_RAW = 0x07,
+            CMD_GETHUM_AVG = 0x08,
+            CMD_GETHUM_RAW = 0x09,
+        };
+
+        private static int RXCOMMANDPOS = 3;
+        private static int RXPAR1POS = 2;
+        private static int RXPAR2POS = 1;
+        private static int RXPAR3POS = 0;
+        private static int RXBUFFERLENGTH = 4;
+
+        private OutputPort m_clockPort = new OutputPort(DEFAULTCLOCK_PIN, false);
+        private TristatePort m_dataPort = new TristatePort(DEFAULTIODATA_PIN, false, true, Port.ResistorMode.Disabled);
+        private Byte m_deviceAddress = DEFAULTADDRESS;
+        private Byte[] m_tempBuffer = new Byte[RXBUFFERLENGTH];
+        private bool averageValuesValid = false;
+        private bool averageValuesChecked = false;
+
+        public ArduinoWeatherShield1Controller() { this.resetConnection(); }
+        public ArduinoWeatherShield1Controller(Cpu.Pin clockPin, Cpu.Pin dataPin, Byte deviceAddress) {
+            this.m_clockPort = new OutputPort(clockPin, false);
+            this.m_dataPort = new TristatePort(dataPin, false, true, Port.ResistorMode.Disabled);
+            this.m_deviceAddress = deviceAddress;
+
+            this.resetConnection();
         }
 
-        public ArduinoWeatherShield1Controller(byte clockpin, byte datapin, byte deviceaddress) {
-            m_clockPin = clockpin;
-            m_dataPin = datapin;
-            m_deviceAddress = deviceaddress;
+        /* Initialize the connection with the WeatherShield1 */
+        public void resetConnection() {
+            this.m_clockPort.Write(false);
 
-            /* Start with a reset */
-            resetConnection();
+            /* We start sending a high level bit (start bit) */
+            if (!this.m_dataPort.Active)
+                this.m_dataPort.Active = true;
+            this.m_dataPort.Write(true);
+            this.pulseClockPin();
+
+            /* Then we send a sequence of "fake" low level bits */
+            for (int ucN = 0; ucN < 200; ucN++) {
+                this.m_dataPort.Write(false);
+                this.pulseClockPin();
+            }
         }
 
-        /* Send a specific command to the weather shield and return the related
-        answer. The answer will be stored in the provided buffer. 
-        This function returns true if the operation successfully terminates */
-
-        public bool sendCommand(byte ucCommand, byte ucParameter, ref byte[] pucBuffer) {
-            sendCommand(ucCommand, ucParameter);
-            //delayMicroseconds(15000);
-            Thread.Sleep(90);
-
-            bool bResult = readAnswer(ucCommand, ref pucBuffer);
-
-            return bResult;
+        /* Assign a new address to the WeatherShield1 */
+        public void setBoardAddress(Byte newAddress) {
+            this.sendCommand(commands.CMD_SETADDRESS, newAddress);
         }
 
-        /* Decode the float value stored in the buffer */
+        /* Set a new sample time (in seconds from 1 to 256) */
+        public void setSampleTime(Byte seconds) {
+            this.sendCommand(commands.CMD_SET_SAMPLETIME, seconds);
+        }
 
-        public float decodeFloatValue(ref byte[] pucBuffer) {
-            byte cMSD = pucBuffer[RXPAR1POS];
-            byte cLSD = pucBuffer[RXPAR2POS];
+        /* Send back the parameter through the WeatherShield1 */
+        public Byte echo(Byte parameter) {
+            this.sendCommand(commands.CMD_ECHO_PAR, parameter);
+            if (this.readAnswer(commands.CMD_ECHO_PAR))
+                return this.m_tempBuffer[RXPAR1POS];
 
-            float fVal = cMSD + ((cLSD) / 100.0f);
+            return 0;
+        }
+
+        /* Read an averaged value of specified unit (or MinValue if fails) */
+        public float readAveragedValue(units unitType) {
+            float result = float.MinValue;
+            commands command = commands.CMD_UNKNOWN;
+
+            switch (unitType) {
+                case units.TEMPERATURE:
+                    command = commands.CMD_GETTEMP_C_AVG;
+                    break;
+
+                case units.HUMIDITY:
+                    command = commands.CMD_GETHUM_AVG;
+                    break;
+
+                case units.PRESSURE:
+                    command = commands.CMD_GETPRESS_AVG;
+                    break;
+            }
+
+            this.sendCommand(command, 0);
+            if (this.readAnswer(command))
+                result = this.decodeFloatValue();
+
+            return result;
+        }
+
+        /* Read a specific sample for a specified unit in a RAW format */
+        /* Returns MinValue if fails */
+        public short readRawValue(units unitType, sample sampleNum) {
+            short result = short.MinValue;
+            commands command = commands.CMD_UNKNOWN;
+
+            switch (unitType) {
+                case units.TEMPERATURE:
+                    command = commands.CMD_GETTEMP_C_RAW;
+                    break;
+
+                case units.HUMIDITY:
+                    command = commands.CMD_GETHUM_RAW;
+                    break;
+
+                case units.PRESSURE:
+                    command = commands.CMD_GETPRESS_RAW;
+                    break;
+            }
+
+            this.sendCommand(command, (Byte)sampleNum);
+            if (this.readAnswer(command))
+                result = this.decodeShortValue();
+
+            return result;
+        }
+
+        /* Averaged values are calculated with last 8 raw samples */
+        /* This function returns true if the shield contains at least */
+        /* 8 valid raw samples in the buffer */
+        public bool averageValuesReady() {
+            if (!this.averageValuesChecked || !this.averageValuesValid) {
+                this.averageValuesValid = false;
+
+                /* Check for valid connection */
+                if (this.echo(0x55) != 0x55)
+                    return this.averageValuesValid;
+
+                /* Read the last 8 raw temperature samples 
+                 ans check they're not zero */
+                this.averageValuesValid = true;
+                for (int n = 0; n < 8; n++) {
+                    short value = this.readRawValue(units.HUMIDITY, (sample)n);
+                    this.averageValuesValid &= (value != 0);
+                }
+
+                this.averageValuesChecked = true;
+            }
+
+            return this.averageValuesValid;
+        }
+
+        /* Generate a clock pulse */
+        private void pulseClockPin() {
+            this.m_clockPort.Write(true);
+            Thread.Sleep(5);
+            this.m_clockPort.Write(false);
+            Thread.Sleep(5);
+        }
+
+        /* Send a byte through the synchronous serial line */
+        private void sendByte(Byte ucData) {
+            for (int n = 0; n < 8; n++) {
+
+                bool bit = (ucData & 0x80) != 0;
+                this.m_dataPort.Write(bit);
+
+                this.pulseClockPin();
+                ucData = (Byte)(ucData << 1);
+            }
+        }
+
+        /* Read a byte from the synchronous serial line */
+        private Byte readByte() {
+            Byte result = 0;
+
+            for (int n = 0; n < 8; n++) {
+
+                this.m_clockPort.Write(true);
+                Thread.Sleep(5);
+
+                result = (Byte)(result << 1);
+                bool input = this.m_dataPort.Read();
+                result |= (Byte)((input) ? 1 : 0);
+
+                this.m_clockPort.Write(false);
+                Thread.Sleep(5);
+            }
+
+            return result;
+        }
+
+        /* Send a command request to the WeatherShield1 */
+        private void sendCommand(commands command, Byte parameter) {
+            /* We start sending the first high level bit */
+            if (!this.m_dataPort.Active)
+                this.m_dataPort.Active = true;
+            this.m_dataPort.Write(true);
+            this.pulseClockPin();
+
+            /* The first byte is always 0xAA... */
+            this.sendByte(0xAA);
+
+            /* ... then is the address... */
+            this.sendByte(this.m_deviceAddress);
+
+            /* ... then is the command ... */
+            this.sendByte((Byte)command);
+
+            /* ... and the parameter ... */
+            this.sendByte(parameter);
+
+            /* And this is the last low level bit required by the protocol */
+            this.m_dataPort.Write(false);
+            this.pulseClockPin();
+        }
+
+        /* Read the answer back from the Weather Shield 1 and fill the provided
+        buffer with the result. Depending on the type of command associated
+        to this answer the buffer contents should be properly decoded.
+        The function returns true if the read answer contain the expected 
+        command */
+        private bool readAnswer(commands command) {
+            this.m_dataPort.Active = false;
+
+            for (int n = RXBUFFERLENGTH; n > 0; n--)
+                this.m_tempBuffer[n - 1] = this.readByte();
+
+            this.m_dataPort.Active = true;
+
+            return (this.m_tempBuffer[RXCOMMANDPOS] == (Byte)command);
+        }
+
+        /* Convert read bytes in a float value */
+        private float decodeFloatValue() {
+
+            Byte cMSD = this.m_tempBuffer[RXPAR1POS];
+            Byte cLSD = this.m_tempBuffer[RXPAR2POS];
+
+            float fVal = cMSD + (((float)cLSD) / 100.0f);
 
             return fVal;
         }
 
-        /* ----------------------------------------------------------------- */
+        /* Convert read bytes in a short value */
+        private short decodeShortValue() {
 
-        /* Decode an short value stored in the buffer */
+            Byte cMSD = this.m_tempBuffer[RXPAR1POS];
+            Byte cLSD = this.m_tempBuffer[RXPAR2POS];
 
-        public ushort decodeShortValue(byte[] pucBuffer) {
-            byte ucMSD = pucBuffer[RXPAR1POS];
-            byte ucLSD = pucBuffer[RXPAR2POS];
-
-            var shResult = (ushort)(ucMSD << 8 | ucLSD);
+            short shResult = (short)((cMSD << 8) | cLSD);
 
             return shResult;
-        }
-
-        public void decodeFloatAsString(byte[] pucBuffer, ref String chString) {
-            byte cMSD = pucBuffer[RXPAR1POS];
-            byte cLSD = pucBuffer[RXPAR2POS];
-
-            if (cLSD < 0) {
-                cLSD = (byte)((-cLSD));
-
-                if (cMSD < 0) {
-                    cMSD = (byte)((-cMSD));
-                }
-
-                // sprintf(chString,"-%d.%d", cMSD, cLSD);
-                chString = "-" + cMSD.ToString() + cLSD.ToString();
-            }
-            else {
-                chString = cMSD.ToString() + cLSD.ToString();
-            }
-        }
-
-/* ----------------------------------------------------------------- */
-
-        /* Send a series of low level bits in order to reset
-the communication channel between the Arduino and the 
-Weather Shield 1 */
-
-        private void resetConnection() {
-            /* Clock is always an output pin */
-            //pinMode(m_clockPin, OUTPUT);
-            //digitalWrite(m_clockPin, LOW); 
-            portClock.Write(false);
-
-            /* Set data pin in output mode */
-//  pinMode(m_dataPin, OUTPUT);
-
-            /* We start sending the first high level bit */
-            // digitalWrite(m_dataPin, HIGH);
-            portData.Write(true);
-            pulseClockPin();
-
-            /* Send a sequence of "fake" low level bits */
-            for (int ucN = 0; ucN < 200; ucN++) {
-                // digitalWrite(m_dataPin, LOW);
-                portData.Write(false);
-                pulseClockPin();
-            }
-        }
-
-/* ----------------------------------------------------------------- */
-
-/* Generate a clock pulse */
-
-        private void pulseClockPin() {
-            //digitalWrite(m_clockPin, HIGH);
-            portClock.Write(true);
-            //delayMicroseconds(5000);
-            Thread.Sleep(5);
-            // digitalWrite(m_clockPin, LOW);  
-            portClock.Write(false);
-            //delayMicroseconds(5000);	
-            Thread.Sleep(5);
-        }
-
-/* ----------------------------------------------------------------- */
-
-        /* Send a byte through the communication bus (MSb first) */
-
-        private void sendByte(byte ucData) {
-            for (byte ucN = 0; ucN < 8; ucN++) {
-                if ((ucData & 0x80) > 0) {
-                    // digitalWrite(m_dataPin, HIGH);
-                    portData.Write(true);
-                }
-                else {
-                    // digitalWrite(m_dataPin, LOW);
-                    portData.Write(false);
-                }
-
-                pulseClockPin();
-                ucData <<= 1;
-            }
-        }
-
-/* ----------------------------------------------------------------- */
-
-        private byte readByte() {
-            byte ucResult = 0;
-
-            for (byte ucN = 0; ucN < 8; ucN++) {
-                //digitalWrite(m_clockPin, HIGH);
-                portClock.Write(true);
-                //delayMicroseconds(5000);
-                Thread.Sleep(5);
-
-                ucResult <<= 1;
-
-                bool ucIn = dataIn.Read();
-                if (ucIn) {
-                    ucResult |= 1;
-                }
-
-                //digitalWrite(m_clockPin, LOW);
-                portClock.Write(false);
-
-                //delayMicroseconds(5000);
-                Thread.Sleep(5);
-            }
-
-            return ucResult;
-        }
-
-/* ----------------------------------------------------------------- */
-
-        /* Send a command request to the Weather Shield 1 */
-
-        private void sendCommand(byte ucCommand, byte ucParameter) {
-            /* Set data pin in output mode */
-            // pinMode(m_dataPin, OUTPUT);
-
-            /* We start sending the first high level bit */
-            //digitalWrite(m_dataPin, HIGH);
-            portData.Write(true);
-            pulseClockPin();
-
-            /* The first byte is always 0xAA... */
-            sendByte(0xAA);
-
-            /* ... then is the address... */
-            sendByte(m_deviceAddress);
-
-            /* ... then is the command ... */
-            sendByte(ucCommand);
-
-            /* ... and the parameter ... */
-            sendByte(ucParameter);
-
-            /* And this is the last low level bit required by the protocol */
-            //digitalWrite(m_dataPin, LOW);
-            portData.Write(false);
-            pulseClockPin();
-        }
-
-/* ----------------------------------------------------------------- */
-        /* Read the answer back from the Weather Shield 1 and fill the provided
-buffer with the result. Depending on the type of command associated
-to this answer the buffer contents should be properly decoded.
-The function returns true if the read answer contain the expected 
-command */
-
-        private bool readAnswer(byte ucCommand, ref byte[] pucBuffer) {
-            /* Set data pin in input mode */
-            // pinMode(m_dataPin, INPUT);
-
-            /* Read RXBUFFERLENGTH bytes from the Weather Shield 1 */
-            for (byte ucN = RXBUFFERLENGTH; ucN > 0; ucN--) {
-                pucBuffer[ucN - 1] = readByte();
-            }
-
-            /* Set data pin in output mode */
-            //pinMode(m_dataPin, OUTPUT);
-
-            return (pucBuffer[RXCOMMANDPOS] == ucCommand);
         }
     }
 }
