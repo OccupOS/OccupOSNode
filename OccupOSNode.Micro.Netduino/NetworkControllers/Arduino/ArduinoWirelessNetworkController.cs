@@ -12,7 +12,7 @@ using Toolbox.NETMF;
 
 namespace OccupOSNode.Micro.NetworkControllers.Arduino {
     using System.Text;
-
+     
     using Toolbox.NETMF.NET;
 
     public class ArduinoWirelessNetworkController : NetworkController
