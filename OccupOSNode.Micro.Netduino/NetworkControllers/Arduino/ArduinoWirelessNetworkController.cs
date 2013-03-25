@@ -18,10 +18,10 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
     public class ArduinoWirelessNetworkController : NetworkController
     {
         static WiFlyGSX wifly;
-        static string SSID = "HTC Portable Hotspot";
-        static string IP = "";
+        static string SSID = "MorrisonN4";
+        static string IP = "192.168.43.250";
         static string user = "YesItDoes";
-        static string password = "1234567890";
+        static string password = "GadgeteerSucks";
         private static WiFlySocket clientSocket;
 
         public ArduinoWirelessNetworkController()

@@ -11,28 +11,25 @@ namespace OccupOSNode.Micro {
 
         public static void Main()
         {
-<<<<<<< HEAD
-            blink3();
-            /*var controller = new ArduinoWeatherShield1Sensor(43110);
-=======
             
-<<<<<<< HEAD
-            /*var controller = new ArduinoWeatherShield1Sensor(43110);
-            while (true) {
-                float temp = controller.GetTemperature();
-                float pres = controller.GetPressure();
-                float humi = controller.GetHumidity();
-            }*/
-=======
             var controller = new ArduinoWeatherShield1Sensor(43110);
->>>>>>> 2232d7d433f184ec007ca1171e221ca1b03ca89a
             float temp = controller.GetTemperature();
->>>>>>> 9efafc0cc1f7d07e4e78dbb0a25f5d3c2fd2b1a5
 
-            var internet = new ArduinoWirelessNetworkController();
+            if (temp != 0)
+            {
+                blink3();
+            }
+
+            /*var internet = new ArduinoWirelessNetworkController();
             internet.sendCommand("hellow world");
             //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
 
+            /*if (controller.connect() == null) {
+                blink();
+            }
+            else {
+                blink1();
+            }
             /*while (true) {
                 if (controller.sendData("test") > 1) {
                     blink3();
