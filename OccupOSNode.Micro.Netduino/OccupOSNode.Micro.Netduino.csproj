@@ -78,21 +78,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO" />
-    <Reference Include="Toolbox.NETMF.Core, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Toolbox.NETMF.Hardware.Core, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.Hardware.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
     </Reference>
-    <Reference Include="Toolbox.NETMF.NET.Integrated, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.NET.Integrated.dll</HintPath>
+    <Reference Include="Toolbox.NETMF.NET.Core">
+      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.NET.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
