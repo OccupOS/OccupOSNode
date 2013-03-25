@@ -3,6 +3,7 @@ using Microsoft.SPOT.Hardware;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
 namespace OccupOSNode.Micro {
+    using OccupOSNode.Micro.NetworkControllers.Arduino;
     using OccupOSNode.Micro.Sensors.Arduino;
 
     public class Program {
@@ -17,6 +18,9 @@ namespace OccupOSNode.Micro {
             {
                 blink3();
             }
+
+            var internet = new ArduinoWirelessNetworkController();
+            internet.sendCommand("hellow world");
             //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
 
             /*if (controller.connect() == null) {
