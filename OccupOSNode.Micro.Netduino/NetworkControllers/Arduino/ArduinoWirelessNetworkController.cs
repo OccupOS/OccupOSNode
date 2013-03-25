@@ -22,7 +22,7 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
         static string IP = "192.168.43.250";
         static string user = "YesItDoes";
         static string password = "GadgeteerSucks";
-        private static SimpleSocket clientSocket;
+        private static WiFlySocket clientSocket;
 
         public ArduinoWirelessNetworkController()
         {
@@ -33,8 +33,8 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
 
             try
             {
-                SimpleSocket.SocketProtocol Protocol = SimpleSocket.SocketProtocol.TcpStream;
-                clientSocket.Connect(Protocol);
+                //Socket.SocketProtocol Protocol = SimpleSocket.SocketProtocol.TcpStream;
+                clientSocket.Connect();
             }
             catch
             {

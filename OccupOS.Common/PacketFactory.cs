@@ -5,7 +5,7 @@ namespace OccupOS.CommonLibrary {
     {
         public string CreatePacket(SensorData sensorData)
         {
-            string packet;
+            string packet = "";
             packet = packet.AddCommaSeperatedValue(System.DateTime.Now.ToString());
             packet = packet.AddCommaSeperatedValue(sensorData.AnalogLight.ToString());
 

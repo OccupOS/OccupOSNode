@@ -11,8 +11,13 @@ namespace OccupOSNode.Micro {
 
         public static void Main()
         {
+<<<<<<< HEAD
             blink3();
             /*var controller = new ArduinoWeatherShield1Sensor(43110);
+=======
+            
+            var controller = new ArduinoWeatherShield1Sensor(43110);
+>>>>>>> 2232d7d433f184ec007ca1171e221ca1b03ca89a
             float temp = controller.GetTemperature();
 
             if (temp != 0)
