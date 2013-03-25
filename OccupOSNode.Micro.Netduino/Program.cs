@@ -11,6 +11,7 @@ namespace OccupOSNode.Micro {
 
         public static void Main()
         {
+            
             var controller = new ArduinoWeatherShield1Sensor(43110);
             float temp = controller.GetTemperature();
 
@@ -19,7 +20,7 @@ namespace OccupOSNode.Micro {
                 blink3();
             }
 
-            var internet = new ArduinoWirelessNetworkController();
+            /*var internet = new ArduinoWirelessNetworkController();
             internet.sendCommand("hellow world");
             //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
 

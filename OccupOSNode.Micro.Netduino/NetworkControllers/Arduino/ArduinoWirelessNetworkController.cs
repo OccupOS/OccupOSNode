@@ -19,7 +19,7 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
     {
         static WiFlyGSX wifly;
         static string SSID = "MorrisonN4";
-        static string IP = "10.111.127.254";
+        static string IP = "192.168.43.250";
         static string user = "YesItDoes";
         static string password = "GadgeteerSucks";
         private static SimpleSocket clientSocket;
@@ -29,7 +29,7 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
             
             connectToWifi();
             Thread.Sleep(10000);
-            clientSocket = new WiFlySocket(IP, 49161, wifly);
+            clientSocket = new WiFlySocket(IP, 1333, wifly);
 
             try
             {
@@ -41,7 +41,7 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
                 throw new IOException("Can't connect");
             }
 
-            sendCommand("hello world");
+            Debug.Print("working!");
             close();
             clientSocket.Close();
         }
