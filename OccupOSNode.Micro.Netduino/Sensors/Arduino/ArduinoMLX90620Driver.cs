@@ -10,6 +10,8 @@ using System.Threading;
 // @author Jisang Choi <7517choi@armymail.mod.uk> 
 
 namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
+    using Math = Microsoft.SPOT.Math;
+
     class ArduinoMLX90620Driver {
 
         int freq = 16;
@@ -17,7 +19,10 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         int[] IRDATA = new int[64];
         byte CFG_LSB, CFG_MSB, PTAT_LSB, PTAT_MSB, CPIX_LSB, CPIX_MSB, PIX_LSB, PIX_MSB;
         int PIX, v_th, CPIX;
-        float ta, to, emissivity, k_t1, k_t2;
+        double ta;
+
+        float to, emissivity, k_t1, k_t2;
+
         float[] temperatures = new float[64];
         int count = 0;
         uint PTAT;
@@ -61,11 +66,18 @@ namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
         }
 
         public void calculate_TA() {
-            throw new NotImplementedException();
+            ta = (-k_t1 + System.Math.Sqrt(System.Math.Pow(2,k_t1) - (4 * k_t2 * (v_th - (float)PTAT))))/(2*k_t2) + 25;
         }
 
         public void calculate_TO() {
-            throw new NotImplementedException();
+            double v_cp_off_comp = (float)CPIX - (a_cp + (b_cp / System.Math.Pow(2, b_i_scale)) * (ta - 25)); //this is needed only during the to calculation, so I declare it here.
+
+            for (int i = 0; i < 64; i++) {
+                v_ir_tgc_comp[i] = (float)(this.IRDATA[i] - (this.a_ij[i] + (float)(this.b_ij[i] / System.Math.Pow(2, this.b_i_scale)) * (this.ta - 25)) - (((float)this.tgc / 32) * v_cp_off_comp));
+                //v_ir_comp[i]= v_ir_tgc_comp[i] / emissivity; //removed to save SRAM, since emissivity in my case is equal to 1.
+                //temperatures[i] = sqrt(sqrt((v_ir_comp[i]/alpha_ij[i]) + pow((ta + 273.15),4))) - 273.15;
+                temperatures[i] = (float)(System.Math.Sqrt(System.Math.Sqrt((this.v_ir_tgc_comp[i] / this.alpha_ij[i]) + System.Math.Pow((this.ta + 273.15), 4))) - 273.15); //edited to work with v_ir_tgc_comp instead of v_ir_comp
+            }
         }
 
         public void read_IR_ALL_MLX90620() {
