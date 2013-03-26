@@ -8,9 +8,7 @@ namespace OccupOS.CommonLibrary {
             string packet = "";
             packet = packet.AddCommaSeperatedValue(System.DateTime.Now.ToString());
             packet = packet.AddCommaSeperatedValue(sensorData.AnalogLight.ToString());
-
             return packet;
-            // PolledAt, SensorType (see skydrive JSON schema 1.1), ID, IntermediateHwMedadataId, MeasuredData).
         }
     }
 
