@@ -48,7 +48,8 @@ namespace OccupOSNode.Sensors.Kinect {
         }
 
         public void Disconnect() {
-            StopSensor(ksensor);
+            if (ksensor != null)
+                StopSensor(ksensor);
         }
 
         public override SensorData GetData() {

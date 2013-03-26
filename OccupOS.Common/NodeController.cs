@@ -179,13 +179,13 @@ namespace OccupOS.CommonLibrary.NodeControllers {
 
         protected abstract void LoadConfiguration();
 
-        public void StartListening() {
+        public void StartListening(ThreadPriority priority = ThreadPriority.Normal) {
             if (ds_controller == null) {
                 ds_controller = new DynamicSensorController(this);
             }
             if (ds_thread == null) {
                 ds_thread = new Thread(ds_controller.UpdateCycle);
-                ds_thread.Priority = ThreadPriority.BelowNormal;
+                ds_thread.Priority = priority;
                 ds_thread.Start();
             }
             ds_controller.Enable();

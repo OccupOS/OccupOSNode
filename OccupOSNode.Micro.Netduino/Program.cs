@@ -1,23 +1,24 @@
-﻿using System.Threading;
-using Microsoft.SPOT.Hardware;
-using SecretLabs.NETMF.Hardware.NetduinoPlus;
+﻿namespace OccupOSNode.Micro {
 
-namespace OccupOSNode.Micro {
+    using System.Threading;
+    using Microsoft.SPOT.Hardware;
+    using SecretLabs.NETMF.Hardware.NetduinoPlus;
     using OccupOSNode.Micro.NetworkControllers.Arduino;
     using OccupOSNode.Micro.Sensors.Arduino;
+    using OccupOS.CommonLibrary.Sensors; //temp, remove
 
     public class Program {
         private static readonly OutputPort outPrt = new OutputPort(Pins.ONBOARD_LED, false);
 
         public static void Main()
         {
-            
-            var controller = new ArduinoWeatherShield1Sensor(43110);
-            float temp = controller.GetTemperature();
+            ArduinoNodeController controller = new ArduinoNodeController();
+            controller.StartListening();
 
-            if (temp != 0)
-            {
-                blink3();
+            while (true) {
+                int sensors = controller.GetSensorCount();
+                if (sensors == 1) {
+                }
             }
 
             /*var internet = new ArduinoWirelessNetworkController();

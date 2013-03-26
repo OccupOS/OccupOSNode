@@ -19,19 +19,8 @@ namespace OccupOSNode
     using OccupOS.CommonLibrary.Sensors;
     using OccupOS.CommonLibrary.NodeControllers;
 
-    /// <summary>
-    ///     The program.
-    /// </summary>
     internal class Program
     {
-        #region Methods
-
-        /// <summary>
-        /// The main.
-        /// </summary>
-        /// <param name="args">
-        /// The args.
-        /// </param>
         private static void Main(string[] args)
         {
             FullNodeController controller = new FullNodeController();
@@ -46,13 +35,10 @@ namespace OccupOSNode
             //var kthread = new Thread(kinectrunner.DelayedPoll);
             //kthread.Start();
         }
-        #endregion
     }
 
     public class KinectRunner
     {
-        #region Public Methods and Operators
-
         public void DelayedPoll()
         {
             var testsensor = new NodeKinectSensor(100);
@@ -71,7 +57,5 @@ namespace OccupOSNode
                 fix timeout expired, keep sending even after error*/
             }
         }
-
-        #endregion
     }
 }

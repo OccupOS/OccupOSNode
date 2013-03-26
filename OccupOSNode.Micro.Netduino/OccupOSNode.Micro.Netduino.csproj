@@ -53,10 +53,10 @@
     </Compile>
     <Compile Include="Sensors\Arduino\ArduinoMLX90620Driver.cs" />
     <Compile Include="Sensors\Arduino\ArduinoMLX90620Sensor.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoWeatherShield1Controller.cs">
+    <Compile Include="Sensors\Arduino\ArduinoWeatherShieldDriver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Sensors\Arduino\ArduinoWeatherShield1Sensor.cs">
+    <Compile Include="Sensors\Arduino\ArduinoWeatherShieldSensor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Sensors\Gadgeteer\GadgeteerLightSense.cs" />
@@ -78,6 +78,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO" />
+    <Reference Include="Toolbox.NETMF.Core">
+      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.3\Assemblies\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>

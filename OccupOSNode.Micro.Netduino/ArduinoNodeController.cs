@@ -15,24 +15,18 @@ namespace OccupOSNode.Micro
 {
     using System;
     using System.IO;
-
     using OccupOS.CommonLibrary.NodeControllers;
+    using Microsoft.SPOT.Hardware;
+    using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-    /// <summary>
-    /// The arduino node controller.
-    /// </summary>
     internal class ArduinoNodeController : NodeController
     {
-        #region Constructors and Destructors
+        private static OutputPort out_port = null;
+        private static TristatePort tri_port = null;
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="ArduinoNodeController"/> class.
-        /// </summary>
-        /// <exception cref="StorageDeviceMissingException">
-        /// </exception>
         public ArduinoNodeController()
         {
-            var rootDirectory = new DirectoryInfo(@"\SD\");
+            /*var rootDirectory = new DirectoryInfo(@"\SD\");
             if (rootDirectory.Exists)
             {
                 this.LoadConfiguration();
@@ -40,16 +34,9 @@ namespace OccupOSNode.Micro
             else
             {
                 throw new StorageDeviceMissingException("Couldn't find a connected SD card.");
-            }
+            }*/
         }
 
-        #endregion
-
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The poll sensors.
-        /// </summary>
         public void PollSensors()
         {
             for (int k = 0; k < this.GetSensorCount(); k++)
@@ -58,20 +45,41 @@ namespace OccupOSNode.Micro
             }
         }
 
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// The load configuration.
-        /// </summary>
-        /// <exception cref="NotImplementedException">
-        /// </exception>
-        protected override void LoadConfiguration()
+        protected override void LoadConfiguration() //remove?
         {
             throw new NotImplementedException();
         }
 
-        #endregion
+        public static Boolean AttemptSetOutputPort(Cpu.Pin portID, bool initialState) {
+            if (out_port == null) {
+                out_port = new OutputPort(portID, initialState);
+                return true;
+            } else return false;
+        }
+
+        public static Boolean AttemptSetTristatePort(Cpu.Pin portID, bool initialState, bool glitchFilter, Port.ResistorMode resistor) {
+            if (tri_port == null) {
+                tri_port = new TristatePort(portID, initialState, glitchFilter, resistor);
+                return true;
+            } else return false;
+        }
+
+        public static OutputPort GetOutputPort() {
+            return out_port;
+        }
+
+        public static TristatePort GetTristatePort() {
+            return tri_port;
+        }
+
+        public static void DisposeOutputPort() {
+            out_port.Dispose();
+            out_port = null;
+        }
+
+        public static void DisposeTristatePort() {
+            tri_port.Dispose();
+            tri_port = null;
+        }
     }
 }
