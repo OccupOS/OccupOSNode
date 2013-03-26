@@ -20,6 +20,7 @@ namespace GadgeteerDemo
     using GHI.Premium.Net;
 
     using Microsoft.SPOT;
+    using OccupOS.CommonLibrary.Sensors;
 
     /// <summary>
     ///     The program.
@@ -70,10 +71,10 @@ namespace GadgeteerDemo
                 Debug.Print("Found WiFi network(s)");
                 for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
                 {
-                    if (wiFiNetworkInfo[i].SSID == "MorrisonN4")
+                    if (wiFiNetworkInfo[i].SSID == "Pretty Fly for a Wi-Fi")
                     {
                         Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
-                        this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "GadgeteerSucks");
+                        this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "IWouldn'tBeSoStupidAsToCommitMyWiFiPasswordToSourceControlWouldI?");
                     }
                     else
                     {
@@ -88,8 +89,10 @@ namespace GadgeteerDemo
                 Debug.Print("Didn't find any WiFi networks");
             }
 
-            this.networkController = new NetworkController("192.168.43.250", 1333);
+            this.networkController = new NetworkController("192.168.1.68", 80);
             this.networkController.Connect();
+
+            Debug.Print("Connected to socket!");
 
             this.timer.Tick += this.timer_Tick;
             this.timer.Start();
@@ -105,11 +108,11 @@ namespace GadgeteerDemo
         /// </param>
         private void timer_Tick(GT.Timer timer)
         {
-            var lightPercentage = (int)this.lightSensor.ReadLightSensorPercentage();
-            Debug.Print(lightPercentage.ToString());
+            SensorData sensorData = new SensorData();
+            sensorData.AnalogLight = (int) this.lightSensor.ReadLightSensorPercentage();
 
-            this.networkController.SendData(lightPercentage.ToString());
-            Debug.Print("(Data sent: light percentage - " + lightPercentage);
+            this.networkController.SendData(sensorData.AnalogLight.ToString());
+            Debug.Print("(Data sent: light percentage - " + sensorData.AnalogLight);
 
             Thread.Sleep(10000);
         }
