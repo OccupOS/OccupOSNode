@@ -19,23 +19,11 @@
             //var internet = new testwifi();
             //internet.sendCommand("hellow world");
 
-            var internet = new testWifi("MicrosoftSucks", 1333);
+            var internet = new testWifi("ImANetduino", 1333);
             testWifi.sendData("sending test");
             blink3();
             
-             private void timer_Tick(GT.Timer timer)
-        {
-            SensorData sensorData = new SensorData();
-            sensorData.AnalogLight = (int) lightSensor.ReadLightSensorPercentage();
-            Debug.Print("Sending data: AnalogLight - " + sensorData.AnalogLight);
-
-            string packet = PacketFactory.CreatePacket(sensorData);
-            networkController.SendData(packet);
-
-            Thread.Sleep(10000);
-        }
-
-
+            
             /*ArduinoNodeController controller = new ArduinoNodeController();
             controller.StartListening();
 
