@@ -6,6 +6,7 @@ namespace OccupOS.CommonLibrary.Sensors {
     }
 
     public class SensorData {
+        public Sensor Sensorobj;
         public float AnalogLight;
         public int EntityCount;
         public Position[] EntityPositions;

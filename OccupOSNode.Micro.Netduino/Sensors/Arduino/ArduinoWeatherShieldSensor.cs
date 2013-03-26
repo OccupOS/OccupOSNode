@@ -36,6 +36,7 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
 
         public override SensorData GetData() {
             var sensorData = new SensorData {
+                Sensorobj = this,
                 Humidity = GetHumidity(),
                 Pressure = GetPressure(),
                 Temperature = GetTemperature()
