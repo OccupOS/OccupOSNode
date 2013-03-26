@@ -5,6 +5,7 @@
     using Microsoft.SPOT;
     using Microsoft.SPOT.Hardware;
 
+    using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
 
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
@@ -19,18 +20,23 @@
             //var internet = new testwifi();
             //internet.sendCommand("hellow world");
 
-            var internet = new testWifi("ImANetduino", 1333);
-            testWifi.sendData("sending test");
-            blink3();
-            
-            
-            /*ArduinoNodeController controller = new ArduinoNodeController();
+            ArduinoNodeController controller = new ArduinoNodeController();
             controller.StartListening();
 
+            var internet = new testWifi("ImANetduino", 1333);
+            
+            blink3();
+            
+            SensorData sensorData = new SensorData();
+             
             while (true) {
                 int sensors = controller.GetSensorCount();
                 if (sensors == 1) {
-                    float temp = ((ArduinoWeatherShieldSensor)controller.GetSensor(0)).GetTemperature();
+                    SensorData data = ((ArduinoWeatherShieldSensor)controller.GetSensor(0)).GetData();
+                    string packet = PacketFactory.CreatePacket(data);
+                    testWifi.sendData(packet);
+                    System.Threading.Thread.Sleep(1000);
+                    
                 }
             }
 

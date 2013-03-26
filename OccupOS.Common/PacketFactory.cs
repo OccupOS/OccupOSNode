@@ -1,9 +1,9 @@
 namespace OccupOS.CommonLibrary {
     using OccupOS.CommonLibrary.Sensors;
 
-    internal class PacketFactory
+    public static class PacketFactory
     {
-        public string CreatePacket(SensorData sensorData)
+        public static string CreatePacket(SensorData sensorData)
         {
             string packet = "";
             packet = packet.AddCommaSeperatedValue(System.DateTime.Now.ToString());
@@ -12,7 +12,7 @@ namespace OccupOS.CommonLibrary {
         }
     }
 
-    internal static class StringExtension {
+    public static class StringExtension {
         public static string AddCommaSeperatedValue(this string str, string value)
         {
             return str.Length == 0 ? value : str + "," + value;
