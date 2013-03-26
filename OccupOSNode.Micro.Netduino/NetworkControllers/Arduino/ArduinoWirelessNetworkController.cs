@@ -24,9 +24,9 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
         }
 
         public void sendCommand(String command) {
-            if (socket != null) {
+            if (socket != null && command != null) {
                 Byte[] cmdBytes = Encoding.UTF8.GetBytes((command + "\r\n"));
-                socket.SendBinary(cmdBytes);
+                socket.SendBinary(cmdBytes); //can't write while disconnected!
             }
         }
 

@@ -21,7 +21,7 @@
             controller.StartListening();
 
             ArduinoWirelessNetworkController ncontroller = new ArduinoWirelessNetworkController();
-            ncontroller.ConnectToNetworkHost("testhoc","1234567890","JisangChoi-HP",1333);
+            ncontroller.ConnectToNetworkHost("testhoc","1234567890","Hyperion",1333);
             
             SensorData sensorData = new SensorData();
              

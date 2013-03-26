@@ -9,10 +9,12 @@ namespace OccupOS.CommonLibrary {
             packet = packet.AddSeperatedValue(System.DateTime.Now.ToString(),",");
             packet = packet.AddSeperatedValue(sensorData.AnalogLight.ToString(),",");
             packet = packet.AddSeperatedValue(sensorData.EntityCount.ToString(),",");
-            foreach (Position position in sensorData.EntityPositions) {
-                packet = packet.AddSeperatedValue(position.X.ToString(),",");
-                packet = packet.AddSeperatedValue(position.Y.ToString(),",");
-                packet = packet.AddSeperatedValue(position.Depth.ToString(),",");
+            if (sensorData.EntityPositions != null) {
+                foreach (Position position in sensorData.EntityPositions) {
+                    packet = packet.AddSeperatedValue(position.X.ToString(), ",");
+                    packet = packet.AddSeperatedValue(position.Y.ToString(), ",");
+                    packet = packet.AddSeperatedValue(position.Depth.ToString(), ",");
+                }
             }
             packet = packet.AddSeperatedValue(sensorData.Humidity.ToString(),",");
             packet = packet.AddSeperatedValue(sensorData.Pressure.ToString(),",");
