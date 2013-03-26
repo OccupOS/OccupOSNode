@@ -1,14 +1,17 @@
 // TODO: Note that this is NOT supposed to reside in the OccupOSNode.Micro.Gadgeteer project. 
 // It is a temporary hack until Gadgeteer supports the .NET MF 4.3 Framework.
 
-namespace OccupOS.CommonLibrary.Sensors {
-    public struct Position {
+namespace GadgeteerDemo
+{
+    public struct Position
+    {
         public float Depth;
         public int X;
         public int Y;
     }
 
-    public class SensorData {
+    public class SensorData
+    {
         public float AnalogLight;
         public int EntityCount;
         public Position[] EntityPositions;
@@ -17,7 +20,8 @@ namespace OccupOS.CommonLibrary.Sensors {
         public float Temperature;
     }
 
-    public enum ConnectionStatus {
+    public enum ConnectionStatus
+    {
         Connected,
         Disconnected,
         Connecting,
