@@ -59,10 +59,6 @@ namespace GadgeteerDemo
             this.wifi_RS21.Interface.NetworkInterface.EnableDynamicDns();
 
             // wifi_RS21.Interface.NetworkInterface.EnableStaticIP("192.168.1.202", "255.255.255.0", "192.168.12.1");
-            if (this.wifi_RS21.Interface.NetworkInterface.IsDhcpEnabled)
-            {
-                Debug.Print("DHCP enables");
-            }
 
             Debug.Print("Scanning for WiFi networks");
             WiFiNetworkInfo[] wiFiNetworkInfo = this.wifi_RS21.Interface.Scan();
@@ -71,10 +67,10 @@ namespace GadgeteerDemo
                 Debug.Print("Found WiFi network(s)");
                 for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
                 {
-                    if (wiFiNetworkInfo[i].SSID == "Pretty Fly for a Wi-Fi")
+                    if (wiFiNetworkInfo[i].SSID == "HTC Portable Hotspot")
                     {
                         Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
-                        this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "IWouldn'tBeSoStupidAsToCommitMyWiFiPasswordToSourceControlWouldI?");
+                        this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "1234567890");
                     }
                     else
                     {
@@ -89,7 +85,7 @@ namespace GadgeteerDemo
                 Debug.Print("Didn't find any WiFi networks");
             }
 
-            this.networkController = new NetworkController("192.168.1.68", 80);
+            this.networkController = new NetworkController("192.168.1.52", 1333);
             this.networkController.Connect();
 
             Debug.Print("Connected to socket!");
