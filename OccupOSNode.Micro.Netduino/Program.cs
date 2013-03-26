@@ -17,15 +17,11 @@
 
         public static void Main()
         {
-            //var internet = new testwifi();
-            //internet.sendCommand("hellow world");
-
             ArduinoNodeController controller = new ArduinoNodeController();
             controller.StartListening();
 
-            var internet = new testWifi("ImANetduino", 1333);
-            
-            blink3();
+            ArduinoWirelessNetworkController ncontroller = new ArduinoWirelessNetworkController();
+            ncontroller.ConnectToNetworkHost("testhoc","1234567890","JisangChoi-HP",1333);
             
             SensorData sensorData = new SensorData();
              
@@ -33,11 +29,10 @@
                 int sensors = controller.GetSensorCount();
                 if (sensors == 1) {
                     SensorData data = ((ArduinoWeatherShieldSensor)controller.GetSensor(0)).GetData();
-                    string packet = PacketFactory.CreatePacket(data);
-                    testWifi.sendData(packet);
-                    System.Threading.Thread.Sleep(1000);
-                    
+                    PacketFactory pfactory = new PacketFactory();
+                    ncontroller.sendCommand(pfactory.CreatePacket(data));
                 }
+                System.Threading.Thread.Sleep(1000);
             }
 
             

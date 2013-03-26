@@ -3,74 +3,44 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Text;
 using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 using SecretLabs.NETMF.Hardware;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 using Toolbox.NETMF.Hardware;
+using Toolbox.NETMF.NET;
 using Toolbox.NETMF;
 
 namespace OccupOSNode.Micro.NetworkControllers.Arduino {
-    using System.Text;
-     
-    using Toolbox.NETMF.NET;
 
-    public class ArduinoWirelessNetworkController : NetworkController
-    {
-        static WiFlyGSX wifly;
-        static string SSID = "HTC Portable Hotspot";
-        static string IP = "192.168.1.52";
-        static string user = "YesItDoes";
-        static string password = "1234567890";
-        private static WiFlySocket clientSocket;
+    public class ArduinoWirelessNetworkController : NetworkController {
 
-        public ArduinoWirelessNetworkController()
-        {
-            
-            connectToWifi();
-            Thread.Sleep(10000);
-            clientSocket = new WiFlySocket(IP, 1333, wifly);
+        private WiFlyGSX wf_module;
+        private SimpleSocket socket = null;
 
-            try
-            {
-                //Socket.SocketProtocol Protocol = SimpleSocket.SocketProtocol.TcpStream;
-                clientSocket.Connect();
-            }
-            catch
-            {
-                throw new IOException("Can't connect");
-            }
-
-            Debug.Print("working!");
-            close();
-            clientSocket.Close();
+        public ArduinoWirelessNetworkController() {
+            wf_module = new WiFlyGSX();
         }
 
-        public void sendCommand(String command)
-        {
-            Byte[] cmdBytes = Encoding.UTF8.GetBytes((command + "\r\n"));
-            clientSocket.SendBinary(cmdBytes);
+        public void sendCommand(String command) {
+            if (socket != null) {
+                Byte[] cmdBytes = Encoding.UTF8.GetBytes((command + "\r\n"));
+                socket.SendBinary(cmdBytes);
+            }
         }
 
-        public void close() 
-        {
-            if (clientSocket != null) 
-            {
+        public void close() {
+            if (socket != null) {
                 sendCommand("QUIT");
             }
         }
 
-        public static void connectToWifi() 
-        {
-            wifly = new WiFlyGSX();
-            wifly.EnableDHCP();
-            wifly.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, password);
-            Thread.Sleep(3500);
-
-            // Showing some interesting output
-            Debug.Print("Local IP: " + wifly.LocalIP);
-            Debug.Print("MAC address: " + wifly.MacAddress);
-
+        public void ConnectToNetworkHost(String SSID, String key, string hostname, ushort hostport) {
+            wf_module.EnableDHCP();
+            wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, key);
+            socket = new WiFlySocket(hostname, hostport, wf_module);
+            socket.Connect();
         }
     }
 }
