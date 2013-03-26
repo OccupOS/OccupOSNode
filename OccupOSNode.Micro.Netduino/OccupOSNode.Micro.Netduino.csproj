@@ -43,6 +43,7 @@
     <Compile Include="NetworkControllers\Arduino\ArduinoWirelessNetworkController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NetworkControllers\Arduino\testWifi.cs" />
     <Compile Include="NetworkControllers\NetworkController.cs" />
     <Compile Include="HardwareControllers\HardwareController.cs" />
     <Compile Include="ArduinoNodeController.cs" />

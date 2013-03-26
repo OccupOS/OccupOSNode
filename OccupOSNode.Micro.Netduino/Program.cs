@@ -11,7 +11,16 @@
 
         public static void Main()
         {
-            ArduinoNodeController controller = new ArduinoNodeController();
+            //var internet = new testwifi();
+            //internet.sendCommand("hellow world");
+
+            var internet = new testWifi("MicrosoftSucks", 1333);
+            testWifi.sendData("GAY");
+            blink3();
+            
+
+
+            /*ArduinoNodeController controller = new ArduinoNodeController();
             controller.StartListening();
 
             while (true) {
@@ -21,8 +30,7 @@
                 }
             }
 
-            /*var internet = new ArduinoWirelessNetworkController();
-            internet.sendCommand("hellow world");
+            
             //var controller = new ArduinoEthernetController("192.168.1.127", 1333);
 
             /*if (controller.connect() == null) {
