@@ -20,8 +20,8 @@
             ArduinoNodeController controller = new ArduinoNodeController();
             controller.StartListening();
 
-            //ArduinoWirelessNetworkController ncontroller = new ArduinoWirelessNetworkController();
-            //ncontroller.ConnectToNetworkHost("testhoc","1234567890","Hyperion",1333);
+            ArduinoWirelessNetworkController ncontroller = new ArduinoWirelessNetworkController();
+            ncontroller.ConnectToNetworkHost("testhoc","1234567890","Hyperion",1333);
             
             SensorData sensorData = new SensorData();
              
@@ -29,8 +29,8 @@
                 int sensors = controller.GetSensorCount();
                 if (sensors == 1) {
                     SensorData data = ((ArduinoWeatherShieldSensor)controller.GetSensor(0)).GetData();
-                    //ncontroller.sendCommand(PacketFactory.CreatePacket(data));
-                    string jsontest = PacketFactory.SerializeJSON(0, new SensorData[] {data});
+                    ncontroller.sendCommand(PacketFactory.CreatePacket(data));
+                    //string jsontest = PacketFactory.SerializeJSON(0, new SensorData[] {data});
                 }
                 System.Threading.Thread.Sleep(1000);
             }

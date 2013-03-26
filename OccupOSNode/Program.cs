@@ -10,52 +10,58 @@
 //   The program.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace OccupOSNode
-{
+namespace OccupOSNode {
     using System;
     using System.Threading;
     using OccupOSNode.Sensors.Kinect;
     using System.Reflection;
     using OccupOS.CommonLibrary.Sensors;
     using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOSCloud; //this and TestServer reference are temporary
 
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
-            FullNodeController controller = new FullNodeController();
-            while (true) {
-                controller.StopListening();
-                for (int k = 0; k < 60000; k++) { Console.Write("Off: " + k + ": "); Console.WriteLine(controller.GetSensorCount()); }
-                controller.StartListening();
-                for (int k = 0; k < 60000; k++) { Console.Write("On: " + k + ": "); Console.WriteLine(controller.GetSensorCount()); }
-            }
-
-            //var kinectrunner = new KinectRunner();
-            //var kthread = new Thread(kinectrunner.DelayedPoll);
-            //kthread.Start();
+    internal class Program {
+        private static void Main(string[] args) {
+            var kinectrunner = new KinectRunner();
+            var kthread = new Thread(kinectrunner.DelayedPoll);
+            kthread.Start();
         }
     }
 
-    public class KinectRunner
-    {
-        public void DelayedPoll()
-        {
-            var testsensor = new NodeKinectSensor(100);
+    public class KinectRunner {
+        public void DelayedPoll() {
+            FullNodeController controller = new FullNodeController();
+            controller.StartListening();
 
-            while (true)
-            {
+            while (true) {
+                if (controller.GetSensorCount() > 0) {
+                    try {
+                        SensorData data = ((NodeKinectSensor)controller.GetSensor(0)).GetData();
+                        string send_data = demoDataForm(data);
+                        Console.WriteLine("Sending: " + send_data);
+                        var helper = new SQLServerHelper("tcp:dndo40zalb.database.windows.net,1433", "comp2014@dndo40zalb", "20041908kjH", "TestSQLDB");
+                        helper.InsertSensorData(3, 1, send_data, DateTime.Now, 1);
+                    } catch (Exception e) { }
+                }
                 Thread.Sleep(5000);
-                int count = testsensor.GetEntityCount();
-                Console.WriteLine("Sending: " + count);
-                /*var test = new SQLServerHelper(
-                    "tcp:dndo40zalb.database.windows.net,1433", "comp2014@dndo40zalb", "20041908kjH", "TestSQLDB");
-                test.insertSensorData(
-                    1, 1, count.ToString(), DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
-
-                test.insertSensorData(1, 1, "7", DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now); 
-                fix timeout expired, keep sending even after error*/
             }
+        }
+
+        public string demoDataForm(SensorData data_in) {
+            string sensordata = "";
+            sensordata = sensordata + data_in.EntityCount;
+            if (data_in.EntityPositions != null) {
+                int len = data_in.EntityPositions.Length;
+                if (len > 0) {
+                    sensordata = sensordata + ",";
+                    int k = 0;
+                    foreach (Position pos in data_in.EntityPositions) {
+                        sensordata = sensordata + pos.X + "," + pos.Y + "," + pos.Depth;
+                        k++;
+                        if (k < len) sensordata = sensordata + ",";
+                    }
+                }
+            }
+            return sensordata;
         }
     }
 }
