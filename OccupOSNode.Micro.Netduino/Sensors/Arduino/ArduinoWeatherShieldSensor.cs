@@ -47,6 +47,10 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
             return driver.echo(0x55) == 0x55 ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
         }
 
+        public int GetMaxSensors() {
+            return 1;
+        }
+
         public int GetDeviceCount() {
             //Maximum of 1 device per Netduino node
             return GetConnectionStatus() == ConnectionStatus.Connected ? 1 : 0;

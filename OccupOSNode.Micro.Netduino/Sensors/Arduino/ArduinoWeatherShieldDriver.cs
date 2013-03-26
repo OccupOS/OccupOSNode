@@ -55,14 +55,14 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         public ArduinoWeatherShieldDriver() {
             ArduinoNodeController.AttemptSetOutputPort(DEFAULTCLOCK_PIN, false);
             ArduinoNodeController.AttemptSetTristatePort(DEFAULTIODATA_PIN, false, true, Port.ResistorMode.Disabled);
-            this.resetConnection();
+            //this.resetConnection();
         }
 
         public ArduinoWeatherShieldDriver(Cpu.Pin clockPin, Cpu.Pin dataPin, Byte deviceAddress) {
             ArduinoNodeController.AttemptSetOutputPort(clockPin, false);
             ArduinoNodeController.AttemptSetTristatePort(dataPin, false, true, Port.ResistorMode.Disabled);
             this.m_deviceAddress = deviceAddress;
-            this.resetConnection();
+            //this.resetConnection();
         }
 
         /* Initialize the connection with the WeatherShield1 */

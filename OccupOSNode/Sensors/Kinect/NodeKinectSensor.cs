@@ -24,6 +24,10 @@ namespace OccupOSNode.Sensors.Kinect {
 
         public NodeKinectSensor(int id) : base(id) { }
 
+        public int GetMaxSensors() {
+            return -1; //infinite
+        }
+
         public int GetDeviceCount() {
             return KinectSensor.KinectSensors.Count;
         }

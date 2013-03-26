@@ -205,13 +205,16 @@ namespace OccupOS.CommonLibrary.NodeControllers {
                             ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(int) });
                             if (constructor != null) {
                                 IDynamicSensor dsensor = constructor.Invoke(new Object[] { -1 }) as IDynamicSensor;
-                                int sensors_connected = dsensor.GetDeviceCount();
                                 int sensors_store = GetSensorCount(type);
-                                if (sensors_connected > sensors_store) {
-                                    AddSensor(type, sensors_connected - sensors_store);
-                                } else {
-                                    if (sensors_connected < sensors_store)
-                                        RemoveInactiveSensors(type);
+                                int max_sensors = dsensor.GetMaxSensors();
+                                if (sensors_store < max_sensors || max_sensors < 0) {
+                                    int sensors_connected = dsensor.GetDeviceCount();
+                                    if (sensors_connected > sensors_store) {
+                                        AddSensor(type, sensors_connected - sensors_store);
+                                    } else {
+                                        if (sensors_connected < sensors_store)
+                                            RemoveInactiveSensors(type);
+                                    }
                                 }
                             }
                         }

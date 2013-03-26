@@ -5,7 +5,6 @@
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
     using OccupOSNode.Micro.NetworkControllers.Arduino;
     using OccupOSNode.Micro.Sensors.Arduino;
-    using OccupOS.CommonLibrary.Sensors; //temp, remove
 
     public class Program {
         private static readonly OutputPort outPrt = new OutputPort(Pins.ONBOARD_LED, false);
@@ -18,6 +17,7 @@
             while (true) {
                 int sensors = controller.GetSensorCount();
                 if (sensors == 1) {
+                    float temp = ((ArduinoWeatherShieldSensor)controller.GetSensor(0)).GetTemperature();
                 }
             }
 
