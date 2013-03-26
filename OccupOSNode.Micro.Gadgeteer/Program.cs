@@ -20,35 +20,26 @@ namespace GadgeteerDemo
     using GHI.Premium.Net;
 
     using Microsoft.SPOT;
-    using OccupOS.CommonLibrary.Sensors;
+    using System;
 
-    /// <summary>
-    ///     The program.
-    /// </summary>
     public partial class Program
     {
         #region Fields
 
-        /// <summary>
-        ///     The timer.
-        /// </summary>
         private readonly GT.Timer timer = new GT.Timer(2000);
 
-        /// <summary>
-        ///     The network controller.
-        /// </summary>
         private NetworkController networkController;
 
         #endregion
 
-        // This method is run when the mainboard is powered up or reset.   
         #region Methods
 
-        /// <summary>
-        ///     The program started.
-        /// </summary>
+        // This method is run when the mainboard is powered up or reset. 
         private void ProgramStarted()
         {
+            DateTime time = new DateTime(2013, 3, 26, 13, 08, 00, 0);
+            Microsoft.SPOT.Hardware.Utility.SetLocalTime(time);
+
             this.wifi_RS21.DebugPrintEnabled = true;
 
             this.wifi_RS21.Interface.Open();
@@ -96,19 +87,14 @@ namespace GadgeteerDemo
             Debug.Print("Finished setup");
         }
 
-        /// <summary>
-        /// The timer_ tick.
-        /// </summary>
-        /// <param name="timer">
-        /// The timer.
-        /// </param>
         private void timer_Tick(GT.Timer timer)
         {
             SensorData sensorData = new SensorData();
-            sensorData.AnalogLight = (int) this.lightSensor.ReadLightSensorPercentage();
+            sensorData.AnalogLight = (int) lightSensor.ReadLightSensorPercentage();
+            Debug.Print("Sending data: AnalogLight - " + sensorData.AnalogLight);
 
-            this.networkController.SendData(sensorData.AnalogLight.ToString());
-            Debug.Print("(Data sent: light percentage - " + sensorData.AnalogLight);
+            string packet = PacketFactory.CreatePacket(sensorData);
+            networkController.SendData(packet);
 
             Thread.Sleep(10000);
         }
