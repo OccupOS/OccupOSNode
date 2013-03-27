@@ -58,7 +58,7 @@ namespace GadgeteerDemo
                 Debug.Print("Found WiFi network(s)");
                 for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
                 {
-                    if (wiFiNetworkInfo[i].SSID == "HTC Portable Hotspot")
+                    if (wiFiNetworkInfo[i].SSID == "testhoc")
                     {
                         Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
                         this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "1234567890");
