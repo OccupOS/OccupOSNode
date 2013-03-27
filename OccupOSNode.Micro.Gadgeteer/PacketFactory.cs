@@ -9,10 +9,6 @@ namespace GadgeteerDemo {
             string packet = "";
             packet = packet.AddSeperatedValue(System.DateTime.Now.ToString(), ",");
             packet = packet.AddSeperatedValue(sensorData.AnalogLight.ToString(), ",");
-            packet = packet.AddSeperatedValue(sensorData.EntityCount.ToString(), ",");
-            packet = packet.AddSeperatedValue(sensorData.Humidity.ToString(), ",");
-            packet = packet.AddSeperatedValue(sensorData.Pressure.ToString(), ",");
-            packet = packet.AddSeperatedValue(sensorData.Temperature.ToString(), ",");
             return packet;
         }
     }
