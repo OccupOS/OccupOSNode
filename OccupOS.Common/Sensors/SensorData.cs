@@ -1,4 +1,7 @@
 namespace OccupOS.CommonLibrary.Sensors {
+
+    using System;
+
     public struct Position {
         public float Depth;
         public int X;
@@ -6,6 +9,8 @@ namespace OccupOS.CommonLibrary.Sensors {
     }
 
     public class SensorData {
+        public DateTime ReadTime;
+        public DateTime PollTime;
         public Sensor Sensorobj;
         public float AnalogLight;
         public int EntityCount;
