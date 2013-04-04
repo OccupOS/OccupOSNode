@@ -21,8 +21,8 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino {
                 hostAddress = Dns.GetHostEntry(hostname).AddressList[0];
             }
             IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try {
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(remoteEndPoint);
             } catch (SocketException e) {
                 return false;
