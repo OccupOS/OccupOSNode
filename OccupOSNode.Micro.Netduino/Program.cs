@@ -17,7 +17,8 @@
             NetduinoNodeController controller = new NetduinoNodeController();
             controller.StartListening();
 
-            NetduinoWirelessNetworkController ncontroller = new NetduinoWirelessNetworkController("UrsaMinor", 1333);
+            NetduinoEthernetController ncontroller = new NetduinoEthernetController("UrsaMinor", 1333);
+            //NetduinoWirelessNetworkController ncontroller = new NetduinoWirelessNetworkController("UrsaMinor", 1333);
             ncontroller.Connect("RichyHotspot","occupos8");
             
             SensorData sensorData = new SensorData();

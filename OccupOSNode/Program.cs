@@ -11,19 +11,38 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 namespace OccupOSNode {
+
     using System;
     using System.Threading;
     using OccupOSNode.Sensors.Kinect;
     using System.Reflection;
     using OccupOS.CommonLibrary.Sensors;
     using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOSNode.NetworkControllers;
+    using OccupOS.CommonLibrary;
     using OccupOSCloud; //this and TestServer reference are temporary
 
     internal class Program {
         private static void Main(string[] args) {
-            var kinectrunner = new KinectRunner();
+
+            FullEthernetController ncontroller = new FullEthernetController("UrsaMinor", 1333);
+            while (!ncontroller.Connect("", "")) { }
+
+            SensorData testdata = new SensorData();
+            testdata.Humidity = 10;
+            testdata.Pressure = 10;
+            testdata.Temperature = 10;
+
+            while (true) {
+                Console.WriteLine("Attempting send...");
+                ncontroller.SendData(PacketFactory.CreatePacket(testdata));
+                Console.WriteLine("Sent!");
+                System.Threading.Thread.Sleep(1000);
+            }
+
+            /*var kinectrunner = new KinectRunner();
             var kthread = new Thread(kinectrunner.DelayedPoll);
-            kthread.Start();
+            kthread.Start();*/
         }
     }
 

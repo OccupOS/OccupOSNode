@@ -1,6 +1,7 @@
 namespace OccupOS.CommonLibrary.NetworkControllers {
 
     using System.Net;
+    using System;
 
     public abstract class NetworkController {
         protected NetworkController(string hostname, ushort port) {
@@ -10,7 +11,7 @@ namespace OccupOS.CommonLibrary.NetworkControllers {
         protected ushort port { get; set; }
 
         public abstract int SendData(string data);
-        public abstract void Connect(string SSID, string key);
+        public abstract Boolean Connect(string SSID, string key);
         public abstract void Disconnect();
     }
 }

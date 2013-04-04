@@ -1,3 +1,5 @@
+namespace OccupOSNode.Micro.NetworkControllers.Netduino {
+
 using System;
 using System.Net.Sockets;
 using System.Text;
@@ -5,8 +7,6 @@ using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 using Toolbox.NETMF.Hardware;
 using Toolbox.NETMF.NET;
-
-namespace OccupOSNode.Micro.NetworkControllers.Netduino {
 
     public class NetduinoWirelessNetworkController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
 
@@ -39,11 +39,16 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino {
             socket = null;
         }
 
-        public override void Connect(string SSID, string key) {
-            wf_module.EnableDHCP();
-            wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, key);
-            socket = new WiFlySocket(hostname, port, wf_module);
-            socket.Connect();
+        public override Boolean Connect(string SSID, string key) {
+            try {
+                wf_module.EnableDHCP();
+                wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, key);
+                socket = new WiFlySocket(hostname, port, wf_module);
+                socket.Connect();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

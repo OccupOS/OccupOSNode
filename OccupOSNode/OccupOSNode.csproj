@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FullNodeController.cs" />
+    <Compile Include="NetworkControllers\FullEthernetController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sensors\Kinect\NodeKinectSensor.cs" />

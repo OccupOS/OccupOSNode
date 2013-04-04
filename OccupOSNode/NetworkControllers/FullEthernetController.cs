@@ -1,28 +1,37 @@
-namespace OccupOSNode.Micro.NetworkControllers.Netduino {
+﻿namespace OccupOSNode.NetworkControllers {
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using OccupOS.CommonLibrary.NetworkControllers;
 
-    public class NetduinoEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
+    class FullEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
         private readonly IPAddress hostAddress;
         private readonly IPEndPoint remoteEndPoint;
         private string address;
         private IPHostEntry hostEntry;
         private Socket socket;
 
-        public NetduinoEthernetController(string hostName, ushort port) 
+        public FullEthernetController(string hostName, ushort port) 
             : base(hostName, port) {
             address = hostName;
             hostEntry = Dns.GetHostEntry(hostName);
             hostAddress = hostEntry.AddressList[0];
-            hostAddress = IPAddress.Parse(hostName);
+            try {
+                hostAddress = IPAddress.Parse(hostName);
+            } catch (Exception e) {
+                if (e is ArgumentException || e is FormatException)
+                    hostAddress = Dns.GetHostAddresses(hostname)[0];
+            }
             remoteEndPoint = new IPEndPoint(hostAddress, port);
         }
 
         public override Boolean Connect(string SSID, string key) {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(hostAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try {
                 socket.Connect(remoteEndPoint);
             } catch (SocketException e) {
