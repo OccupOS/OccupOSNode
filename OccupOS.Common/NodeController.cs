@@ -177,8 +177,6 @@ namespace OccupOS.CommonLibrary.NodeControllers {
 
         public int GetSensorDataBufferCount() { return sensorDataBuffer.Count; }
 
-        protected abstract void LoadConfiguration();
-
         public void StartListening(ThreadPriority priority = ThreadPriority.Normal) {
             if (ds_controller == null) {
                 ds_controller = new DynamicSensorController(this);

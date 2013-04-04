@@ -45,11 +45,6 @@ namespace OccupOSNode.Micro
             }
         }
 
-        protected override void LoadConfiguration() //remove?
-        {
-            throw new NotImplementedException();
-        }
-
         public static Boolean AttemptSetOutputPort(Cpu.Pin portID, bool initialState) {
             if (out_port == null) {
                 out_port = new OutputPort(portID, initialState);

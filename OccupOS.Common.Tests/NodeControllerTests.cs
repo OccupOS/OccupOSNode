@@ -2,16 +2,11 @@
     using System;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     using OccupOS.CommonLibrary.NodeControllers;
     using OccupOS.CommonLibrary.Sensors;
 
     public class TestNodeController : NodeController
     {
-        protected override void LoadConfiguration()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class TestSensor : Sensor

@@ -6,7 +6,7 @@
     using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
-    using OccupOSNode.Micro.NetworkControllers.Arduino;
+    using OccupOSNode.Micro.NetworkControllers.Netduino;
     using OccupOSNode.Micro.Sensors.Netduino;
 
     public class Program {
@@ -17,16 +17,16 @@
             NetduinoNodeController controller = new NetduinoNodeController();
             controller.StartListening();
 
-            NetduinoWirelessNetworkController ncontroller = new NetduinoWirelessNetworkController();
-            ncontroller.ConnectToHost("RichyHotspot","occupos8","UrsaMinor",1333);
+            NetduinoWirelessNetworkController ncontroller = new NetduinoWirelessNetworkController("UrsaMinor", 1333);
+            ncontroller.Connect("RichyHotspot","occupos8");
             
             SensorData sensorData = new SensorData();
             while (true) {
                 int sensors = controller.GetSensorCount();
                 if (sensors == 1) {
                     SensorData data = ((NetduinoWeatherShieldSensor)controller.GetSensor(0)).GetData();
-                    if (!ncontroller.sendCommand(PacketFactory.CreatePacket(data)))
-                        ncontroller.ConnectToHost("RichyHotspot", "occupos8", "UrsaMinor", 1333);
+                    if (ncontroller.SendData(PacketFactory.CreatePacket(data)) <= 0)
+                        ncontroller.Connect("RichyHotspot", "occupos8");
                     //string jsontest = PacketFactory.SerializeJSON(0, new SensorData[] {data});
                 }
                 System.Threading.Thread.Sleep(1000);

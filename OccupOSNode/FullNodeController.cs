@@ -9,9 +9,5 @@
 
         public void PollSensors() {
         }
-
-        protected override void LoadConfiguration() {
-            throw new NotImplementedException();
-        }
     }
 }
