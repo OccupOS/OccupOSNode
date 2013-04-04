@@ -14,12 +14,12 @@ using Toolbox.NETMF;
 
 namespace OccupOSNode.Micro.NetworkControllers.Arduino {
 
-    public class ArduinoWirelessNetworkController : NetworkController {
+    public class NetduinoWirelessNetworkController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
 
         private WiFlyGSX wf_module;
         private SimpleSocket socket = null;
 
-        public ArduinoWirelessNetworkController() {
+        public NetduinoWirelessNetworkController() {
             wf_module = new WiFlyGSX();
         }
 

@@ -19,12 +19,12 @@ namespace OccupOSNode.Micro
     using Microsoft.SPOT.Hardware;
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-    internal class ArduinoNodeController : NodeController
+    internal class NetduinoNodeController : NodeController
     {
         private static OutputPort out_port = null;
         private static TristatePort tri_port = null;
 
-        public ArduinoNodeController()
+        public NetduinoNodeController()
         {
             /*var rootDirectory = new DirectoryInfo(@"\SD\");
             if (rootDirectory.Exists)

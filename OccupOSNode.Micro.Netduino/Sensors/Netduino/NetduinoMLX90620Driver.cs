@@ -9,10 +9,10 @@ using System.Threading;
 // Based on the Arduino implementation by IlBaboomba and I2C repeated start methods by Chris Walker @secretlabs
 // @author Jisang Choi <7517choi@armymail.mod.uk> 
 
-namespace OccupOSNode.Micro.Netduino.Sensors.Arduino {
+namespace OccupOSNode.Micro.Netduino.Sensors.Netduino {
     using Math = Microsoft.SPOT.Math;
 
-    class ArduinoMLX90620Driver {
+    class NetduinoMLX90620Driver {
 
         int freq = 16;
 

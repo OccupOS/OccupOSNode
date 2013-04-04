@@ -36,31 +36,27 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="HardwareControllers\Arduino\ArduinoHardwareController.cs" />
-    <Compile Include="NetworkControllers\Arduino\ArduinoEthernetController.cs">
+    <Compile Include="HardwareControllers\Netduino\NetduinoHardwareController.cs" />
+    <Compile Include="NetworkControllers\Netduino\NetduinoEthernetController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NetworkControllers\Arduino\ArduinoWirelessNetworkController.cs">
+    <Compile Include="NetworkControllers\Netduino\NetduinoWirelessNetworkController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NetworkControllers\Arduino\testWifi.cs" />
-    <Compile Include="NetworkControllers\NetworkController.cs" />
-    <Compile Include="HardwareControllers\HardwareController.cs" />
-    <Compile Include="ArduinoNodeController.cs" />
+    <Compile Include="NetduinoNodeController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoAmbientLightSensor.cs">
+    <Compile Include="Sensors\Netduino\NetduinoAmbientLightSensor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Sensors\Arduino\ArduinoMLX90620Driver.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoMLX90620Sensor.cs" />
-    <Compile Include="Sensors\Arduino\ArduinoWeatherShieldDriver.cs">
+    <Compile Include="Sensors\Netduino\NetduinoMLX90620Driver.cs" />
+    <Compile Include="Sensors\Netduino\NetduinoMLX90620Sensor.cs" />
+    <Compile Include="Sensors\Netduino\NetduinoWeatherShieldDriver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Sensors\Arduino\ArduinoWeatherShieldSensor.cs">
+    <Compile Include="Sensors\Netduino\NetduinoWeatherShieldSensor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Sensors\Gadgeteer\GadgeteerLightSense.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Hardware" />

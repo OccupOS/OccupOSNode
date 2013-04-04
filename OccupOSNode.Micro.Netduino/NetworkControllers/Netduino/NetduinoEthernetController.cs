@@ -3,14 +3,14 @@ using System.Net.Sockets;
 using System.Text;
 
 namespace OccupOSNode.Micro.NetworkControllers.Arduino {
-    public class ArduinoEthernetController : NetworkController {
+    public class NetduinoEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
         private readonly IPAddress hostAddress;
         private readonly IPEndPoint remoteEndPoint;
         private string address;
         private IPHostEntry hostEntry;
         private Socket socket;
 
-        public ArduinoEthernetController(string hostName, int port) {
+        public NetduinoEthernetController(string hostName, int port) {
             address = hostName;
             //hostEntry = Dns.GetHostEntry(hostName);
             //hostAddress = hostEntry.AddressList[0];

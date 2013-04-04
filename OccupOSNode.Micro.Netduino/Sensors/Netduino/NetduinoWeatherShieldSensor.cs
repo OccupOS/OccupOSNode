@@ -1,36 +1,36 @@
 ﻿using System;
 using OccupOS.CommonLibrary.Sensors;
 
-namespace OccupOSNode.Micro.Sensors.Arduino {
+namespace OccupOSNode.Micro.Sensors.Netduino {
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-    internal class ArduinoWeatherShieldSensor : Sensor, IHumiditySensor, IPressureSensor, ITemperatureSensor, IDynamicSensor {
-        private readonly ArduinoWeatherShieldDriver driver;
+    internal class NetduinoWeatherShieldSensor : Sensor, IHumiditySensor, IPressureSensor, ITemperatureSensor, IDynamicSensor {
+        private readonly NetduinoWeatherShieldDriver driver;
         private byte[] data;
 
         private float humidity, pressure, temp;
 
-        public ArduinoWeatherShieldSensor(int id)
+        public NetduinoWeatherShieldSensor(int id)
             : base(id) {
-                driver = new ArduinoWeatherShieldDriver(Pins.GPIO_PIN_D7, Pins.GPIO_PIN_D2, ArduinoWeatherShieldDriver.DEFAULTADDRESS);
+                driver = new NetduinoWeatherShieldDriver(Pins.GPIO_PIN_D7, Pins.GPIO_PIN_D2, NetduinoWeatherShieldDriver.DEFAULTADDRESS);
             data = new byte[4];
         }
 
         public float GetHumidity()
         {
-            humidity = driver.readAveragedValue(ArduinoWeatherShieldDriver.units.HUMIDITY);
+            humidity = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.HUMIDITY);
             return humidity;
         }
 
         public float GetPressure()
         {
-            pressure = driver.readAveragedValue(ArduinoWeatherShieldDriver.units.PRESSURE);
+            pressure = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.PRESSURE);
             return pressure;
         }
 
         public float GetTemperature()
         {
-            temp = driver.readAveragedValue(ArduinoWeatherShieldDriver.units.TEMPERATURE);
+            temp = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.TEMPERATURE);
             return temp;
         }
 

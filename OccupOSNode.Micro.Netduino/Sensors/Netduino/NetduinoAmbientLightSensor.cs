@@ -4,7 +4,7 @@ using Microsoft.SPOT.Hardware;
 using OccupOS.CommonLibrary.Sensors;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-namespace OccupOSNode.Micro.Sensors.Arduino {
+namespace OccupOSNode.Micro.Sensors.Netduino {
     internal class LightSensor : Sensor, ILightSensor {
         private readonly AnalogInput input;
         private readonly Hashtable ports = new Hashtable();

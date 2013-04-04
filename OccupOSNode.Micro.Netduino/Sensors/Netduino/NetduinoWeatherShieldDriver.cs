@@ -3,8 +3,8 @@ using System.Threading;
 using Microsoft.SPOT.Hardware;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-namespace OccupOSNode.Micro.Sensors.Arduino {
-    public class ArduinoWeatherShieldDriver {
+namespace OccupOSNode.Micro.Sensors.Netduino {
+    public class NetduinoWeatherShieldDriver {
         public static Cpu.Pin DEFAULTCLOCK_PIN = Cpu.Pin.GPIO_Pin7;
         public static Cpu.Pin DEFAULTIODATA_PIN = Cpu.Pin.GPIO_Pin2;
         public static Byte DEFAULTADDRESS = 0x01;
@@ -52,32 +52,32 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         private bool averageValuesValid = false;
         private bool averageValuesChecked = false;
 
-        public ArduinoWeatherShieldDriver() {
-            ArduinoNodeController.AttemptSetOutputPort(DEFAULTCLOCK_PIN, false);
-            ArduinoNodeController.AttemptSetTristatePort(DEFAULTIODATA_PIN, false, true, Port.ResistorMode.Disabled);
+        public NetduinoWeatherShieldDriver() {
+            NetduinoNodeController.AttemptSetOutputPort(DEFAULTCLOCK_PIN, false);
+            NetduinoNodeController.AttemptSetTristatePort(DEFAULTIODATA_PIN, false, true, Port.ResistorMode.Disabled);
             //this.resetConnection();
         }
 
-        public ArduinoWeatherShieldDriver(Cpu.Pin clockPin, Cpu.Pin dataPin, Byte deviceAddress) {
-            ArduinoNodeController.AttemptSetOutputPort(clockPin, false);
-            ArduinoNodeController.AttemptSetTristatePort(dataPin, false, true, Port.ResistorMode.Disabled);
+        public NetduinoWeatherShieldDriver(Cpu.Pin clockPin, Cpu.Pin dataPin, Byte deviceAddress) {
+            NetduinoNodeController.AttemptSetOutputPort(clockPin, false);
+            NetduinoNodeController.AttemptSetTristatePort(dataPin, false, true, Port.ResistorMode.Disabled);
             this.m_deviceAddress = deviceAddress;
             //this.resetConnection();
         }
 
         /* Initialize the connection with the WeatherShield1 */
         public void resetConnection() {
-            ArduinoNodeController.GetOutputPort().Write(false);
+            NetduinoNodeController.GetOutputPort().Write(false);
 
             /* We start sending a high level bit (start bit) */
-            if (!ArduinoNodeController.GetTristatePort().Active)
-                ArduinoNodeController.GetTristatePort().Active = true;
-            ArduinoNodeController.GetTristatePort().Write(true);
+            if (!NetduinoNodeController.GetTristatePort().Active)
+                NetduinoNodeController.GetTristatePort().Active = true;
+            NetduinoNodeController.GetTristatePort().Write(true);
             this.pulseClockPin();
 
             /* Then we send a sequence of "fake" low level bits */
             for (int ucN = 0; ucN < 200; ucN++) {
-                ArduinoNodeController.GetTristatePort().Write(false);
+                NetduinoNodeController.GetTristatePort().Write(false);
                 this.pulseClockPin();
             }
         }
@@ -181,9 +181,9 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
 
         /* Generate a clock pulse */
         private void pulseClockPin() {
-            ArduinoNodeController.GetOutputPort().Write(true);
+            NetduinoNodeController.GetOutputPort().Write(true);
             Thread.Sleep(5);
-            ArduinoNodeController.GetOutputPort().Write(false);
+            NetduinoNodeController.GetOutputPort().Write(false);
             Thread.Sleep(5);
         }
 
@@ -192,7 +192,7 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
             for (int n = 0; n < 8; n++) {
 
                 bool bit = (ucData & 0x80) != 0;
-                ArduinoNodeController.GetTristatePort().Write(bit);
+                NetduinoNodeController.GetTristatePort().Write(bit);
 
                 this.pulseClockPin();
                 ucData = (Byte)(ucData << 1);
@@ -205,14 +205,14 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
 
             for (int n = 0; n < 8; n++) {
 
-                ArduinoNodeController.GetOutputPort().Write(true);
+                NetduinoNodeController.GetOutputPort().Write(true);
                 Thread.Sleep(5);
 
                 result = (Byte)(result << 1);
-                bool input = ArduinoNodeController.GetTristatePort().Read();
+                bool input = NetduinoNodeController.GetTristatePort().Read();
                 result |= (Byte)((input) ? 1 : 0);
 
-                ArduinoNodeController.GetOutputPort().Write(false);
+                NetduinoNodeController.GetOutputPort().Write(false);
                 Thread.Sleep(5);
             }
 
@@ -222,9 +222,9 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         /* Send a command request to the WeatherShield1 */
         private void sendCommand(commands command, Byte parameter) {
             /* We start sending the first high level bit */
-            if (!ArduinoNodeController.GetTristatePort().Active)
-                ArduinoNodeController.GetTristatePort().Active = true;
-            ArduinoNodeController.GetTristatePort().Write(true);
+            if (!NetduinoNodeController.GetTristatePort().Active)
+                NetduinoNodeController.GetTristatePort().Active = true;
+            NetduinoNodeController.GetTristatePort().Write(true);
             this.pulseClockPin();
 
             /* The first byte is always 0xAA... */
@@ -240,7 +240,7 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
             this.sendByte(parameter);
 
             /* And this is the last low level bit required by the protocol */
-            ArduinoNodeController.GetTristatePort().Write(false);
+            NetduinoNodeController.GetTristatePort().Write(false);
             this.pulseClockPin();
         }
 
@@ -250,12 +250,12 @@ namespace OccupOSNode.Micro.Sensors.Arduino {
         The function returns true if the read answer contain the expected 
         command */
         private bool readAnswer(commands command) {
-            ArduinoNodeController.GetTristatePort().Active = false;
+            NetduinoNodeController.GetTristatePort().Active = false;
 
             for (int n = RXBUFFERLENGTH; n > 0; n--)
                 this.m_tempBuffer[n - 1] = this.readByte();
 
-            ArduinoNodeController.GetTristatePort().Active = true;
+            NetduinoNodeController.GetTristatePort().Active = true;
 
             return (this.m_tempBuffer[RXCOMMANDPOS] == (Byte)command);
         }
