@@ -10,27 +10,22 @@ using System.Net.Sockets;
 using OccupOS.CommonLibrary.NetworkControllers;
 
     class FullEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
-        private readonly IPAddress hostAddress;
-        private readonly IPEndPoint remoteEndPoint;
-        private string address;
-        private IPHostEntry hostEntry;
         private Socket socket;
 
-        public FullEthernetController(string hostName, ushort port) 
-            : base(hostName, port) {
-            address = hostName;
-            hostEntry = Dns.GetHostEntry(hostName);
-            hostAddress = hostEntry.AddressList[0];
+        public FullEthernetController(string hostname, ushort port) 
+            : base(hostname, port) {
+        }
+
+        public override Boolean Connect(string SSID, string key) {
+            IPHostEntry hostEntry = Dns.GetHostEntry(hostname);
+            IPAddress hostAddress = hostEntry.AddressList[0];
             try {
-                hostAddress = IPAddress.Parse(hostName);
+                hostAddress = IPAddress.Parse(hostname);
             } catch (Exception e) {
                 if (e is ArgumentException || e is FormatException)
                     hostAddress = Dns.GetHostAddresses(hostname)[0];
             }
-            remoteEndPoint = new IPEndPoint(hostAddress, port);
-        }
-
-        public override Boolean Connect(string SSID, string key) {
+            IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
             socket = new Socket(hostAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try {
                 socket.Connect(remoteEndPoint);

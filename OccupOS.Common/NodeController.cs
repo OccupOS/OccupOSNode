@@ -94,7 +94,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             RemoveSensorByID(sensor.ID);
         }
 
-        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) { //todo: replace with check database
+        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) { //Needs to check whole database
             if (sensorlist.Count > 0) {
                 foreach (Sensor current_active in sensorlist) {
                     if (startID.ToString().Equals(current_active.ID))
