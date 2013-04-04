@@ -23,20 +23,31 @@ namespace OccupOSNode.Micro.NetworkControllers.Arduino {
             wf_module = new WiFlyGSX();
         }
 
-        public void sendCommand(String command) {
+        public bool sendCommand(String command) {
             if (socket != null && command != null) {
-                Byte[] cmdBytes = Encoding.UTF8.GetBytes((command + "\r\n"));
-                socket.SendBinary(cmdBytes); //can't write while disconnected!
+                try {
+                    Byte[] cmdBytes = Encoding.UTF8.GetBytes((command + "\r\n"));
+                    socket.SendBinary(cmdBytes);
+                    return true;
+                } catch (InvalidOperationException e) {
+                    Debug.Print("Failure to write to target:\n" + e);
+                    socket = null;
+                    return false;
+                }
             }
+            return false;
         }
 
-        public void close() {
+        public void close(String closecommand = "QUIT") {
             if (socket != null) {
-                sendCommand("QUIT");
+                sendCommand(closecommand);
             }
+            wf_module.CloseSocket();
+            socket.Close();
+            socket = null;
         }
 
-        public void ConnectToNetworkHost(String SSID, String key, string hostname, ushort hostport) {
+        public void ConnectToHost(String SSID, String key, string hostname, ushort hostport) {
             wf_module.EnableDHCP();
             wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, key);
             socket = new WiFlySocket(hostname, hostport, wf_module);
