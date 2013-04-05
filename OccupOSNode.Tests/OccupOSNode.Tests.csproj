@@ -57,6 +57,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FullNodeControllerTests.cs" />
+    <Compile Include="ProgramTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

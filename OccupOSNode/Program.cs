@@ -55,7 +55,7 @@ namespace OccupOSNode {
                 if (controller.GetSensorCount() > 0) {
                     try {
                         SensorData data = ((NodeKinectSensor)controller.GetSensor(0)).GetData();
-                        string send_data = demoDataForm(data);
+                        string send_data = DemoDataForm(data);
                         Console.WriteLine("Sending: " + send_data);
                         var helper = new SQLServerHelper("tcp:dndo40zalb.database.windows.net,1433", "comp2014@dndo40zalb", "20041908kjH", "TestSQLDB");
                         helper.InsertSensorData(3, 1, send_data, DateTime.Now, 1);
@@ -65,15 +65,19 @@ namespace OccupOSNode {
             }
         }
 
-        public string demoDataForm(SensorData data_in) {
+        public string DemoDataForm(SensorData data_in)
+        {
             string sensordata = "";
             sensordata = sensordata + data_in.EntityCount;
-            if (data_in.EntityPositions != null) {
+            if (data_in.EntityPositions != null)
+            {
                 int len = data_in.EntityPositions.Length;
-                if (len > 0) {
+                if (len > 0)
+                {
                     sensordata = sensordata + ",";
                     int k = 0;
-                    foreach (Position pos in data_in.EntityPositions) {
+                    foreach (Position pos in data_in.EntityPositions)
+                    {
                         sensordata = sensordata + pos.X + "," + pos.Y + "," + pos.Depth;
                         k++;
                         if (k < len) sensordata = sensordata + ",";
