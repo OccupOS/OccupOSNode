@@ -30,6 +30,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="HardwareControllers\DynamicSensorController.cs" />
     <Compile Include="HardwareControllers\HardwareController.cs" />
     <Compile Include="NetworkControllers\NetworkController.cs" />
     <Compile Include="NodeController.cs" />
