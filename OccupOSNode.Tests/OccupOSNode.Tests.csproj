@@ -58,8 +58,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FullNodeControllerTests.cs" />
+    <Compile Include="NetworkControllers\FullEthernetControllerTests.cs" />
     <Compile Include="ProgramTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sensors\Kinect\NodeKinectSensorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OccupOSNode\OccupOSNode.csproj">
