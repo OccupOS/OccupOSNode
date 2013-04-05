@@ -1,26 +1,22 @@
 using System;
 using System.Collections;
 using OccupOS.CommonLibrary.Sensors;
+using OccupOS.CommonLibrary.HardwareControllers;
+using OccupOS.CommonLibrary.NetworkControllers;
 using System.Reflection;
 using System.Threading;
 
 namespace OccupOS.CommonLibrary.NodeControllers {
 
-    public class StorageDeviceMissingException : Exception {
-        public StorageDeviceMissingException(string message)
-            : base(message) { }
-    }
-
     public abstract class NodeController {
-        private readonly ArrayList sensorDataBuffer = new ArrayList();
-        private readonly ArrayList sensors = new ArrayList();
-        private DynamicSensorController ds_controller = null;
+        private HardwareController hardware_controller = null;
+        private NetworkController network_controller = null;
+        private DynamicSensorController dyn_controller = null;
         private Thread ds_thread = null;
 
-        public void AddSensor(Sensor sensor) {
-            if (sensor != null) {
-                sensors.Add(sensor);
-            }
+        public NodeController(HardwareController hardwareController, NetworkController networkController) {
+            this.hardware_controller = hardwareController;
+            this.network_controller = networkController;
         }
 
         private void AddSensor(Type stype, int count) {
@@ -28,53 +24,16 @@ namespace OccupOS.CommonLibrary.NodeControllers {
                 ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(int) });
                 if (constructor != null) {
                     Sensor newsensor = constructor.Invoke(new Object[] {
-                        FindLowestNumID(GetAllSensors(stype), stype, 0) }) as Sensor;
-                    AddSensor(newsensor);
+                        FindLowestNumID(hardware_controller.GetAllSensors(stype), stype, 0) }) as Sensor;
+                    hardware_controller.AddSensor(newsensor);
                     if (newsensor is IDynamicSensor)
-                        ((IDynamicSensor) newsensor).Connect();
+                        ((IDynamicSensor)newsensor).Connect();
                 }
-            }
-        }
-
-        public Sensor GetSensor(int index) {
-            if (index <= sensors.Count - 1) {
-                if (sensors[index] is Sensor) {
-                    return (Sensor)sensors[index];
-                }
-                else {
-                    throw new ArgumentNullException();
-                }
-            }
-            else {
-                throw new IndexOutOfRangeException();
-            }
-        }
-
-        public void RemoveSensorByID(int id) {
-            int sensornum = 0;
-            for (int k = 0; k < sensors.Count; k++) {
-                var sensor = sensors[sensornum];
-                if (sensor is Sensor) {
-                    if (id == ((Sensor)sensor).ID) {
-                        sensors.Remove(sensor);
-                        sensornum--;
-                    }
-                }
-                sensornum++;
-            }
-        }
-
-        public void RemoveSensor(int index) {
-            if (index <= sensors.Count - 1) {
-                sensors.RemoveAt(index);
-            }
-            else {
-                throw new IndexOutOfRangeException();
             }
         }
 
         private void RemoveInactiveSensors(Type stype) {
-            ArrayList actives = GetAllSensors(stype);
+            ArrayList actives = hardware_controller.GetAllSensors(stype);
             foreach (Sensor current_active in actives) {
                 try {
                     if (current_active is IDynamicSensor) {
@@ -91,10 +50,11 @@ namespace OccupOS.CommonLibrary.NodeControllers {
         private void DisconnectSensor(Sensor sensor) {
             if (sensor is IDynamicSensor)
                 ((IDynamicSensor)sensor).Disconnect();
-            RemoveSensorByID(sensor.ID);
+            hardware_controller.RemoveSensorByID(sensor.ID);
         }
 
-        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) { //Needs to check whole database
+        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) {
+            //This method preferably needs to check whole database instead
             if (sensorlist.Count > 0) {
                 foreach (Sensor current_active in sensorlist) {
                     if (startID.ToString().Equals(current_active.ID))
@@ -104,94 +64,21 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             return startID;
         }
 
-        public int GetSensorCount() { return sensors.Count; }
-
-        public int GetSensorCount(Type stype) {
-            int count = 0;
-            foreach (object sensor in sensors) {
-                if (sensor is Sensor) {
-                    if (sensor.GetType() == stype) {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
-
-        public ArrayList GetAllSensors(Type stype) {
-            ArrayList matches = new ArrayList();
-            foreach (object sensor in sensors) {
-                if (sensor is Sensor) {
-                    if (sensor.GetType() == stype) {
-                        matches.Add(sensor);
-                    }
-                }
-            }
-            return matches;
-        }
-
-        public void AddSensorReading(SensorData data) {
-            if (data != null) {
-                sensorDataBuffer.Add(data);
-            }
-        }
-
-        public SensorData GetSensorReading(int index) {
-            if (index <= sensorDataBuffer.Count - 1) {
-                if (sensorDataBuffer[index] is SensorData) {
-                    return (SensorData)sensorDataBuffer[index];
-                }
-                else {
-                    throw new ArgumentNullException();
-                }
-            }
-            else {
-                throw new IndexOutOfRangeException();
-            }
-        }
-
-        public SensorData PollSensorReading(int index) {
-            if (index <= sensorDataBuffer.Count - 1) {
-                if (sensorDataBuffer[index] is SensorData) {
-                    var data = (SensorData)sensorDataBuffer[index];
-                    sensorDataBuffer.RemoveAt(index);
-                    return data;
-                }
-                else {
-                    throw new ArgumentNullException();
-                }
-            }
-            else {
-                throw new IndexOutOfRangeException();
-            }
-        }
-
-        public void RemoveSensorReading(int index) {
-            if (index <= sensorDataBuffer.Count - 1) {
-                sensorDataBuffer.RemoveAt(index);
-            }
-            else {
-                throw new IndexOutOfRangeException();
-            }
-        }
-
-        public int GetSensorDataBufferCount() { return sensorDataBuffer.Count; }
-
         public void StartListening(ThreadPriority priority = ThreadPriority.Normal) {
-            if (ds_controller == null) {
-                ds_controller = new DynamicSensorController(this);
+            if (dyn_controller == null) {
+                dyn_controller = new DynamicSensorController(this);
             }
             if (ds_thread == null) {
-                ds_thread = new Thread(ds_controller.UpdateCycle);
+                ds_thread = new Thread(dyn_controller.UpdateCycle);
                 ds_thread.Priority = priority;
                 ds_thread.Start();
             }
-            ds_controller.Enable();
+            dyn_controller.Enable();
         }
 
         public void StopListening() {
-            if (ds_controller != null) {
-                ds_controller.Disable();
+            if (dyn_controller != null) {
+                dyn_controller.Disable();
             }
         }
 
@@ -203,7 +90,7 @@ namespace OccupOS.CommonLibrary.NodeControllers {
                             ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(int) });
                             if (constructor != null) {
                                 IDynamicSensor dsensor = constructor.Invoke(new Object[] { -1 }) as IDynamicSensor;
-                                int sensors_store = GetSensorCount(type);
+                                int sensors_store = hardware_controller.GetSensorCount(type);
                                 int max_sensors = dsensor.GetMaxSensors();
                                 if (sensors_store < max_sensors || max_sensors < 0) {
                                     int sensors_connected = dsensor.GetDeviceCount();
@@ -233,7 +120,6 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             public void UpdateCycle() {
                 while (true) {
                     if (!enabled) {
-                        //Ensures thread waits only between update cycles
                         event_waiter.WaitOne();
                     } 
                     else {

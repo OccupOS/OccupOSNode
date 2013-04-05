@@ -16,19 +16,12 @@ namespace OccupOSNode.Micro
     using System;
     using System.IO;
     using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOS.CommonLibrary.NetworkControllers;
     using OccupOSNode.Micro.HardwareControllers.Netduino;
 
     internal class NetduinoNodeController : NodeController
     {
-
-        public NetduinoNodeController() { }
-
-        public void PollSensors()
-        {
-            for (int k = 0; k < this.GetSensorCount(); k++)
-            {
-                this.AddSensorReading(this.GetSensor(k).GetData());
-            }
-        }
+        public NetduinoNodeController(NetduinoHardwareController hardwareController, NetworkController networkController)
+            : base(hardwareController, networkController) { }
     }
 }

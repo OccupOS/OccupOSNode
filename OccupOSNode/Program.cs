@@ -11,13 +11,11 @@ namespace OccupOSNode
 {
     using System;
     using System.Threading;
-
     using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
-
-    using OccupOSCloud;
-
     using OccupOSNode.NetworkControllers;
+    using OccupOS.CommonLibrary.HardwareControllers;
+    //using OccupOS.Cloud;
 
     internal class Program
     {
@@ -54,12 +52,12 @@ namespace OccupOSNode
 
         public void DelayedPoll()
         {
-            var controller = new FullNodeController();
+            var controller = new FullNodeController(new FullEthernetController("hostname",1333));
             controller.StartListening();
 
             while (true)
             {
-                if (controller.GetSensorCount() > 0)
+                /*if (controller.GetSensorCount() > 0)
                 {
                     try
                     {
@@ -77,7 +75,7 @@ namespace OccupOSNode
                     {
                         Console.Write(e.Message);
                     }
-                }
+                }*/
 
                 Thread.Sleep(5000);
             }

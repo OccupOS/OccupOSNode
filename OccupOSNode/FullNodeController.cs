@@ -10,15 +10,13 @@
 namespace OccupOSNode
 {
     using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOS.CommonLibrary.HardwareControllers;
+    using OccupOS.CommonLibrary.NetworkControllers;
+    using OccupOSNode.NetworkControllers;
 
-    internal class FullNodeController : NodeController
+    public class FullNodeController : NodeController
     {
-        #region Public Methods and Operators
-
-        public void PollSensors()
-        {
-        }
-
-        #endregion
+        public FullNodeController(NetworkController networkController)
+            : base(new HardwareController(), networkController) { }
     }
 }

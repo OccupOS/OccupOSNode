@@ -3,9 +3,10 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOS.CommonLibrary.Sensors;
 
-    public class TestNodeController : NodeController
+    public class TestHardwareController : HardwareController
     {
     }
 
@@ -27,12 +28,12 @@
         [TestMethod]
         public void GetSensorByIndex()
         {
-            TestNodeController nodeController = new TestNodeController();
+            TestHardwareController hwController = new TestHardwareController();
 
             TestSensor sensor = new TestSensor(1);
-            nodeController.AddSensor(sensor);
+            hwController.AddSensor(sensor);
 
-            Assert.AreEqual(sensor, nodeController.GetSensor(0));
+            Assert.AreEqual(sensor, hwController.GetSensor(0));
         }
     }
 }
