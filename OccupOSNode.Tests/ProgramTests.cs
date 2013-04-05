@@ -22,9 +22,9 @@
             Random random = new Random();
             
             SensorData sensorData = new SensorData();
-            sensorData.EntityCount = 1;
+            sensorData.EntityCount = random.Next(0, 6);
             
-            Position[] positions = new Position[1];
+            Position[] positions = new Position[2];
 
             for (int i = 0; i < positions.Length; i++)
             {
@@ -42,14 +42,29 @@
             Assert.AreEqual(sensorData.EntityCount + "," +
                             sensorData.EntityPositions[0].X + "," +
                             sensorData.EntityPositions[0].Y + "," +
-                            sensorData.EntityPositions[0].Depth,
+                            sensorData.EntityPositions[0].Depth + "," +
+                            sensorData.EntityPositions[1].X + "," +
+                            sensorData.EntityPositions[1].Y + "," +
+                            sensorData.EntityPositions[1].Depth,
                             packedData);
         }
 
         [TestMethod]
-        public void PackDemoDataFormWithExtraData()
+        public void PackDemoDataFormWithIrrelevantData()
         {
-            // TODO: We should fill some random sensor extra sensor data as well.
+            KinectRunner kinectRunner = new KinectRunner();
+            Random random = new Random();
+
+            SensorData sensorData = new SensorData();
+            sensorData.AnalogLight = random.Next(0, 100);
+            sensorData.Humidity = random.Next(0, 1000) / 100;
+            sensorData.PollTime = DateTime.Now;
+            sensorData.Pressure = random.Next(0, 1000) / 100;
+            sensorData.ReadTime = DateTime.Now;
+            sensorData.Temperature = random.Next(0, 1000) / 100;
+
+            string packedData = kinectRunner.DemoDataForm(sensorData);
+            Assert.AreEqual("0", packedData);
         }
     }
 }
