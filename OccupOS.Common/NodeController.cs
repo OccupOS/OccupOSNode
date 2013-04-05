@@ -17,19 +17,24 @@ namespace OccupOS.CommonLibrary.NodeControllers {
             this.network_controller = networkController;
         }
 
-        public void StartListening(ThreadPriority priority = ThreadPriority.Normal) {
+        public void Run() {
+            //todo: CreateSensorPoller, poll buffer, timestamp poll, serialize and send via networkController
+            //HardwareController monitors Sensor Arrays, may need to make Arrays threadsafe
+        }
+
+        public void EnableDynamicListening(ThreadPriority priority = ThreadPriority.Normal) {
             if (dyn_controller == null) {
                 dyn_controller = new DynamicSensorController(hardware_controller);
             }
             if (ds_thread == null) {
-                ds_thread = new Thread(dyn_controller.Start);
+                ds_thread = new Thread(dyn_controller.Run);
                 ds_thread.Priority = priority;
                 ds_thread.Start();
             }
             dyn_controller.Enable();
         }
 
-        public void StopListening() {
+        public void DisableDynamicListening() {
             if (dyn_controller != null) {
                 dyn_controller.Disable();
             }

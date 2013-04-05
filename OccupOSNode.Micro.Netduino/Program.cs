@@ -20,7 +20,7 @@
             while (!ncontroller.Connect("RichyHotspot", "occupos8")) { }
 
             NetduinoNodeController controller = new NetduinoNodeController(new NetduinoHardwareController(), ncontroller);
-            controller.StartListening();
+            controller.EnableDynamicListening();
             
             SensorData sensorData = new SensorData();
             while (true) {

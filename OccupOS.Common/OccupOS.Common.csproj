@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="HardwareControllers\DynamicSensorController.cs" />
     <Compile Include="HardwareControllers\HardwareController.cs" />
+    <Compile Include="HardwareControllers\SensorPoller.cs" />
     <Compile Include="NetworkControllers\NetworkController.cs" />
     <Compile Include="NodeController.cs" />
     <Compile Include="PacketFactory.cs" />

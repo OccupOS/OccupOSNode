@@ -53,7 +53,7 @@ namespace OccupOSNode
         public void DelayedPoll()
         {
             var controller = new FullNodeController(new FullEthernetController("hostname",1333));
-            controller.StartListening();
+            controller.EnableDynamicListening();
 
             while (true)
             {

@@ -70,6 +70,16 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
             return count;
         }
 
+        public ArrayList GetAllSensors() {
+            ArrayList matches = new ArrayList();
+            foreach (object sensor in sensors) {
+                if (sensor is Sensor) {
+                    matches.Add(sensor);
+                }
+            }
+            return matches;
+        }
+
         public ArrayList GetAllSensors(Type stype) {
             ArrayList matches = new ArrayList();
             foreach (object sensor in sensors) {
@@ -82,16 +92,16 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
             return matches;
         }
 
-        public void AddSensorReading(SensorData data) {
-            if (data != null) {
+        public void AddSensorReadings(SensorData[] data) {
+            if (data != null && data.Length > 0) {
                 sensorDataBuffer.Add(data);
             }
         }
 
-        public SensorData GetSensorReading(int index) {
+        public SensorData[] GetSensorReadings(int index) {
             if (index <= sensorDataBuffer.Count - 1) {
-                if (sensorDataBuffer[index] is SensorData) {
-                    return (SensorData)sensorDataBuffer[index];
+                if (sensorDataBuffer[index] is SensorData[]) {
+                    return (SensorData[])sensorDataBuffer[index];
                 } else {
                     throw new ArgumentNullException();
                 }
@@ -100,10 +110,10 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
             }
         }
 
-        public SensorData PollSensorReading(int index) {
+        public SensorData[] PollSensorReadings(int index) {
             if (index <= sensorDataBuffer.Count - 1) {
-                if (sensorDataBuffer[index] is SensorData) {
-                    var data = (SensorData)sensorDataBuffer[index];
+                if (sensorDataBuffer[index] is SensorData[]) {
+                    var data = (SensorData[])sensorDataBuffer[index];
                     sensorDataBuffer.RemoveAt(index);
                     return data;
                 } else {
@@ -114,7 +124,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
             }
         }
 
-        public void RemoveSensorReading(int index) {
+        public void RemoveSensorReadings(int index) {
             if (index <= sensorDataBuffer.Count - 1) {
                 sensorDataBuffer.RemoveAt(index);
             } else {

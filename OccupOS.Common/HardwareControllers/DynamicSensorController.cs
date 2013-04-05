@@ -15,7 +15,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
             this.hw_controller = hardwareController;
         }
 
-        public void Start() {
+        public void Run() {
             while (true) {
                 if (!enabled) {
                     event_waiter.WaitOne();
