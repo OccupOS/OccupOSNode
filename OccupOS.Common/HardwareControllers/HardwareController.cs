@@ -13,29 +13,25 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
     using OccupOS.CommonLibrary.Sensors;
 
-    public class StorageDeviceMissingException : Exception
-    {
-        public StorageDeviceMissingException(string message)
-            : base(message)
-        {
-        }
-    }
-
     public class HardwareController
     {
-        private readonly ArrayList sensorDataBuffer = new ArrayList();
-        private readonly ArrayList sensors = new ArrayList();
+        private readonly ArrayList sensorDataBuffer;
+        private readonly ArrayList sensors;
 
         public HardwareController()
         {
+            this.sensorDataBuffer = new ArrayList();
+            this.sensors = new ArrayList();
         }
 
         public void AddSensor(Sensor sensor)
         {
-            if (sensor != null)
+            if (sensor == null)
             {
-                this.sensors.Add(sensor);
+                throw new NullReferenceException();
             }
+
+            this.sensors.Add(sensor);
         }
 
         public void AddSensorReadings(SensorData[] data)
@@ -48,7 +44,8 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public ArrayList GetAllSensors()
         {
-            ArrayList matches = new ArrayList();
+            var matches = new ArrayList();
+
             foreach (object sensor in this.sensors)
             {
                 if (sensor is Sensor)
@@ -62,7 +59,8 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public ArrayList GetAllSensors(Type stype)
         {
-            ArrayList matches = new ArrayList();
+            var matches = new ArrayList();
+
             foreach (object sensor in this.sensors)
             {
                 if (sensor is Sensor)
@@ -79,20 +77,18 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public Sensor GetSensor(int index)
         {
-            if (index <= this.sensors.Count - 1)
+            if (index < 0 || index > this.sensors.Count - 1)
             {
-                if (this.sensors[index] is Sensor)
-                {
-                    return (Sensor)this.sensors[index];
-                }
-                else
-                {
-                    throw new ArgumentNullException();
-                }
+                throw new IndexOutOfRangeException();
+            }
+
+            if (this.sensors[index] is Sensor)
+            {
+                return (Sensor)this.sensors[index];
             }
             else
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentNullException();
             }
         }
 
