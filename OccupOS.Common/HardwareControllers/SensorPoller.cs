@@ -1,38 +1,60 @@
-namespace OccupOS.CommonLibrary.HardwareControllers {
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SensorPoller.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace OccupOS.CommonLibrary.HardwareControllers
+{
     using System;
     using System.Collections;
-    using System.Threading;
+
     using OccupOS.CommonLibrary.Sensors;
 
-    public class SensorPoller {
-
+    public class SensorPoller
+    {
         private int delay_time;
-        private int max_buffer_size;
         private HardwareController hw_controller;
+        private int max_buffer_size;
 
-        public SensorPoller(HardwareController hardwareController, int delay = 2000, int maxBuffer = 50) {
-            if (delay < 0 || maxBuffer < 1) throw new ArgumentException();
+        public SensorPoller(HardwareController hardwareController, int delay = 2000, int maxBuffer = 50)
+        {
+            if (delay < 0 || maxBuffer < 1)
+            {
+                throw new ArgumentException();
+            }
+
             this.hw_controller = hardwareController;
             this.delay_time = delay;
             this.max_buffer_size = maxBuffer;
         }
 
-        public void Run() {
-            while (true) {
-                if (hw_controller.GetSensorDataBufferCount() >= max_buffer_size)
-                    hw_controller.RemoveSensorReadings(0);
-                hw_controller.AddSensorReadings(SampleSensorData());
-                System.Threading.Thread.Sleep(delay_time);
+        public void Run()
+        {
+            while (true)
+            {
+                if (this.hw_controller.GetSensorDataBufferCount() >= this.max_buffer_size)
+                {
+                    this.hw_controller.RemoveSensorReadings(0);
+                }
+
+                this.hw_controller.AddSensorReadings(this.SampleSensorData());
+                System.Threading.Thread.Sleep(this.delay_time);
             }
         }
 
-        private SensorData[] SampleSensorData() {
-            ArrayList sample = hw_controller.GetAllSensors();
+        private SensorData[] SampleSensorData()
+        {
+            ArrayList sample = this.hw_controller.GetAllSensors();
             SensorData[] result = new SensorData[sample.Count];
-            for (int k = 0; k < sample.Count; k++) {
-                result[k] = ((Sensor) sample[k]).GetData();
+            for (int k = 0; k < sample.Count; k++)
+            {
+                result[k] = ((Sensor)sample[k]).GetData();
             }
+
             return result;
         }
     }

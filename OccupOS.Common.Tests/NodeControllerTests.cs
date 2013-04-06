@@ -1,39 +1,18 @@
-﻿namespace OccupOS.Common.Tests {
-    using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NodeControllerTests.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace OccupOS.Common.Tests
+{
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using OccupOS.CommonLibrary.NodeControllers;
-    using OccupOS.CommonLibrary.HardwareControllers;
-    using OccupOS.CommonLibrary.Sensors;
-
-    public class TestHardwareController : HardwareController
-    {
-    }
-
-    public class TestSensor : Sensor
-    {
-        public TestSensor(int id)
-            : base(id)
-        {
-        }
-
-        public override SensorData GetData() {
-            throw new NotImplementedException();
-        }
-    }
 
     [TestClass]
-    public class NodeControllerTests {
-
-        [TestMethod]
-        public void GetSensorByIndex()
-        {
-            TestHardwareController hwController = new TestHardwareController();
-
-            TestSensor sensor = new TestSensor(1);
-            hwController.AddSensor(sensor);
-
-            Assert.AreEqual(sensor, hwController.GetSensor(0));
-        }
+    public class NodeControllerTests
+    {
     }
 }

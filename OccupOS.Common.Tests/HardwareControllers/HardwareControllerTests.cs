@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FullNodeController.cs" company="OccupOS">
+// <copyright file="HardwareControllerTests.cs" company="OccupOS">
 //   This file is part of OccupOS.
 //   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 //   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
@@ -7,21 +7,44 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OccupOSNode
+namespace OccupOS.Common.Tests
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     using OccupOS.CommonLibrary.HardwareControllers;
-    using OccupOS.CommonLibrary.NetworkControllers;
-    using OccupOS.CommonLibrary.NodeControllers;
+    using OccupOS.CommonLibrary.Sensors;
 
-    public class FullNodeController : NodeController
+    [TestClass]
+    public class HardwareControllerTests
     {
-        #region Constructors and Destructors
+        [TestMethod]
+        public void GetSensorByIndex()
+        {
+            var hardwareController = new TestHardwareController();
 
-        public FullNodeController(NetworkController networkController)
-            : base(new HardwareController(), networkController)
+            var sensor = new TestSensor(1);
+            hardwareController.AddSensor(sensor);
+
+            Assert.AreEqual(sensor, hardwareController.GetSensor(0));
+        }
+
+        private class TestHardwareController : HardwareController
         {
         }
 
-        #endregion
+        private class TestSensor : Sensor
+        {
+            public TestSensor(int id)
+                : base(id)
+            {
+            }
+
+            public override SensorData GetData()
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

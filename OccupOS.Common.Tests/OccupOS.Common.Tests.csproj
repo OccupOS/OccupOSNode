@@ -47,6 +47,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="HardwareControllers\HardwareControllerTests.cs" />
+    <Compile Include="PacketFactoryTests.cs" />
     <Compile Include="NodeControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -55,6 +57,10 @@
       <Project>{0d871d10-3625-4c8e-8ead-631c27a60ec6}</Project>
       <Name>OccupOS.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NetworkControllers\" />
+    <Folder Include="Sensors\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

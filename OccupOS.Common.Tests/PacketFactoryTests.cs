@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IEntityCountSensor.cs" company="OccupOS">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PacketFactoryTests.cs" company="OccupOS">
 //   This file is part of OccupOS.
 //   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 //   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
@@ -7,10 +7,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OccupOS.CommonLibrary.Sensors
+namespace OccupOS.Common.Tests
 {
-    public interface IEntityCountSensor
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    [TestClass]
+    public class PacketFactoryTests
     {
-        int GetEntityCount();
     }
 }

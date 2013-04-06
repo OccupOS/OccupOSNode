@@ -1,56 +1,156 @@
-namespace OccupOS.CommonLibrary.HardwareControllers {
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DynamicSensorController.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace OccupOS.CommonLibrary.HardwareControllers
+{
     using System;
     using System.Collections;
     using System.Reflection;
     using System.Threading;
+
     using OccupOS.CommonLibrary.Sensors;
 
-    public class DynamicSensorController {
-        private HardwareController hw_controller = null;
-        private Boolean enabled = false;
+    public class DynamicSensorController
+    {
+        private bool enabled = false;
         private ManualResetEvent event_waiter = new ManualResetEvent(false);
+        private HardwareController hw_controller = null;
 
-        public DynamicSensorController(HardwareController hardwareController) {
+        public DynamicSensorController(HardwareController hardwareController)
+        {
             this.hw_controller = hardwareController;
         }
 
-        public void Run() {
-            while (true) {
-                if (!enabled) {
-                    event_waiter.WaitOne();
-                } else {
-                    UpdateDynamicSensors();
+        public void Disable()
+        {
+            this.enabled = false;
+        }
+
+        public void Enable()
+        {
+            this.enabled = true;
+            this.event_waiter.Set();
+        }
+
+        public void Run()
+        {
+            while (true)
+            {
+                if (!this.enabled)
+                {
+                    this.event_waiter.WaitOne();
+                }
+                else
+                {
+                    this.UpdateDynamicSensors();
                 }
             }
         }
 
-        public void Enable() {
-            this.enabled = true;
-            event_waiter.Set();
+        private void CreateSensor(Type stype, int count)
+        {
+            for (int k = 0; k < count; k++)
+            {
+                ConstructorInfo constructor = stype.GetConstructor(new[] { typeof(int) });
+                if (constructor != null)
+                {
+                    Sensor newsensor =
+                        constructor.Invoke(
+                            new object[] { this.FindLowestNumID(this.hw_controller.GetAllSensors(stype), stype, 0) }) as
+                        Sensor;
+                    this.hw_controller.AddSensor(newsensor);
+                    if (newsensor is IDynamicSensor)
+                    {
+                        ((IDynamicSensor)newsensor).Connect();
+                    }
+                }
+            }
         }
 
-        public void Disable() {
-            this.enabled = false;
+        private void DisposeInactives(Type stype)
+        {
+            ArrayList actives = this.hw_controller.GetAllSensors(stype);
+            foreach (Sensor current_active in actives)
+            {
+                try
+                {
+                    if (current_active is IDynamicSensor)
+                    {
+                        if (((IDynamicSensor)current_active).GetConnectionStatus() == ConnectionStatus.Disconnected)
+                        {
+                            this.DisposeSensor(current_active);
+                        }
+                    }
+                }
+                catch (SensorNotFoundException)
+                {
+                    this.DisposeSensor(current_active);
+                }
+            }
         }
 
-        private void UpdateDynamicSensors() {
-            foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes()) {
-                if (type.IsClass) {
-                    foreach (var iface in type.GetInterfaces()) {
-                        if (iface.Name.Equals("IDynamicSensor")) {
-                            ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(int) });
-                            if (constructor != null) {
-                                IDynamicSensor dsensor = constructor.Invoke(new Object[] { -1 }) as IDynamicSensor;
-                                int sensors_store = hw_controller.GetSensorCount(type);
+        private void DisposeSensor(Sensor sensor)
+        {
+            if (sensor is IDynamicSensor)
+            {
+                ((IDynamicSensor)sensor).Disconnect();
+            }
+
+            this.hw_controller.RemoveSensorByID(sensor.ID);
+        }
+
+        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID)
+        {
+            // This method preferably needs to check whole database instead
+            if (sensorlist.Count > 0)
+            {
+                foreach (Sensor current_active in sensorlist)
+                {
+                    if (startID.ToString().Equals(current_active.ID))
+                    {
+                        this.FindLowestNumID(sensorlist, stype, startID + 1);
+                    }
+                }
+            }
+
+            return startID;
+        }
+
+        private void UpdateDynamicSensors()
+        {
+            foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes())
+            {
+                if (type.IsClass)
+                {
+                    foreach (var iface in type.GetInterfaces())
+                    {
+                        if (iface.Name.Equals("IDynamicSensor"))
+                        {
+                            ConstructorInfo constructor = type.GetConstructor(new[] { typeof(int) });
+                            if (constructor != null)
+                            {
+                                IDynamicSensor dsensor = constructor.Invoke(new object[] { -1 }) as IDynamicSensor;
+                                int sensors_store = this.hw_controller.GetSensorCount(type);
                                 int max_sensors = dsensor.GetMaxSensors();
-                                if (sensors_store < max_sensors || max_sensors < 0) {
+                                if (sensors_store < max_sensors || max_sensors < 0)
+                                {
                                     int sensors_connected = dsensor.GetDeviceCount();
-                                    if (sensors_connected > sensors_store) {
-                                        CreateSensor(type, sensors_connected - sensors_store);
-                                    } else {
+                                    if (sensors_connected > sensors_store)
+                                    {
+                                        this.CreateSensor(type, sensors_connected - sensors_store);
+                                    }
+                                    else
+                                    {
                                         if (sensors_connected < sensors_store)
-                                            DisposeInactives(type);
+                                        {
+                                            this.DisposeInactives(type);
+                                        }
                                     }
                                 }
                             }
@@ -58,51 +158,6 @@ namespace OccupOS.CommonLibrary.HardwareControllers {
                     }
                 }
             }
-        }
-
-        private void CreateSensor(Type stype, int count) {
-            for (int k = 0; k < count; k++) {
-                ConstructorInfo constructor = stype.GetConstructor(new Type[] { typeof(int) });
-                if (constructor != null) {
-                    Sensor newsensor = constructor.Invoke(new Object[] {
-                        FindLowestNumID(hw_controller.GetAllSensors(stype), stype, 0) }) as Sensor;
-                    hw_controller.AddSensor(newsensor);
-                    if (newsensor is IDynamicSensor)
-                        ((IDynamicSensor)newsensor).Connect();
-                }
-            }
-        }
-
-        private void DisposeSensor(Sensor sensor) {
-            if (sensor is IDynamicSensor)
-                ((IDynamicSensor)sensor).Disconnect();
-            hw_controller.RemoveSensorByID(sensor.ID);
-        }
-
-        private void DisposeInactives(Type stype) {
-            ArrayList actives = hw_controller.GetAllSensors(stype);
-            foreach (Sensor current_active in actives) {
-                try {
-                    if (current_active is IDynamicSensor) {
-                        if (((IDynamicSensor)current_active).GetConnectionStatus()
-                            == ConnectionStatus.Disconnected)
-                            DisposeSensor(current_active);
-                    }
-                } catch (SensorNotFoundException) {
-                    DisposeSensor(current_active);
-                }
-            }
-        }
-
-        private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID) {
-            //This method preferably needs to check whole database instead
-            if (sensorlist.Count > 0) {
-                foreach (Sensor current_active in sensorlist) {
-                    if (startID.ToString().Equals(current_active.ID))
-                        FindLowestNumID(sensorlist, stype, startID + 1);
-                }
-            }
-            return startID;
         }
     }
 }
