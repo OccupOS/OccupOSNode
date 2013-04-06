@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+
+
 namespace OccupOS.CommonLibrary.HardwareControllers
 {
     using System;
@@ -18,23 +20,25 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
     public class DynamicSensorController
     {
-        private bool enabled = false;
         private ManualResetEvent event_waiter = new ManualResetEvent(false);
         private HardwareController hw_controller = null;
 
         public DynamicSensorController(HardwareController hardwareController)
         {
+            this.Enabled = false;
             this.hw_controller = hardwareController;
         }
 
+        public bool Enabled { get; private set; }
+
         public void Disable()
         {
-            this.enabled = false;
+            this.Enabled = false;
         }
 
         public void Enable()
         {
-            this.enabled = true;
+            this.Enabled = true;
             this.event_waiter.Set();
         }
 
@@ -42,7 +46,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         {
             while (true)
             {
-                if (!this.enabled)
+                if (!this.Enabled)
                 {
                     this.event_waiter.WaitOne();
                 }

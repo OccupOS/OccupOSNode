@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOS.Common.Tests")]
+
 namespace OccupOS.CommonLibrary.Sensors
 {
     public abstract class Sensor

@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
+
 namespace OccupOSNode
 {
     using System;
@@ -38,7 +40,7 @@ namespace OccupOSNode
         }
     }
 
-    public class KinectRunner
+    internal class KinectRunner
     {
         public void DelayedPoll()
         {
