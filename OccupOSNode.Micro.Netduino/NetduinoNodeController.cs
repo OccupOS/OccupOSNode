@@ -21,7 +21,7 @@ namespace OccupOSNode.Micro
 
     internal class NetduinoNodeController : NodeController
     {
-        public NetduinoNodeController(NetduinoHardwareController hardwareController, NetworkController networkController)
-            : base(hardwareController, networkController) { }
+        public NetduinoNodeController(int ID, NetduinoHardwareController hardwareController, NetworkController networkController)
+            : base(ID, hardwareController, networkController) { }
     }
 }

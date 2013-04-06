@@ -31,7 +31,7 @@ namespace OccupOSNode.Micro
             networkController.ConnectToWiFi("RichyHotspot", "occupos8");
             networkController.ConnectToSocket("UrsaMinor", 1333);
 
-            var controller = new NetduinoNodeController(new NetduinoHardwareController(), networkController);
+            var controller = new NetduinoNodeController(0, new NetduinoHardwareController(), networkController);
             controller.EnableDynamicListening();
 
             var sensorData = new SensorData();

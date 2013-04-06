@@ -17,8 +17,8 @@ namespace OccupOSNode
 
     internal class FullNodeController : NodeController
     {
-        public FullNodeController(NetworkController networkController)
-            : base(new HardwareController(), networkController)
+        public FullNodeController(int ID, HardwareController hardwareController, NetworkController networkController)
+            : base(ID, hardwareController, networkController)
         {
         }
     }

@@ -15,6 +15,7 @@ namespace OccupOSNode
     using System.Threading;
     using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
+    using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOSNode.NetworkControllers;
 
     internal class Program
@@ -47,7 +48,7 @@ namespace OccupOSNode
             var networkController = new FullEthernetNetworkController();
             networkController.ConnectToSocket("hostname", 1333);
 
-            var controller = new FullNodeController(networkController);
+            var controller = new FullNodeController(1, new HardwareController(), networkController);
             controller.EnableDynamicListening();
 
             while (true)
