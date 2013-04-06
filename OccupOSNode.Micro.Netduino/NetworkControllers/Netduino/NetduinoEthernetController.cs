@@ -1,55 +1,67 @@
-namespace OccupOSNode.Micro.NetworkControllers.Netduino {
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NetduinoEthernetController.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace OccupOSNode.Micro.NetworkControllers.Netduino
+{
     using System;
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
 
-    public class NetduinoEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
+    using OccupOS.CommonLibrary.NetworkControllers;
+
+    public class NetduinoEthernetController : EthernetNetworkController
+    {
         private Socket socket;
 
-        public NetduinoEthernetController(string hostname, ushort port)
-            : base(hostname, port) {
-        }
+        public override void ConnectToSocket(string hostName, ushort port)
+        {
+            this.HostName = hostName;
+            this.Port = port;
 
-        public override Boolean Connect(string SSID, string key) {
             IPAddress hostAddress;
-            try {
-                hostAddress = IPAddress.Parse(hostname);
-            } catch (ArgumentException e) {
-                IPAddress[] list = Dns.GetHostEntry(hostname).AddressList;
-                hostAddress = Dns.GetHostEntry(hostname).AddressList[0];
+            try
+            {
+                hostAddress = IPAddress.Parse(hostName);
             }
+            catch (ArgumentException e)
+            {
+                IPAddress[] list = Dns.GetHostEntry(hostName).AddressList;
+                hostAddress = Dns.GetHostEntry(hostName).AddressList[0];
+            }
+
             IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
-            try {
-                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socket.Connect(remoteEndPoint);
-            } catch (SocketException e) {
-                return false;
-            }
-            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
-            socket.SendTimeout = 5000;
-            return true;
+            
+            this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            this.socket.Connect(remoteEndPoint);
+            this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
+            this.socket.SendTimeout = 5000;
         }
 
-        public override void Disconnect() {
-            socket.Close();
-            socket = null;
+        public override void DisconnectFromSocket()
+        {
+            this.HostName = default(string);
+            this.Port = default(ushort);
+
+            this.socket.Close();
+            this.socket = null;
         }
 
-        public override int SendData(string data) {
-            if (socket != null) {
-                try {
-                    byte[] buffer = Encoding.UTF8.GetBytes(data);
-                    return socket.Send(buffer);
-                } catch (Exception e) {
-                    if (e is SocketException || e is ObjectDisposedException) {
-                        socket = null;
-                    }
-                    return 0;
-                }
+        public override void SendData(string data)
+        {
+            if (this.socket == null || data == null)
+            {
+                throw new NullReferenceException();
             }
-            return 0;
+
+            byte[] buffer = Encoding.UTF8.GetBytes(data);
+            this.socket.Send(buffer);
         }
     }
 }

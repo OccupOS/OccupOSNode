@@ -11,11 +11,11 @@ namespace OccupOS.CommonLibrary.NetworkControllers
 {
     public abstract class NetworkController
     {
-        protected string ConnectedHostName { get; set; }
+        protected string HostName { get; set; }
 
-        protected ushort ConnectedPort { get; set; }
+        protected ushort Port { get; set; }
 
-        public abstract void ConnectToSocket(string hostname, ushort port);
+        public abstract void ConnectToSocket(string hostName, ushort port);
 
         public abstract void DisconnectFromSocket();
 

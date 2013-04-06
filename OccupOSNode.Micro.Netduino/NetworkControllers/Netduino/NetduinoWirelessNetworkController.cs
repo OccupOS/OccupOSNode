@@ -1,54 +1,71 @@
-namespace OccupOSNode.Micro.NetworkControllers.Netduino {
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NetduinoWirelessNetworkController.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Net.Sockets;
-using System.Text;
-using Microsoft.SPOT;
-using Microsoft.SPOT.Hardware;
-using Toolbox.NETMF.Hardware;
-using Toolbox.NETMF.NET;
+namespace OccupOSNode.Micro.NetworkControllers.Netduino
+{
+    using System;
+    using System.Net.Sockets;
+    using System.Text;
 
-    public class NetduinoWirelessNetworkController : OccupOS.CommonLibrary.NetworkControllers.NetworkController {
+    using Microsoft.SPOT;
 
-        private WiFlyGSX wf_module;
+    using OccupOS.CommonLibrary.NetworkControllers;
+
+    using Toolbox.NETMF.Hardware;
+    using Toolbox.NETMF.NET;
+
+    public class NetduinoWirelessNetworkController : WirelessNetworkController
+    {
         private SimpleSocket socket = null;
+        private WiFlyGSX wf_module;
 
-        public NetduinoWirelessNetworkController(string hostname, ushort port) 
-        : base(hostname, port) {
-            wf_module = new WiFlyGSX();
+        public NetduinoWirelessNetworkController()
+        {
+            this.wf_module = new WiFlyGSX();
         }
 
-        public override int SendData(string data) {
-            if (socket != null && data != null) {
-                try {
-                    Byte[] cmdBytes = Encoding.UTF8.GetBytes((data + "\r\n"));
-                    socket.SendBinary(cmdBytes);
-                    return cmdBytes.Length;
-                } catch (InvalidOperationException e) {
-                    Debug.Print("Failure to write to target:\n" + e);
-                    socket = null;
-                    return 0;
-                }
+
+
+        public override void ConnectToWiFi(string SSID, string password)
+        {
+            this.wf_module.EnableDHCP();
+            this.wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, password);
+        }
+
+        public override void ConnectToSocket(string hostName, ushort port)
+        {
+            this.HostName = hostName;
+            this.Port = port;
+
+            this.socket = new WiFlySocket(hostName, port, this.wf_module);
+            this.socket.Connect();
+        }
+
+        public override void DisconnectFromSocket()
+        {
+            this.HostName = default(string);
+            this.Port = default(ushort);
+
+            this.wf_module.CloseSocket();
+            this.socket.Close();
+            this.socket = null;
+        }
+
+        public override void SendData(string data)
+        {
+            if (this.socket == null || data == null)
+            {
+                throw new NullReferenceException();
             }
-            return 0;
-        }
 
-        public override void Disconnect() {
-            wf_module.CloseSocket();
-            socket.Close();
-            socket = null;
-        }
-
-        public override Boolean Connect(string SSID, string key) {
-            try {
-                wf_module.EnableDHCP();
-                wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, key);
-                socket = new WiFlySocket(hostname, port, wf_module);
-                socket.Connect();
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
+            byte[] cmdBytes = Encoding.UTF8.GetBytes(data + "\r\n");
+            this.socket.SendBinary(cmdBytes);
         }
     }
 }

@@ -22,46 +22,47 @@ namespace OccupOSNode.NetworkControllers
     {
         private Socket socket;
 
-        public override void ConnectToSocket(string hostname, ushort port)
+        public override void ConnectToSocket(string hostName, ushort port)
         {
-            this.ConnectedHostName = hostname;
-            this.ConnectedPort = port;
+            this.HostName = hostName;
+            this.Port = port;
 
-            IPHostEntry hostEntry = Dns.GetHostEntry(hostname);
+            IPHostEntry hostEntry = Dns.GetHostEntry(hostName);
             IPAddress hostAddress = hostEntry.AddressList[0];
             try
             {
-                hostAddress = IPAddress.Parse(hostname);
+                hostAddress = IPAddress.Parse(hostName);
             }
             catch (Exception e)
             {
                 if (e is ArgumentException || e is FormatException)
                 {
-                    hostAddress = Dns.GetHostAddresses(hostname)[0];
+                    hostAddress = Dns.GetHostAddresses(hostName)[0];
                 }
             }
 
             IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
+            
             this.socket = new Socket(hostAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             this.socket.Connect(remoteEndPoint);
-
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             this.socket.SendTimeout = 5000;
         }
 
         public override void DisconnectFromSocket()
         {
-            this.ConnectedHostName = default(string);
-            this.ConnectedPort = default(ushort);
+            this.HostName = default(string);
+            this.Port = default(ushort);
+
             this.socket.Close();
             this.socket = null;
         }
 
         public override void SendData(string data)
         {
-            if (this.socket == null)
+            if (this.socket == null || data == null)
             {
-                throw new SocketException();
+                throw new NullReferenceException();
             }
             
             try
