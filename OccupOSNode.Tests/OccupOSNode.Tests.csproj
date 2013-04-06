@@ -6,8 +6,8 @@
     <ProjectGuid>{DF2114C7-5AFD-4131-8E98-62917E60718A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OccupOS.Tests</RootNamespace>
-    <AssemblyName>OccupOS.Tests</AssemblyName>
+    <RootNamespace>OccupOSNode.Tests</RootNamespace>
+    <AssemblyName>OccupOSNode.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -39,6 +39,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\IndianaJones.NETMF.Json\bin\Debug\IndianaJones.NETMF.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="OccupOS.CommonLibrary">
       <HintPath>..\OccupOS.Common\bin\Debug\OccupOS.CommonLibrary.dll</HintPath>
     </Reference>

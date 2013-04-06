@@ -9,10 +9,23 @@
 
 namespace OccupOSNode
 {
+    using System.Net.Sockets;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using OccupOSNode.NetworkControllers;
 
     [TestClass]
     public class FullEthernetControllerTests
     {
+        [TestMethod]
+        [ExpectedException(typeof(SocketException))]
+        public void SendDataWithoutConnection()
+        {
+            var fullEthernetNetworkController = new FullEthernetNetworkController();
+            fullEthernetNetworkController.SendData("testdata");
+
+            Assert.Fail("Expected exception");
+        }
     }
 }

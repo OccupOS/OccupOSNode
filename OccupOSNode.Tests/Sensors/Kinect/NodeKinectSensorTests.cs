@@ -11,8 +11,31 @@ namespace OccupOSNode
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using OccupOS.CommonLibrary.Sensors;
+
+    using OccupOSNode.Sensors.Kinect;
+
     [TestClass]
     public class NodeKinectSensorTests
     {
+        [TestMethod]
+        [ExpectedException(typeof(SensorNotFoundException))]
+        public void GetEntityCountWithNoKinect()
+        {
+            var nodeKinectSensor = new NodeKinectSensor(0);
+            nodeKinectSensor.GetEntityCount();
+
+            Assert.Fail("Expected exception.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SensorNotFoundException))]
+        public void GetEntityPositionsWithNoKinect()
+        {
+            var nodeKinectSensor = new NodeKinectSensor(0);
+            nodeKinectSensor.GetEntityPositions();
+
+            Assert.Fail("Expected exception.");
+        }
     }
 }

@@ -14,26 +14,20 @@ namespace OccupOSNode
     using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
     using OccupOSNode.NetworkControllers;
-    using OccupOS.CommonLibrary.HardwareControllers;
-    //using OccupOS.Cloud;
 
     internal class Program
     {
-        #region Methods
-
         private static void Main(string[] args)
         {
-            var ncontroller = new FullEthernetController("UrsaMinor", 1333);
-            while (!ncontroller.Connect(string.Empty, string.Empty))
-            {
-            }
+            var networkController = new FullEthernetNetworkController();
+            networkController.ConnectToSocket("hostname", 1333);
 
             var testdata = new SensorData { Humidity = 10, Pressure = 10, Temperature = 10 };
 
             while (true)
             {
                 Console.WriteLine("Attempting send...");
-                ncontroller.SendData(PacketFactory.CreatePacket(testdata));
+                networkController.SendData(PacketFactory.CreatePacket(testdata));
                 Console.WriteLine("Sent!");
                 Thread.Sleep(1000);
             }
@@ -42,17 +36,16 @@ namespace OccupOSNode
             var kthread = new Thread(kinectrunner.DelayedPoll);
             kthread.Start();*/
         }
-
-        #endregion
     }
 
     public class KinectRunner
     {
-        #region Public Methods and Operators
-
         public void DelayedPoll()
         {
-            var controller = new FullNodeController(new FullEthernetController("hostname",1333));
+            var networkController = new FullEthernetNetworkController();
+            networkController.ConnectToSocket("hostname", 1333);
+
+            var controller = new FullNodeController(networkController);
             controller.EnableDynamicListening();
 
             while (true)
@@ -106,7 +99,5 @@ namespace OccupOSNode
 
             return sensordata;
         }
-
-        #endregion
     }
 }

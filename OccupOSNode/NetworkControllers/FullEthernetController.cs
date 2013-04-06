@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
+
 namespace OccupOSNode.NetworkControllers
 {
     using System;
@@ -14,86 +16,66 @@ namespace OccupOSNode.NetworkControllers
     using System.Net.Sockets;
     using System.Text;
 
-    internal class FullEthernetController : OccupOS.CommonLibrary.NetworkControllers.NetworkController
-    {
-        #region Fields
+    using OccupOS.CommonLibrary.NetworkControllers;
 
+    internal class FullEthernetNetworkController : EthernetNetworkController
+    {
         private Socket socket;
 
-        #endregion
-
-        #region Constructors and Destructors
-
-        public FullEthernetController(string hostname, ushort port)
-            : base(hostname, port)
+        public override void ConnectToSocket(string hostname, ushort port)
         {
-        }
+            this.ConnectedHostName = hostname;
+            this.ConnectedPort = port;
 
-        #endregion
-
-        #region Public Methods and Operators
-
-        public override bool Connect(string SSID, string key)
-        {
-            IPHostEntry hostEntry = Dns.GetHostEntry(this.hostname);
+            IPHostEntry hostEntry = Dns.GetHostEntry(hostname);
             IPAddress hostAddress = hostEntry.AddressList[0];
             try
             {
-                hostAddress = IPAddress.Parse(this.hostname);
+                hostAddress = IPAddress.Parse(hostname);
             }
             catch (Exception e)
             {
                 if (e is ArgumentException || e is FormatException)
                 {
-                    hostAddress = Dns.GetHostAddresses(this.hostname)[0];
+                    hostAddress = Dns.GetHostAddresses(hostname)[0];
                 }
             }
 
-            IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, this.port);
+            IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
             this.socket = new Socket(hostAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                this.socket.Connect(remoteEndPoint);
-            }
-            catch (SocketException e)
-            {
-                return false;
-            }
+            this.socket.Connect(remoteEndPoint);
 
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             this.socket.SendTimeout = 5000;
-            return true;
         }
 
-        public override void Disconnect()
+        public override void DisconnectFromSocket()
         {
+            this.ConnectedHostName = default(string);
+            this.ConnectedPort = default(ushort);
             this.socket.Close();
             this.socket = null;
         }
 
-        public override int SendData(string data)
+        public override void SendData(string data)
         {
-            if (this.socket != null)
+            if (this.socket == null)
             {
-                try
+                throw new SocketException();
+            }
+            
+            try
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes(data);
+                this.socket.Send(buffer);
+            }
+            catch (Exception e)
+            {
+                if (e is SocketException || e is ObjectDisposedException)
                 {
-                    byte[] buffer = Encoding.UTF8.GetBytes(data);
-                    return this.socket.Send(buffer);
-                }
-                catch (Exception e)
-                {
-                    if (e is SocketException || e is ObjectDisposedException)
-                    {
-                        this.socket = null;
-                    }
-
-                    return 0;
+                    this.socket = null;
                 }
             }
-
-            return 0;
         }
-
-        #endregion
     }
 }

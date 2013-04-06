@@ -7,6 +7,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
+
 namespace OccupOSNode.Sensors.Kinect
 {
     using System;
@@ -16,38 +18,18 @@ namespace OccupOSNode.Sensors.Kinect
 
     using OccupOS.CommonLibrary.Sensors;
 
-    /*===========================================================================================
-    * NOTE: The KinectSensor class is not designed to work with the .NET Micro Framework!
-    * When building for the Netduino you should not include this class.
-    ============================================================================================*/
     internal class NodeKinectSensor : Sensor, ISoundSensor, IEntityPositionSensor, IEntityCountSensor, IDynamicSensor
     {
-        #region Static Fields
-
-        private static int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
-
-        private static int MAX_TIME_DIFFERENCE = 200;
-
-        private static int QUEUE_MAX_LENGTH = 6;
-
-        #endregion
-
-        #region Fields
+        private const int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
+        private const int MAX_TIME_DIFFERENCE = 200;
+        private const int QUEUE_MAX_LENGTH = 6;
 
         private KinectSensor ksensor;
-
-        #endregion
-
-        #region Constructors and Destructors
 
         public NodeKinectSensor(int id)
             : base(id)
         {
         }
-
-        #endregion
-
-        #region Public Methods and Operators
 
         public void Connect()
         {
@@ -204,10 +186,6 @@ namespace OccupOSNode.Sensors.Kinect
             }
         }
 
-        #endregion
-
-        #region Methods
-
         private Joint BestTrackedJoint(Skeleton skeleton)
         {
             Joint joint = skeleton.Joints[JointType.Head];
@@ -360,17 +338,10 @@ namespace OccupOSNode.Sensors.Kinect
             return frames;
         }
 
-        #endregion
-
         private struct SynchedFrames
         {
-            #region Fields
-
             public DepthImageFrame d_frame;
-
             public SkeletonFrame s_frame;
-
-            #endregion
         }
     }
 }
