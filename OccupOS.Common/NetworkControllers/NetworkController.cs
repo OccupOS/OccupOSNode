@@ -9,13 +9,27 @@
 
 namespace OccupOS.CommonLibrary.NetworkControllers
 {
+    using System;
+
     public abstract class NetworkController
     {
-        protected string HostName { get; set; }
+        public NetworkController(string HostName, ushort Port) {
+            this.HostName = HostName;
+            this.Port = Port;
+        }
 
-        protected ushort Port { get; set; }
+        public string HostName { get; protected set; }
+
+        public ushort Port { get; protected set; }
 
         public abstract void ConnectToSocket(string hostName, ushort port);
+
+        public void ConnectToSocket() {
+            if (HostName != null)
+                ConnectToSocket(HostName, Port);
+            else
+                throw new ArgumentNullException("Default HostName and Port arguments have not specified");
+        }
 
         public abstract void DisconnectFromSocket();
 

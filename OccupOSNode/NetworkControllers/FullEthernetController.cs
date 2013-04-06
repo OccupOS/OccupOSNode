@@ -69,13 +69,11 @@ namespace OccupOSNode.NetworkControllers
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(data);
                 this.socket.Send(buffer);
-            }
-            catch (Exception e)
+            } 
+            catch (ObjectDisposedException e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
-                {
-                    this.socket = null;
-                }
+                this.socket = null;
+                throw new NullReferenceException();
             }
         }
     }

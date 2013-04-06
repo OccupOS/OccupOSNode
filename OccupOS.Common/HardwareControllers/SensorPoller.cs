@@ -20,7 +20,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         private HardwareController hw_controller;
         private int max_buffer_size;
 
-        public SensorPoller(HardwareController hardwareController, int delay = 2000, int maxBuffer = 50)
+        public SensorPoller(HardwareController hardwareController, int delay, int maxBuffer)
         {
             if (delay < 0 || maxBuffer < 1)
             {

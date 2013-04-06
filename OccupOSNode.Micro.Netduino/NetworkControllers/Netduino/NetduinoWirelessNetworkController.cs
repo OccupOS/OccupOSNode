@@ -12,11 +12,8 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
     using System;
     using System.Net.Sockets;
     using System.Text;
-
     using Microsoft.SPOT;
-
     using OccupOS.CommonLibrary.NetworkControllers;
-
     using Toolbox.NETMF.Hardware;
     using Toolbox.NETMF.NET;
 
@@ -26,14 +23,20 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
         private WiFlyGSX wf_module;
 
         public NetduinoWirelessNetworkController()
+            : base(null, 0, null, null) {
+            this.wf_module = new WiFlyGSX();
+        }
+
+        public NetduinoWirelessNetworkController(string Hostname, ushort Port, string SSID, string Password)
+            : base(Hostname, Port, SSID, Password)
         {
             this.wf_module = new WiFlyGSX();
         }
 
-
-
         public override void ConnectToWiFi(string SSID, string password)
         {
+            this.SSID = SSID;
+            this.Password = password;
             this.wf_module.EnableDHCP();
             this.wf_module.JoinNetwork(SSID, 0, WiFlyGSX.AuthMode.MixedWPA1_WPA2, password);
         }
@@ -42,7 +45,6 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
         {
             this.HostName = hostName;
             this.Port = port;
-
             this.socket = new WiFlySocket(hostName, port, this.wf_module);
             this.socket.Connect();
         }
@@ -53,8 +55,11 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
             this.Port = default(ushort);
 
             this.wf_module.CloseSocket();
-            this.socket.Close();
-            this.socket = null;
+            if (this.socket != null)
+            {
+                this.socket.Close();
+                this.socket = null;
+            }
         }
 
         public override void SendData(string data)
@@ -63,9 +68,16 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
             {
                 throw new NullReferenceException();
             }
-
-            byte[] cmdBytes = Encoding.UTF8.GetBytes(data + "\r\n");
-            this.socket.SendBinary(cmdBytes);
+            try
+            {
+                byte[] cmdBytes = Encoding.UTF8.GetBytes(data + "\r\n");
+                this.socket.SendBinary(cmdBytes);
+            }
+            catch (ObjectDisposedException e)
+            {
+                this.socket = null;
+                throw new NullReferenceException();
+            }
         }
     }
 }

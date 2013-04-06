@@ -9,8 +9,32 @@
 
 namespace OccupOS.CommonLibrary.NetworkControllers
 {
+    using System;
+
     public abstract class WirelessNetworkController : NetworkController
     {
-        public abstract void ConnectToWiFi(string SSID, string password);
+        public WirelessNetworkController(string HostName, ushort Port, string SSID, string Password) : base(HostName, Port)
+        {
+                this.SSID = SSID;
+                this.Password = Password;
+        }
+
+        public WirelessNetworkController() : base(null, 0) {
+            this.SSID = null;
+            this.Password = null;
+        }
+
+        public string SSID { get; protected set; }
+
+        public string Password { get; protected set; }
+
+        public abstract void ConnectToWiFi(string SSID, string Password);
+
+        public void ConnectToWiFi() {
+            if (SSID != null && Password != null)
+                ConnectToWiFi(SSID, Password);
+            else
+                throw new ArgumentNullException("Default HostName and Port arguments have not specified");
+        }
     }
 }

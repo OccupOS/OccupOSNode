@@ -49,8 +49,11 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
             this.HostName = default(string);
             this.Port = default(ushort);
 
-            this.socket.Close();
-            this.socket = null;
+            if (this.socket != null) 
+            {
+                this.socket.Close();
+                this.socket = null;
+            }
         }
 
         public override void SendData(string data)
@@ -59,9 +62,16 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
             {
                 throw new NullReferenceException();
             }
-
-            byte[] buffer = Encoding.UTF8.GetBytes(data);
-            this.socket.Send(buffer);
+            try 
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes(data);
+                this.socket.Send(buffer);
+            } 
+            catch (ObjectDisposedException e)
+            {
+                this.socket = null;
+                throw new NullReferenceException();
+            }
         }
     }
 }

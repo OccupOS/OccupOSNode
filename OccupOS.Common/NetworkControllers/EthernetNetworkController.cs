@@ -11,5 +11,8 @@ namespace OccupOS.CommonLibrary.NetworkControllers
 {
     public abstract class EthernetNetworkController : NetworkController
     {
+        public EthernetNetworkController() : base(null, 0) { }
+
+        public EthernetNetworkController(string HostName, ushort Port) : base(HostName, Port) { }
     }
 }

@@ -78,6 +78,7 @@ namespace OccupOS.CommonLibrary
                     {
                         jsonstring = jsonstring + "\"" + dataobj.Sensorobj.ID + "\":{";
                         jsonstring = jsonstring + SerializeDataComponent(dataobj) + "}";
+                        //needs commas
                     }
                 }
 

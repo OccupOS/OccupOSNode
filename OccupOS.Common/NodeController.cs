@@ -9,20 +9,33 @@
 
 namespace OccupOS.CommonLibrary.NodeControllers
 {
+    using System;
+    using System.Net.Sockets;
     using System.Threading;
-
     using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOS.CommonLibrary.NetworkControllers;
+    using OccupOS.CommonLibrary.Sensors;
 
     public abstract class NodeController
     {
+        private static int DEFAULT_SEND_DELAY = 5000;
+        private static int MAX_CONNECTION_ATTEMPTS = 20;
+
+        protected int ID { get; set; }
         private Thread ds_thread = null;
         private DynamicSensorController dyn_controller = null;
         private HardwareController hardware_controller = null;
         private NetworkController network_controller = null;
+        Thread buffer_thread = null;
+        Thread upload_thread = null;
+        private bool sending_active = false;
+        private int send_delay;
+        private int buffer_delay;
+        private int buffer_max_size;
 
-        public NodeController(HardwareController hardwareController, NetworkController networkController)
+        public NodeController(int ID, HardwareController hardwareController, NetworkController networkController)
         {
+            this.ID = ID;
             this.hardware_controller = hardwareController;
             this.network_controller = networkController;
         }
@@ -44,7 +57,7 @@ namespace OccupOS.CommonLibrary.NodeControllers
 
             if (this.ds_thread == null)
             {
-                this.ds_thread = new Thread(this.dyn_controller.Run);
+                this.ds_thread = new Thread(new ThreadStart(this.dyn_controller.Run));
                 this.ds_thread.Priority = priority;
                 this.ds_thread.Start();
             }
@@ -52,10 +65,98 @@ namespace OccupOS.CommonLibrary.NodeControllers
             this.dyn_controller.Enable();
         }
 
-        public void Run()
+        public void Start(int sendDelay, int bufferDelay = -1, int bufferMax = 40)
         {
-            // todo: CreateSensorPoller, poll buffer, timestamp poll, serialize and send via networkController
-            // HardwareController monitors Sensor Arrays, may need to make Arrays threadsafe
+            if (sending_active) throw new InvalidOperationException("NodeController already active");
+            this.buffer_max_size = bufferMax;
+            if (sendDelay > 0)
+                this.send_delay = sendDelay;
+            else
+                send_delay = DEFAULT_SEND_DELAY;
+            if (bufferDelay < 1)
+                buffer_delay = sendDelay;
+            else
+                buffer_delay = bufferDelay;
+
+            try {
+                sending_active = true;
+                buffer_thread = new Thread(new SensorPoller(hardware_controller, buffer_delay, buffer_max_size).Run);
+                buffer_thread.Start();
+                ConnectToTarget();
+                upload_thread = new Thread(new ThreadStart(this.Run));
+                upload_thread.Start();
+            } catch (Exception e) {
+                sending_active = false;
+                if (buffer_thread != null) buffer_thread.Abort();
+                if (upload_thread != null) upload_thread.Abort();
+                throw e;
+            }
+        }
+
+        private void Run() {
+            SensorData[] readings = null;
+            try {
+                while (true) {
+                    if (hardware_controller.GetSensorDataBufferCount() > 0) {
+                        readings = hardware_controller.PollSensorReadings(0);
+                        if (readings != null) {
+                            foreach (SensorData data in readings) {
+                                data.PollTime = System.DateTime.Now;
+                            }
+                            string jsondata = PacketFactory.SerializeJSON(ID, readings);
+                            AttemptUpload(jsondata);
+                        }
+                    } else System.Threading.Thread.Sleep(send_delay);
+                }
+            } catch (Exception e) {
+                sending_active = false;
+                if (buffer_thread != null) buffer_thread.Abort();
+                if (upload_thread != null) upload_thread.Abort();
+                throw e;
+            }
+        }
+
+        private void ConnectToTarget() {
+            bool connected = false;
+            for (int k = 0; k < MAX_CONNECTION_ATTEMPTS; k++) {
+                connected = AttemptConnection();
+                if (connected) break;
+            }
+            if (!connected) throw new SocketException(SocketError.HostUnreachable);
+        }
+
+        private bool AttemptConnection() {
+            try {
+                if (network_controller is WirelessNetworkController) {
+                    ((WirelessNetworkController)network_controller).ConnectToWiFi();
+                }
+                network_controller.ConnectToSocket();
+                return true;
+            } catch (Exception e) {
+                if (e is SocketException || e is ArgumentNullException) return false;
+            }
+            return false;
+        }
+
+        private void UploadToTarget(string data) {
+            bool success = false;
+            for (int k = 0; k < MAX_CONNECTION_ATTEMPTS; k++) {
+                success = AttemptUpload(data);
+                if (success) break;
+            }
+            if (!success) throw new SocketException(SocketError.HostUnreachable);
+        }
+
+        private bool AttemptUpload(string data) {
+            try {
+                network_controller.SendData(data);
+                return true;
+            } catch (Exception e) {
+                if (e is SocketException || e is ArgumentNullException) {
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }
