@@ -5,14 +5,12 @@
 //   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
-// <summary>
-//   This is NOT supposed to reside in the OccupOSNode.Micro.Gadgeteer project. 
-//   It is a temporary hack until Gadgeteer supports the .NET MF 4.3 Framework.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace GadgeteerDemo
 {
+    using OccupOS.CommonLibrary.Sensors;
+
     public class PacketFactory
     {
         public static string CreatePacket(SensorData sensorData)

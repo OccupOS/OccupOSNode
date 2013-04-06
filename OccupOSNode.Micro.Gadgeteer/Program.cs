@@ -18,13 +18,13 @@ namespace GadgeteerDemo
 
     using Microsoft.SPOT;
 
-    using OccupOSNode.Micro.Gadgeteer;
+    using OccupOS.CommonLibrary.Sensors;
 
     public partial class Program
     {
         private readonly GT.Timer timer = new GT.Timer(2000);
 
-        private NetworkController networkController;
+        private GadgeteerWiFiNetworkController networkController;
 
         // This method is run when the mainboard is powered up or reset. 
         private void ProgramStarted()
@@ -32,45 +32,9 @@ namespace GadgeteerDemo
             DateTime time = new DateTime(2013, 3, 26, 13, 08, 00, 0);
             Microsoft.SPOT.Hardware.Utility.SetLocalTime(time);
 
-            this.wifi_RS21.DebugPrintEnabled = true;
-
-            this.wifi_RS21.Interface.Open();
-
-            NetworkInterfaceExtension.AssignNetworkingStackTo(this.wifi_RS21.Interface);
-
-            this.wifi_RS21.Interface.NetworkInterface.EnableDhcp();
-            this.wifi_RS21.Interface.NetworkInterface.EnableDynamicDns();
-
-            // wifi_RS21.Interface.NetworkInterface.EnableStaticIP("192.168.1.202", "255.255.255.0", "192.168.12.1");
-            Debug.Print("Scanning for WiFi networks");
-            WiFiNetworkInfo[] wiFiNetworkInfo = this.wifi_RS21.Interface.Scan();
-            if (wiFiNetworkInfo != null)
-            {
-                Debug.Print("Found WiFi network(s)");
-                for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
-                {
-                    if (wiFiNetworkInfo[i].SSID == "testhoc")
-                    {
-                        Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
-                        this.wifi_RS21.Interface.Join(wiFiNetworkInfo[i], "1234567890");
-                    }
-                    else
-                    {
-                        Debug.Print("Skipping: " + wiFiNetworkInfo[i].SSID);
-                    }
-                }
-
-                Debug.Print(this.wifi_RS21.Interface.IsLinkConnected ? "Connection successful!" : "Connection failed!");
-            }
-            else
-            {
-                Debug.Print("Didn't find any WiFi networks");
-            }
-
-            this.networkController = new NetworkController("192.168.1.52", 1333);
-            this.networkController.Connect();
-
-            Debug.Print("Connected to socket!");
+            this.networkController = new GadgeteerWiFiNetworkController(wifi_RS21);
+            this.networkController.ConnectToWiFi("testhoc", "1234567890");
+            this.networkController.ConnectToSocket("192.168.1.52", 1333);
 
             this.timer.Tick += this.timer_Tick;
             this.timer.Start();
@@ -80,7 +44,7 @@ namespace GadgeteerDemo
 
         private void timer_Tick(GT.Timer timer)
         {
-            SensorData sensorData = new SensorData();
+            var sensorData = new SensorData();
             sensorData.AnalogLight = (int)this.lightSensor.ReadLightSensorPercentage();
             Debug.Print("Sending data: AnalogLight - " + sensorData.AnalogLight);
 

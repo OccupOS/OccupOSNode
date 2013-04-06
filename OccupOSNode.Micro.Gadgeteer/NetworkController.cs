@@ -5,49 +5,89 @@
 //   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
-// <summary>
-//   This is NOT supposed to reside in the OccupOSNode.Micro.Gadgeteer project. 
-//   It is a temporary hack until Gadgeteer supports the .NET MF 4.3 Framework.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace GadgeteerDemo
 {
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
 
-    public class NetworkController
+    using Gadgeteer.Modules.GHIElectronics;
+
+    using GHI.Premium.Net;
+
+    using Microsoft.SPOT;
+
+    using OccupOS.CommonLibrary.NetworkControllers;
+
+    public class GadgeteerWiFiNetworkController : WirelessNetworkController
     {
-        private readonly IPAddress hostAddress;
-        private readonly IPEndPoint remoteEndPoint;
-        private string address;
-        private IPHostEntry hostEntry;
         private Socket socket;
+        private WiFi_RS21 wiFiSensor;
 
-        public NetworkController(string hostName, int port)
+        public GadgeteerWiFiNetworkController(WiFi_RS21 wiFiSensor)
         {
-            this.address = hostName;
-
-            // hostEntry = Dns.GetHostEntry(hostName);
-            // hostAddress = hostEntry.AddressList[0];
-            this.hostAddress = IPAddress.Parse(hostName);
-            this.remoteEndPoint = new IPEndPoint(this.hostAddress, port);
+            this.wiFiSensor = wiFiSensor;
         }
 
-        public Socket Connect()
+        public override void ConnectToSocket(string hostName, ushort port)
         {
+            IPAddress hostAddress = IPAddress.Parse(hostName);
+            IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
+
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.socket.Connect(this.remoteEndPoint);
+            this.socket.Connect(remoteEndPoint);
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             this.socket.SendTimeout = 5000;
-            return this.socket;
+            Debug.Print("Connected to socket!");
         }
 
-        public int SendData(string data)
+        public override void ConnectToWiFi(string SSID, string password)
+        {
+            this.wiFiSensor.DebugPrintEnabled = true;
+
+            this.wiFiSensor.Interface.Open();
+
+            NetworkInterfaceExtension.AssignNetworkingStackTo(this.wiFiSensor.Interface);
+
+            this.wiFiSensor.Interface.NetworkInterface.EnableDhcp();
+            this.wiFiSensor.Interface.NetworkInterface.EnableDynamicDns();
+
+            Debug.Print("Scanning for WiFi networks");
+            WiFiNetworkInfo[] wiFiNetworkInfo = this.wiFiSensor.Interface.Scan();
+            if (wiFiNetworkInfo != null)
+            {
+                Debug.Print("Found WiFi network(s)");
+                for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
+                {
+                    if (wiFiNetworkInfo[i].SSID == SSID)
+                    {
+                        Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
+                        this.wiFiSensor.Interface.Join(wiFiNetworkInfo[i], password);
+                    }
+                    else
+                    {
+                        Debug.Print("Skipping: " + wiFiNetworkInfo[i].SSID);
+                    }
+                }
+
+                Debug.Print(this.wiFiSensor.Interface.IsLinkConnected ? "Connection successful!" : "Connection failed!");
+            }
+            else
+            {
+                Debug.Print("Didn't find any WiFi networks");
+            }
+        }
+
+        public override void DisconnectFromSocket()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void SendData(string data)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(data);
-            return this.socket.Send(buffer);
+            this.socket.Send(buffer);
         }
     }
 }
