@@ -73,7 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\OccupOS.Common\OccupOSNode.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\OccupOSNode.Common\OccupOSNode.Common.csproj">
       <Project>{0D871D10-3625-4C8E-8EAD-631C27A60EC6}</Project>
       <Name>OccupOSNode.Common</Name>
     </ProjectReference>

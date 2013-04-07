@@ -56,9 +56,6 @@
     <Compile Include="Sensors\SensorData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mscorlib">
-      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.2\mscorlib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
 </Project>

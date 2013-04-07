@@ -60,7 +60,7 @@
       <Project>{69006995-277a-44fb-b8d6-2f964ca95862}</Project>
       <Name>TestServerProject</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\OccupOS.Common\OccupOSNode.Common.csproj">
+    <ProjectReference Include="..\..\Common\OccupOSNode.Common\OccupOSNode.Common.csproj">
       <Project>{0d871d10-3625-4c8e-8ead-631c27a60ec6}</Project>
       <Name>OccupOSNode.Common</Name>
     </ProjectReference>
