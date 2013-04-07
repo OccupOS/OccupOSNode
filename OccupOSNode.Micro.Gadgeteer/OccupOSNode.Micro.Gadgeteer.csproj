@@ -60,7 +60,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SensorData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Gadgeteer">
@@ -118,5 +117,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OccupOS.Common\OccupOS.Common.csproj">
+      <Project>{0D871D10-3625-4C8E-8EAD-631C27A60EC6}</Project>
+      <Name>OccupOS.Common</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

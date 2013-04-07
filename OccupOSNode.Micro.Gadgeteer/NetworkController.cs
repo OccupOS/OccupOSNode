@@ -1,111 +1,93 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NetworkController.cs" company="OccupOS">
-//   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-//   
-//   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//   
-//   You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
-// <summary>
-//   The network controller.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace GadgeteerDemo
 {
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
 
-    /// <summary>
-    /// The network controller.
-    /// </summary>
-    public class NetworkController
+    using Gadgeteer.Modules.GHIElectronics;
+
+    using GHI.Premium.Net;
+
+    using Microsoft.SPOT;
+
+    using OccupOS.CommonLibrary.NetworkControllers;
+
+    public class GadgeteerWiFiNetworkController : WirelessNetworkController
     {
-        #region Fields
-
-        /// <summary>
-        /// The host address.
-        /// </summary>
-        private readonly IPAddress hostAddress;
-
-        /// <summary>
-        /// The remote end point.
-        /// </summary>
-        private readonly IPEndPoint remoteEndPoint;
-
-        /// <summary>
-        /// The address.
-        /// </summary>
-        private string address;
-
-        /// <summary>
-        /// The host entry.
-        /// </summary>
-        private IPHostEntry hostEntry;
-
-        /// <summary>
-        /// The socket.
-        /// </summary>
         private Socket socket;
+        private WiFi_RS21 wiFiSensor;
 
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="NetworkController"/> class.
-        /// </summary>
-        /// <param name="hostName">
-        /// The host name.
-        /// </param>
-        /// <param name="port">
-        /// The port.
-        /// </param>
-        public NetworkController(string hostName, int port)
+        public GadgeteerWiFiNetworkController(WiFi_RS21 wiFiSensor)
         {
-            this.address = hostName;
-
-            // hostEntry = Dns.GetHostEntry(hostName);
-            // hostAddress = hostEntry.AddressList[0];
-            this.hostAddress = IPAddress.Parse(hostName);
-            this.remoteEndPoint = new IPEndPoint(this.hostAddress, port);
+            this.wiFiSensor = wiFiSensor;
         }
 
-        #endregion
-
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The connect.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Socket"/>.
-        /// </returns>
-        public Socket Connect()
+        public override void ConnectToSocket(string hostName, ushort port)
         {
+            IPAddress hostAddress = IPAddress.Parse(hostName);
+            IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
+
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.socket.Connect(this.remoteEndPoint);
+            this.socket.Connect(remoteEndPoint);
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             this.socket.SendTimeout = 5000;
-            return this.socket;
+            Debug.Print("Connected to socket!");
         }
 
-        /// <summary>
-        /// The send data.
-        /// </summary>
-        /// <param name="data">
-        /// The data.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int SendData(string data)
+        public override void ConnectToWiFi(string SSID, string password)
+        {
+            this.wiFiSensor.DebugPrintEnabled = true;
+
+            this.wiFiSensor.Interface.Open();
+
+            NetworkInterfaceExtension.AssignNetworkingStackTo(this.wiFiSensor.Interface);
+
+            this.wiFiSensor.Interface.NetworkInterface.EnableDhcp();
+            this.wiFiSensor.Interface.NetworkInterface.EnableDynamicDns();
+
+            Debug.Print("Scanning for WiFi networks");
+            WiFiNetworkInfo[] wiFiNetworkInfo = this.wiFiSensor.Interface.Scan();
+            if (wiFiNetworkInfo != null)
+            {
+                Debug.Print("Found WiFi network(s)");
+                for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
+                {
+                    if (wiFiNetworkInfo[i].SSID == SSID)
+                    {
+                        Debug.Print("Joining: " + wiFiNetworkInfo[i].SSID);
+                        this.wiFiSensor.Interface.Join(wiFiNetworkInfo[i], password);
+                    }
+                    else
+                    {
+                        Debug.Print("Skipping: " + wiFiNetworkInfo[i].SSID);
+                    }
+                }
+
+                Debug.Print(this.wiFiSensor.Interface.IsLinkConnected ? "Connection successful!" : "Connection failed!");
+            }
+            else
+            {
+                Debug.Print("Didn't find any WiFi networks");
+            }
+        }
+
+        public override void DisconnectFromSocket()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void SendData(string data)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(data);
-            return this.socket.Send(buffer);
+            this.socket.Send(buffer);
         }
-
-        #endregion
     }
 }
