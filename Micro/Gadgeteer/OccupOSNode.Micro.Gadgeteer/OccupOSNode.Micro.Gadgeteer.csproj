@@ -63,26 +63,23 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Gadgeteer">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.dll</HintPath>
+      <HintPath>..\..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.dll</HintPath>
     </Reference>
     <Reference Include="GHI.Premium.Net">
-      <HintPath>..\..\..\..\lib\GHI Premium NETMF v4.2 SDK\GHI.Premium.Net.dll</HintPath>
+      <HintPath>..\..\..\lib\GHI Premium NETMF v4.2 SDK\GHI.Premium.Net.dll</HintPath>
     </Reference>
     <Reference Include="GHIElectronics.Gadgeteer.FEZSpider">
-      <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Mainboards\FEZSpider\NETMF 4.2\GHIElectronics.Gadgeteer.FEZSpider.dll</HintPath>
+      <HintPath>..\..\..\lib\GHI .NET Gadgeteer SDK\Mainboards\FEZSpider\NETMF 4.2\GHIElectronics.Gadgeteer.FEZSpider.dll</HintPath>
     </Reference>
     <Reference Include="GTM.GHIElectronics.LightSensor">
-      <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\LightSensor\NETMF 4.2\GTM.GHIElectronics.LightSensor.dll</HintPath>
+      <HintPath>..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\LightSensor\NETMF 4.2\GTM.GHIElectronics.LightSensor.dll</HintPath>
     </Reference>
     <Reference Include="GTM.GHIElectronics.WiFi_RS21">
-      <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\WiFi_RS21\NETMF 4.2\GTM.GHIElectronics.WiFi_RS21.dll</HintPath>
+      <HintPath>..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\WiFi_RS21\NETMF 4.2\GTM.GHIElectronics.WiFi_RS21.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SPOT.Graphics" />
     <Reference Include="Microsoft.SPOT.Native" />
     <Reference Include="Microsoft.SPOT.Net" />
-    <Reference Include="mscorlib">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\mscorlib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
