@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>OccupOSNode.Micro.Netduino</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OccupOSNode.Micro.Netduino</RootNamespace>
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{182011EF-A555-4CA7-81A0-3A9E81FC38B9}</ProjectGuid>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <DeployDevice>Netduino</DeployDevice>
+    <DeployTransport>USB</DeployTransport>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>OccupOSNode.Micro.Program</StartupObject>
+  </PropertyGroup>
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="HardwareControllers\Netduino\NetduinoHardwareController.cs" />
+    <Compile Include="NetworkControllers\Netduino\NetduinoEthernetController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NetworkControllers\Netduino\NetduinoWirelessNetworkController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NetduinoNodeController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Sensors\Netduino\NetduinoAmbientLightSensor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sensors\Netduino\NetduinoMLX90620Driver.cs" />
+    <Compile Include="Sensors\Netduino\NetduinoMLX90620Sensor.cs" />
+    <Compile Include="Sensors\Netduino\NetduinoWeatherShieldDriver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sensors\Netduino\NetduinoWeatherShieldSensor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.SPOT.Hardware">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Hardware.PWM">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.PWM.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Hardware.SerialPort">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.SerialPort.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Native">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Net">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="SecretLabs.NETMF.Hardware">
+      <HintPath>..\..\..\..\lib\Netduino SDK\v4.2\SecretLabs.NETMF.Hardware.dll</HintPath>
+    </Reference>
+    <Reference Include="SecretLabs.NETMF.Hardware.NetduinoPlus">
+      <HintPath>..\..\..\..\lib\Netduino SDK\v4.2\SecretLabs.NETMF.Hardware.NetduinoPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO">
+      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Toolbox.NETMF.Core">
+      <HintPath>..\..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX">
+      <HintPath>..\..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
+    </Reference>
+    <Reference Include="Toolbox.NETMF.NET.Core">
+      <HintPath>..\..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.NET.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\OccupOS.Common\OccupOSNode.Common.csproj">
+      <Project>{0D871D10-3625-4C8E-8EAD-631C27A60EC6}</Project>
+      <Name>OccupOSNode.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

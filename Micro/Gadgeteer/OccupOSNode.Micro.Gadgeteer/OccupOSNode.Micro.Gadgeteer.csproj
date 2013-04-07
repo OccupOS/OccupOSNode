@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <!--VS2010 product version-->
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{48832307-790C-4A2D-8A6D-4815E87BAA82}</ProjectGuid>
+    <!--This is an executable-->
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OccupOSNode.Micro.Gadgeteer</RootNamespace>
+    <AssemblyName>OccupOSNode.Micro.Gadgeteer</AssemblyName>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!--Identify this as a MicroFramework, CSharp project-->
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <!--This entry seems to be specific to NET MF projects-->
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <!-- Default transport and device-->
+    <DeployDevice>Gadgeteer</DeployDevice>
+    <DeployTransport>USB</DeployTransport>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE,MF_FRAMEWORK_VERSION_V4_2</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <!-- Everything below here is custom to .NET MF / Gadgeteer template-->
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="NetworkController.cs" />
+    <Compile Include="PacketFactory.cs" />
+    <Compile Include="Program.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Program.gadgeteer</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Gadgeteer">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.dll</HintPath>
+	</Reference>
+    <Reference Include="Gadgeteer.WebClient">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.WebClient.dll</HintPath>
+	</Reference>
+    <Reference Include="Gadgeteer.WebServer">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.WebServer.dll</HintPath>
+	</Reference>
+    <Reference Include="GHI.Premium.Net">
+	  <HintPath>..\..\..\..\lib\GHI Premium NETMF v4.2 SDK\GHI.Premium.Net.dll</HintPath>
+	</Reference>
+    <Reference Include="GHIElectronics.Gadgeteer.FEZSpider">
+	  <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Mainboards\FEZSpider\NETMF 4.2\GHIElectronics.Gadgeteer.FEZSpider.dll</HintPath>
+	</Reference>
+    <Reference Include="GTM.GHIElectronics.LightSensor">
+	  <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\LightSensor\NETMF 4.2\GTM.GHIElectronics.LightSensor.dll</HintPath>
+	</Reference>
+    <Reference Include="GTM.GHIElectronics.WiFi_RS21">
+	  <HintPath>..\..\..\..\lib\GHI .NET Gadgeteer SDK\Modules\WiFi_RS21\NETMF 4.2\GTM.GHIElectronics.WiFi_RS21.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Graphics">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Graphics.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Hardware">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Hardware.SerialPort">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.SerialPort.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.IO">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.IO.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Native">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Native.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Net">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Net.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Net.Security">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Net.Security.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.TinyCore">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.TinyCore.dll</HintPath>
+	</Reference>
+    <Reference Include="Microsoft.SPOT.Touch">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Touch.dll</HintPath>
+	</Reference>
+    <Reference Include="mscorlib">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\mscorlib.dll</HintPath>
+	</Reference>
+    <Reference Include="System">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.dll</HintPath>
+	</Reference>
+    <Reference Include="System.Http">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.Http.dll</HintPath>
+	</Reference>
+    <Reference Include="System.IO">
+	  <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.IO.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Program.gadgeteer">
+      <Generator>GadgeteerFileCodeGenerator</Generator>
+      <LastGenOutput>Program.generated.cs</LastGenOutput>
+    </None>
+    <None Include="Program.gadgeteer.diagram">
+      <DependentUpon>Program.gadgeteer</DependentUpon>
+    </None>
+    <None Include="Resources\NinaB.tinyfnt" />
+    <None Include="Resources\small.tinyfnt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\OccupOS.Common\OccupOSNode.Common.csproj">
+      <Project>{0D871D10-3625-4C8E-8EAD-631C27A60EC6}</Project>
+      <Name>OccupOSNode.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
