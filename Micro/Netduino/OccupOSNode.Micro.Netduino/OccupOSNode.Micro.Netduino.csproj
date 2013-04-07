@@ -59,36 +59,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SPOT.Hardware">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SPOT.Hardware.PWM">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.PWM.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SPOT.Hardware.SerialPort">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Hardware.SerialPort.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SPOT.Native">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Native.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SPOT.Net">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="SecretLabs.NETMF.Hardware">
-      <HintPath>..\..\..\..\lib\Netduino SDK\v4.2\SecretLabs.NETMF.Hardware.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.SPOT.Hardware" />
+    <Reference Include="Microsoft.SPOT.Native" />
     <Reference Include="SecretLabs.NETMF.Hardware.NetduinoPlus">
       <HintPath>..\..\..\..\lib\Netduino SDK\v4.2\SecretLabs.NETMF.Hardware.NetduinoPlus.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO">
-      <HintPath>..\..\..\..\lib\Microsoft .NET Micro Framework\v4.2\System.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="Toolbox.NETMF.Core">
-      <HintPath>..\..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX">
       <HintPath>..\..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
     </Reference>

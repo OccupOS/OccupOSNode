@@ -56,17 +56,9 @@
     <Compile Include="Sensors\SensorData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Gadgeteer">
-      <HintPath>..\..\lib\Microsoft .NET Gadgeteer\.NET Micro Framework 4.2\Gadgeteer.dll</HintPath>
+    <Reference Include="mscorlib">
+      <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.2\mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SPOT.Native">
-	  <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.2\Microsoft.SPOT.Native.dll</HintPath>
-    </Reference>
-	<Reference Include="mscorlib">
-	  <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.2\mscorlib.dll</HintPath>
-    </Reference>
-	<Reference Include="System">
-	  <HintPath>..\..\lib\Microsoft .NET Micro Framework\v4.2\System.dll</HintPath>
-	</Reference>
+    <Reference Include="System" />
   </ItemGroup>
 </Project>

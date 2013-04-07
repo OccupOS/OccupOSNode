@@ -16,7 +16,6 @@ namespace OccupOS.CommonLibrary.NodeControllers
     using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOS.CommonLibrary.NetworkControllers;
     using OccupOS.CommonLibrary.Sensors;
-    using Microsoft.SPOT;
 
     public abstract class NodeController
     {
