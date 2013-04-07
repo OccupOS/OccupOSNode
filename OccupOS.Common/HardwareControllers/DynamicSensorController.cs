@@ -15,18 +15,19 @@ namespace OccupOS.CommonLibrary.HardwareControllers
     using System.Collections;
     using System.Reflection;
     using System.Threading;
-
     using OccupOS.CommonLibrary.Sensors;
 
     public class DynamicSensorController
     {
         private ManualResetEvent event_waiter = new ManualResetEvent(false);
         private HardwareController hw_controller = null;
+        private Assembly assembly;
 
-        public DynamicSensorController(HardwareController hardwareController)
+        public DynamicSensorController(HardwareController hardwareController, Assembly assembly)
         {
             this.Enabled = false;
             this.hw_controller = hardwareController;
+            this.assembly = assembly;
         }
 
         public bool Enabled { get; private set; }
@@ -54,6 +55,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
                 {
                     this.UpdateDynamicSensors();
                 }
+                System.Threading.Thread.Sleep(500);
             }
         }
 
@@ -128,7 +130,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         private void UpdateDynamicSensors()
         {
-            foreach (var type in Assembly.GetAssembly(this.GetType()).GetTypes())
+            foreach (var type in assembly.GetTypes())
             {
                 if (type.IsClass)
                 {

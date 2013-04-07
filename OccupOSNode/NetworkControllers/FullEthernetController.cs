@@ -22,6 +22,10 @@ namespace OccupOSNode.NetworkControllers
     {
         private Socket socket;
 
+        public FullEthernetNetworkController() : base(null, 0) { }
+
+        public FullEthernetNetworkController(string Hostname, ushort Port) : base(Hostname, Port) { }
+
         public override void ConnectToSocket(string hostName, ushort port)
         {
             this.HostName = hostName;

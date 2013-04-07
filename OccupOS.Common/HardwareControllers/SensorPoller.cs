@@ -11,7 +11,6 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 {
     using System;
     using System.Collections;
-
     using OccupOS.CommonLibrary.Sensors;
 
     public class SensorPoller
@@ -40,8 +39,9 @@ namespace OccupOS.CommonLibrary.HardwareControllers
                 {
                     this.hw_controller.RemoveSensorReadings(0);
                 }
-
-                this.hw_controller.AddSensorReadings(this.SampleSensorData());
+                SensorData[] readings = SampleSensorData();
+                if (readings != null)
+                    this.hw_controller.AddSensorReadings(readings);
                 System.Threading.Thread.Sleep(this.delay_time);
             }
         }
@@ -49,12 +49,13 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         private SensorData[] SampleSensorData()
         {
             ArrayList sample = this.hw_controller.GetAllSensors();
-            SensorData[] result = new SensorData[sample.Count];
-            for (int k = 0; k < sample.Count; k++)
-            {
-                result[k] = ((Sensor)sample[k]).GetData();
+            SensorData[] result = null;
+            if (sample != null) {
+                result = new SensorData[sample.Count];
+                for (int k = 0; k < sample.Count; k++) {
+                    result[k] = ((Sensor)sample[k]).GetData();
+                }
             }
-
             return result;
         }
     }

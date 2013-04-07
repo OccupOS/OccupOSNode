@@ -20,6 +20,10 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
     {
         private Socket socket;
 
+        public NetduinoEthernetController() : base(null, 0) { }
+
+        public NetduinoEthernetController(string Hostname, ushort Port) : base(Hostname, Port) { }
+
         public override void ConnectToSocket(string hostName, ushort port)
         {
             this.HostName = hostName;

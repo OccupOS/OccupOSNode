@@ -12,14 +12,16 @@ namespace OccupOS.CommonLibrary.NodeControllers
     using System;
     using System.Net.Sockets;
     using System.Threading;
+    using System.Reflection;
     using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOS.CommonLibrary.NetworkControllers;
     using OccupOS.CommonLibrary.Sensors;
+    using Microsoft.SPOT;
 
     public abstract class NodeController
     {
         private static int DEFAULT_SEND_DELAY = 5000;
-        private static int MAX_CONNECTION_ATTEMPTS = 20;
+        private static int MAX_CONNECTION_ATTEMPTS = 50;
 
         protected int ID { get; set; }
         private Thread ds_thread = null;
@@ -52,7 +54,7 @@ namespace OccupOS.CommonLibrary.NodeControllers
         {
             if (this.dyn_controller == null)
             {
-                this.dyn_controller = new DynamicSensorController(this.hardware_controller);
+                this.dyn_controller = new DynamicSensorController(this.hardware_controller, Assembly.GetAssembly(this.GetType()));
             }
 
             if (this.ds_thread == null)
@@ -104,9 +106,11 @@ namespace OccupOS.CommonLibrary.NodeControllers
                                 data.PollTime = System.DateTime.Now;
                             }
                             string jsondata = PacketFactory.SerializeJSON(ID, readings);
-                            AttemptUpload(jsondata);
+                            UploadToTarget(jsondata);
                         }
-                    } else System.Threading.Thread.Sleep(send_delay);
+                    } 
+                    else
+                        System.Threading.Thread.Sleep(send_delay);
                 }
             } catch (Exception e) {
                 sending_active = false;
@@ -133,7 +137,9 @@ namespace OccupOS.CommonLibrary.NodeControllers
                 network_controller.ConnectToSocket();
                 return true;
             } catch (Exception e) {
-                if (e is SocketException || e is ArgumentNullException) return false;
+                if (e is SocketException || e is ArgumentNullException) {
+                    return false;
+                }
             }
             return false;
         }

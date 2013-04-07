@@ -15,48 +15,24 @@ namespace OccupOSNode.Micro
 
     using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
-
+    using OccupOS.CommonLibrary.NodeControllers;
     using OccupOSNode.Micro.HardwareControllers.Netduino;
     using OccupOSNode.Micro.NetworkControllers.Netduino;
-
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
+    using System.Threading;
 
     public class Program
     {
-        private static readonly OutputPort outPrt = new OutputPort(Pins.ONBOARD_LED, false);
-
         public static void Main()
         {
-            var networkController = new NetduinoWirelessNetworkController();
-            networkController.ConnectToWiFi("RichyHotspot", "occupos8");
-            networkController.ConnectToSocket("UrsaMinor", 1333);
+            //var networkController = new NetduinoWirelessNetworkController("UrsaMinor", 1333, "RichyHotspot", "occupos8");
+            var networkController = new NetduinoEthernetController("192.168.0.3", 1333);
 
             var controller = new NetduinoNodeController(0, new NetduinoHardwareController(), networkController);
             controller.EnableDynamicListening();
-
-            var sensorData = new SensorData();
-            while (true)
-            {
-                int sensors = 0; /*controller.GetSensorCount();*/
-                if (sensors == 1)
-                {
-                    var data = new SensorData();
-                        
-                        /*((NetduinoWeatherShieldSensor)controller.GetSensor(0)).GetData();*/
-                    try
-                    {
-                        networkController.SendData(PacketFactory.CreatePacket(data));
-                    }
-                    catch (Exception e)
-                    {
-                        networkController.ConnectToWiFi("RichyHotspot", "occupos8");
-                    }
-
-                    // string jsontest = PacketFactory.SerializeJSON(0, new SensorData[] {data});
-                }
-
-                System.Threading.Thread.Sleep(1000);
-            }
+            //Thread.Sleep(10000);
+            //controller.DisableDynamicListening();
+            controller.Start(5000, 5000, 40);
         }
     }
 }
