@@ -29,12 +29,11 @@ namespace GadgeteerDemo
         // This method is run when the mainboard is powered up or reset. 
         private void ProgramStarted()
         {
-            DateTime time = new DateTime(2013, 3, 26, 13, 08, 00, 0);
-            Microsoft.SPOT.Hardware.Utility.SetLocalTime(time);
+            Microsoft.SPOT.Hardware.Utility.SetLocalTime(DateTime.Now);
 
             this.networkController = new GadgeteerWiFiNetworkController(wifi_RS21);
-            this.networkController.ConnectToWiFi("testhoc", "1234567890");
-            this.networkController.ConnectToSocket("192.168.1.52", 1333);
+            this.networkController.ConnectToWiFi("2WIRE487", "0046056798");
+            this.networkController.ConnectToSocket("192.168.1.65", 1333);
 
             this.timer.Tick += this.timer_Tick;
             this.timer.Start();

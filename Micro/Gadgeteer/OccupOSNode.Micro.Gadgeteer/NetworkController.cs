@@ -32,6 +32,8 @@ namespace GadgeteerDemo
 
         public override void ConnectToSocket(string hostName, ushort port)
         {
+            Debug.Print("Connecting to socket");
+
             IPAddress hostAddress = IPAddress.Parse(hostName);
             IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
 
@@ -39,6 +41,7 @@ namespace GadgeteerDemo
             this.socket.Connect(remoteEndPoint);
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             this.socket.SendTimeout = 5000;
+
             Debug.Print("Connected to socket!");
         }
 
@@ -58,7 +61,7 @@ namespace GadgeteerDemo
             if (wiFiNetworkInfo != null)
             {
                 Debug.Print("Found WiFi network(s)");
-                for (int i = 0; i < wiFiNetworkInfo.Length - 1; i++)
+                for (int i = 0; i < wiFiNetworkInfo.Length; i++)
                 {
                     if (wiFiNetworkInfo[i].SSID == SSID)
                     {
