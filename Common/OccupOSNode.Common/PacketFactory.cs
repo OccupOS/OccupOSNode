@@ -156,11 +156,19 @@ namespace OccupOS.CommonLibrary
                     break;
                 case "IEntityPositionSensor":
                     if (dataobj.EntityPositions != null) {
+                        int count = 0;
+                        bool prev_entry = false;
                         foreach (Position pos in dataobj.EntityPositions) {
-                            jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "\":{\"";
-                            jsonfragment = jsonfragment + XPOS_ID + "\":" + pos.X + ",\"";
-                            jsonfragment = jsonfragment + YPOS_ID + "\":" + pos.Y + ",\"";
-                            jsonfragment = jsonfragment + DEPTHPOS_ID + "\":" + pos.Depth + "}";
+                            if (pos.Depth != 0 || pos.X != 0 || pos.Depth != 0) {
+                                if (prev_entry == true)
+                                    jsonfragment = jsonfragment + ",";
+                                jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "." + count + "\":{\"";
+                                jsonfragment = jsonfragment + XPOS_ID + "\":" + pos.X + ",\"";
+                                jsonfragment = jsonfragment + YPOS_ID + "\":" + pos.Y + ",\"";
+                                jsonfragment = jsonfragment + DEPTHPOS_ID + "\":" + pos.Depth + "}";
+                                count++;
+                                prev_entry = true;
+                            }
                         }
                     }
                     break;
