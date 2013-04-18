@@ -20,6 +20,7 @@ namespace OccupOS.CommonLibrary.Sensors
 
     public class SensorData
     {
+        public Sensor SensorType;
         public float AnalogLight;
         public int EntityCount;
         public Position[] EntityPositions;
@@ -27,7 +28,6 @@ namespace OccupOS.CommonLibrary.Sensors
         public DateTime PollTime;
         public float Pressure;
         public DateTime ReadTime;
-        public Sensor Sensorobj;
         public float Temperature;
         public float PowerWatt;
         public float SoundDb;

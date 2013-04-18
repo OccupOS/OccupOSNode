@@ -9,15 +9,12 @@
 namespace OccupOS.CommonLibrary
 {
     using System;
-
     using OccupOS.CommonLibrary.Sensors;
 
     public class PacketFactory
     {
         // JSON Identifiers:
         private const int AIRQUALITY_ID = 6;
-
-        private const int DEPTHPOS_ID = 14; //confirm with schema
 
         private const int ENTITYCOUNT_ID = 0;
 
@@ -45,11 +42,13 @@ namespace OccupOS.CommonLibrary
 
         private const int WINDSPEED_ID = 10;
 
-        private const int XPOS_ID = 12; // comfirm with schema
+        private const string XPOS_ID = "X";
 
-        private const int YPOS_ID = 13; // confirm with schema
+        private const string YPOS_ID = "Y";
 
-        public static string CreatePacket(SensorData sensorData)
+        private const string DEPTHPOS_ID = "Depth";
+
+        public static string CreateCSVPacket(SensorData sensorData)
         {
             string packet = string.Empty;
             packet = packet.AddSeperatedValue(System.DateTime.Now.ToString(), ",");
@@ -78,33 +77,39 @@ namespace OccupOS.CommonLibrary
                             objnum++;
                         }
                     }
-                    jsonstring = jsonstring + "\"" + sensorData[objnum].Sensorobj.ID + "\":{";
-                    jsonstring = jsonstring + SerializeDataComponent(sensorData[objnum]) + "}";
-                    for (int k = objnum; k < sensorData.Length; k++) {
-                        if (sensorData[k] != null) {
-                            jsonstring = jsonstring + ",\"" + sensorData[k].Sensorobj.ID + "\":{";
-                            jsonstring = jsonstring + SerializeDataComponent(sensorData[k]) + "}";
+                    if (dataobj != null) {
+                        jsonstring = jsonstring + "\"" + sensorData[objnum].SensorType.ID + "\":{";
+                        jsonstring = jsonstring + SerializeDataComponent(sensorData[objnum]) + "}";
+                        objnum++;
+                        if (objnum < sensorData.Length) {
+                            for (int k = objnum; k < sensorData.Length; k++) {
+                                jsonstring = jsonstring + ",\"" + sensorData[objnum].SensorType.ID + "\":{";
+                                jsonstring = jsonstring + SerializeDataComponent(sensorData[k]) + "}";
+                            }
                         }
                     }
                 }
-
                 jsonstring = jsonstring + "}";
             }
-
             return jsonstring + "}";
         }
 
         private static string SerializeDataComponent(SensorData dataobj)
         {
             string jsonfragment = string.Empty;
-            Type sensortype = dataobj.Sensorobj.GetType();
+            Type sensortype;
+            try {
+                sensortype = dataobj.SensorType.GetType();
+            } catch (NullReferenceException e) {
+                throw new ArgumentNullException("SensorData Sensor object not specified");
+            }
             if (sensortype.IsClass)
             {
                 int k = 0;
                 if (dataobj.ReadTime != DateTime.MinValue)
                 {
-                    jsonfragment = jsonfragment + "\"" + READTIME_ID + "\":"
-                                                + dataobj.ReadTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss");
+                    jsonfragment = jsonfragment + "\"" + READTIME_ID + "\":\""
+                                                + dataobj.ReadTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss") + "\"";
                 }
 
                 if (dataobj.PollTime != DateTime.MinValue)
@@ -115,8 +120,8 @@ namespace OccupOS.CommonLibrary
                     }
                 }
 
-                jsonfragment = jsonfragment + "\"" + POLLTIME_ID + "\":"
-                                            + dataobj.PollTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss");
+                jsonfragment = jsonfragment + "\"" + POLLTIME_ID + "\":\""
+                                            + dataobj.PollTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss") + "\"";
                 string[] artefacts = new string[sensortype.GetInterfaces().Length];
                 foreach (Type iface in sensortype.GetInterfaces())
                 {
@@ -147,16 +152,16 @@ namespace OccupOS.CommonLibrary
             switch (ifaceName)
             {
                 case "IEntityCountSensor":
-                    jsonfragment = jsonfragment + "\"" + ENTITYCOUNT_ID + "\":" + dataobj.EntityCount;
+                        jsonfragment = jsonfragment + "\"" + ENTITYCOUNT_ID + "\":" + dataobj.EntityCount;
                     break;
                 case "IEntityPositionSensor":
-                    foreach (Position pos in dataobj.EntityPositions)
-                    {
-                        jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "\":{\"";
-                        jsonfragment = jsonfragment + XPOS_ID + "\":" + dataobj.EntityPositions[0] + ",\"";
-                        jsonfragment = jsonfragment + YPOS_ID + "\":" + dataobj.EntityPositions[1] + ",\"";
-                        jsonfragment = jsonfragment + DEPTHPOS_ID + "\":" + dataobj.EntityPositions[2];
-                        jsonfragment = jsonfragment + "}";
+                    if (dataobj.EntityPositions != null) {
+                        foreach (Position pos in dataobj.EntityPositions) {
+                            jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "\":{\"";
+                            jsonfragment = jsonfragment + XPOS_ID + "\":" + pos.X + ",\"";
+                            jsonfragment = jsonfragment + YPOS_ID + "\":" + pos.Y + ",\"";
+                            jsonfragment = jsonfragment + DEPTHPOS_ID + "\":" + pos.Depth + "}";
+                        }
                     }
                     break;
                 case "IHumiditySensor":

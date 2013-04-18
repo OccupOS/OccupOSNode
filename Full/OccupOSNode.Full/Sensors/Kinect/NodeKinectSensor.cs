@@ -112,7 +112,7 @@ namespace OccupOSNode.Sensors.Kinect
         {
             var sensorData = new SensorData
                                  {
-                                     Sensorobj = this,
+                                     SensorType = this,
                                      ReadTime = DateTime.Now,
                                      EntityCount = this.GetEntityCount(), 
                                      EntityPositions = this.GetEntityPositions()

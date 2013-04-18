@@ -36,7 +36,7 @@ namespace OccupOSNode.Micro.Sensors.Netduino {
 
         public override SensorData GetData() {
             var sensorData = new SensorData {
-                Sensorobj = this,
+                SensorType = this,
                 ReadTime = DateTime.Now,
                 Humidity = GetHumidity(),
                 Pressure = GetPressure(),
