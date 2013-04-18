@@ -17,7 +17,7 @@ namespace OccupOS.CommonLibrary
         // JSON Identifiers:
         private const int AIRQUALITY_ID = 6;
 
-        private const int DEPTHPOS_ID = 99; // todo
+        private const int DEPTHPOS_ID = 14; //confirm with schema
 
         private const int ENTITYCOUNT_ID = 0;
 
@@ -45,9 +45,9 @@ namespace OccupOS.CommonLibrary
 
         private const int WINDSPEED_ID = 10;
 
-        private const int XPOS_ID = 99; // todo
+        private const int XPOS_ID = 12; // comfirm with schema
 
-        private const int YPOS_ID = 99; // todo
+        private const int YPOS_ID = 13; // confirm with schema
 
         public static string CreatePacket(SensorData sensorData)
         {
@@ -61,11 +61,6 @@ namespace OccupOS.CommonLibrary
             return packet;
         }
 
-        public static void JsonCollection()
-        {
-            // todo
-        }
-
         public static string SerializeJSON(int nodeID, SensorData[] sensorData)
         {
             string jsonstring = "{";
@@ -74,11 +69,22 @@ namespace OccupOS.CommonLibrary
                 jsonstring = jsonstring + "\"" + nodeID + "\":{";
                 if (sensorData != null)
                 {
-                    foreach (SensorData dataobj in sensorData)
-                    {
-                        jsonstring = jsonstring + "\"" + dataobj.Sensorobj.ID + "\":{";
-                        jsonstring = jsonstring + SerializeDataComponent(dataobj) + "}";
-                        //needs commas
+                    int objnum = 0;
+                    SensorData dataobj = sensorData[objnum];
+                    if (dataobj == null && sensorData.Length > 1) {
+                        objnum = 1;
+                        while (dataobj == null && objnum < sensorData.Length) {
+                            dataobj = sensorData[objnum];
+                            objnum++;
+                        }
+                    }
+                    jsonstring = jsonstring + "\"" + sensorData[objnum].Sensorobj.ID + "\":{";
+                    jsonstring = jsonstring + SerializeDataComponent(sensorData[objnum]) + "}";
+                    for (int k = objnum; k < sensorData.Length; k++) {
+                        if (sensorData[k] != null) {
+                            jsonstring = jsonstring + ",\"" + sensorData[k].Sensorobj.ID + "\":{";
+                            jsonstring = jsonstring + SerializeDataComponent(sensorData[k]) + "}";
+                        }
                     }
                 }
 
@@ -98,9 +104,7 @@ namespace OccupOS.CommonLibrary
                 if (dataobj.ReadTime != DateTime.MinValue)
                 {
                     jsonfragment = jsonfragment + "\"" + READTIME_ID + "\":"
-                                                + dataobj.ReadTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss'.'nn");
-
-                    // todo: test
+                                                + dataobj.ReadTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss");
                 }
 
                 if (dataobj.PollTime != DateTime.MinValue)
@@ -112,7 +116,7 @@ namespace OccupOS.CommonLibrary
                 }
 
                 jsonfragment = jsonfragment + "\"" + POLLTIME_ID + "\":"
-                                            + dataobj.PollTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss'.'nn");
+                                            + dataobj.PollTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss");
                 string[] artefacts = new string[sensortype.GetInterfaces().Length];
                 foreach (Type iface in sensortype.GetInterfaces())
                 {
@@ -148,11 +152,12 @@ namespace OccupOS.CommonLibrary
                 case "IEntityPositionSensor":
                     foreach (Position pos in dataobj.EntityPositions)
                     {
-                        jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "\":{"; // todo
+                        jsonfragment = jsonfragment + "\"" + ENTITYPOS_ID + "\":{\"";
+                        jsonfragment = jsonfragment + XPOS_ID + "\":" + dataobj.EntityPositions[0] + ",\"";
+                        jsonfragment = jsonfragment + YPOS_ID + "\":" + dataobj.EntityPositions[1] + ",\"";
+                        jsonfragment = jsonfragment + DEPTHPOS_ID + "\":" + dataobj.EntityPositions[2];
                         jsonfragment = jsonfragment + "}";
                     }
-
-                    JsonCollection();
                     break;
                 case "IHumiditySensor":
                     jsonfragment = jsonfragment + "\"" + HUMIDITY_ID + "\":" + dataobj.Humidity;
@@ -161,18 +166,22 @@ namespace OccupOS.CommonLibrary
                     jsonfragment = jsonfragment + "\"" + LIGHT_ID + "\":" + dataobj.AnalogLight;
                     break;
                 case "IPowerSensor":
+                    jsonfragment = jsonfragment + "\"" + POWER_ID + "\":" + dataobj.PowerWatt;
                     break;
                 case "IPressureSensor":
                     jsonfragment = jsonfragment + "\"" + PRESSURE_ID + "\":" + dataobj.Pressure;
                     break;
                 case "ISound":
+                    jsonfragment = jsonfragment + "\"" + SOUND_ID + "\":" + dataobj.SoundDb;
                     break;
                 case "ITemperatureSensor":
                     jsonfragment = jsonfragment + "\"" + TEMPERATURE_ID + "\":" + dataobj.Temperature;
                     break;
                 case "IVibrationSensor":
+                    jsonfragment = jsonfragment + "\"" + VIBRATION_ID + "\":" + dataobj.VibrationHz;
                     break;
                 case "IWindSpeedSensor":
+                    jsonfragment = jsonfragment + "\"" + WINDSPEED_ID + "\":" + dataobj.Windspeed;
                     break;
                 default:
                     break;

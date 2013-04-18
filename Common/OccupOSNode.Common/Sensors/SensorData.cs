@@ -29,6 +29,10 @@ namespace OccupOS.CommonLibrary.Sensors
         public DateTime ReadTime;
         public Sensor Sensorobj;
         public float Temperature;
+        public float PowerWatt;
+        public float SoundDb;
+        public float VibrationHz;
+        public float Windspeed;
     }
 
     public enum ConnectionStatus
