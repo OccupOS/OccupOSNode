@@ -18,22 +18,22 @@ namespace OccupOSNode
     using OccupOS.CommonLibrary.HardwareControllers;
     using OccupOSNode.NetworkControllers;
     using OccupOSNode.Sensors.Kinect;
+    using System.Collections.Generic;
 
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
+    internal class Program {
+        private static void Main(string[] args) {
 
             var networkController = new FullEthernetNetworkController("192.168.0.2", 1333);
             FullNodeController nodeController = new FullNodeController(0, new HardwareController(), networkController);
             //nodeController.Start(5, 5, 5);
 
-            Position[] pos = new Position[2] { new Position { X = 1, Y = 2, Depth = 3}, new Position { X = 0, Y = 5, Depth = 2}};
+            Position[] pos = new Position[2] { new Position { X = 1, Y = 2, Depth = 3 }, new Position { X = 0, Y = 5, Depth = 2 } };
             var testdata = new SensorData { SensorType = new NodeKinectSensor(0), EntityCount = 1, EntityPositions = pos };
             var testbundle = new SensorData[1];
             testbundle[0] = testdata;
+            string result = PacketFactory.SerializeJSON(111, testbundle);
 
-            Console.WriteLine(PacketFactory.SerializeJSON(111, testbundle));
+            Console.WriteLine(result);
             while (true) { }
         }
     }

@@ -21,18 +21,19 @@ namespace OccupOS.CommonLibrary.Sensors
     public class SensorData
     {
         public Sensor SensorType;
+        public DateTime ReadTime;
+        public DateTime PollTime;
         public float AnalogLight;
         public int EntityCount;
         public Position[] EntityPositions;
         public float Humidity;
-        public DateTime PollTime;
         public float Pressure;
-        public DateTime ReadTime;
         public float Temperature;
         public float PowerWatt;
         public float SoundDb;
         public float VibrationHz;
         public float Windspeed;
+        public int RefNum;
     }
 
     public enum ConnectionStatus
