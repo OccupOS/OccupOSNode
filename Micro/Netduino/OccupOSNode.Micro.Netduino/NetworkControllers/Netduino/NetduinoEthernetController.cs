@@ -77,5 +77,56 @@ namespace OccupOSNode.Micro.NetworkControllers.Netduino
                 throw new NullReferenceException();
             }
         }
+
+        /*Following two methods by Michael Schwarz, 
+         * http://weblogs.asp.net/mschwarz/archive/2008/03/09/wrong-datetime-on-net-micro-framework-devices.aspx
+         */
+
+        public static bool UpdateTimeFromNtpServer(string server, int timeZoneOffset) {
+            try {
+                var currentTime = GetNtpTime(server, timeZoneOffset);
+                Microsoft.SPOT.Hardware.Utility.SetLocalTime(currentTime);
+
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        private static DateTime GetNtpTime(String timeServer, int timeZoneOffset) {
+            
+            var ep = new IPEndPoint(Dns.GetHostEntry(timeServer).AddressList[0], 123);
+            var ntpData = new byte[48];
+            using (var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+                s.SendTimeout = s.ReceiveTimeout = 10000;
+                s.Connect(ep);
+                ntpData[0] = 0x1B;
+                s.Send(ntpData);
+                s.Receive(ntpData);
+                s.Close();
+            }
+
+            const byte offsetTransmitTime = 40;
+
+            ulong intpart = 0;
+            ulong fractpart = 0;
+
+            for (var i = 0; i <= 3; i++)
+                intpart = (intpart << 8) | ntpData[offsetTransmitTime + i];
+
+            for (var i = 4; i <= 7; i++)
+                fractpart = (fractpart << 8) | ntpData[offsetTransmitTime + i];
+
+            ulong milliseconds = (intpart * 1000 + (fractpart * 1000) / 0x100000000L);
+
+            var timeSpan = TimeSpan.FromTicks((long)milliseconds * TimeSpan.TicksPerMillisecond);
+            var dateTime = new DateTime(1900, 1, 1);
+            dateTime += timeSpan;
+
+            var offsetAmount = new TimeSpan(timeZoneOffset, 0, 0);
+            var networkDateTime = (dateTime + offsetAmount);
+
+            return networkDateTime;
+        }
     }
 }

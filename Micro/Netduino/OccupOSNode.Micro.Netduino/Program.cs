@@ -27,12 +27,12 @@ namespace OccupOSNode.Micro
         {
             //var networkController = new NetduinoWirelessNetworkController("192.168.0.3", 1333, "virginmedia6963974", "cssuvjcs");
             var networkController = new NetduinoEthernetController("192.168.0.3", 1333);
-
+            NetduinoEthernetController.UpdateTimeFromNtpServer("time.nist.gov", 1); 
             var controller = new NetduinoNodeController(0, new NetduinoHardwareController(), networkController);
             controller.EnableDynamicListening();
             //Thread.Sleep(10000);
             //controller.DisableDynamicListening();
-            controller.Start(5000, 5000, 40);
+            controller.Start(60000, 30000, 40);
         }
     }
 }
