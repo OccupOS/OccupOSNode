@@ -25,7 +25,7 @@ namespace OccupOSNode.Micro
     {
         public static void Main()
         {
-            //var networkController = new NetduinoWirelessNetworkController("UrsaMinor", 1333, "RichyHotspot", "occupos8");
+            //var networkController = new NetduinoWirelessNetworkController("192.168.0.3", 1333, "virginmedia6963974", "cssuvjcs");
             var networkController = new NetduinoEthernetController("192.168.0.3", 1333);
 
             var controller = new NetduinoNodeController(0, new NetduinoHardwareController(), networkController);

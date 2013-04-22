@@ -23,9 +23,9 @@ namespace OccupOSNode
     internal class Program {
         private static void Main(string[] args) {
 
-            var networkController = new FullEthernetNetworkController("192.168.0.2", 1333);
+            var networkController = new FullEthernetNetworkController("192.168.0.3", 1333);
             FullNodeController nodeController = new FullNodeController(0, new HardwareController(), networkController);
-            nodeController.Start(10, 5, 40);
+            nodeController.Start(5000, 5000, 40);
         }
     }
 }

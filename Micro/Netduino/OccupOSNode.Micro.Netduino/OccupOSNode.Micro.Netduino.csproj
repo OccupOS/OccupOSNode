@@ -61,15 +61,15 @@
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Hardware" />
     <Reference Include="Microsoft.SPOT.Native" />
-    <Reference Include="SecretLabs.NETMF.Hardware.NetduinoPlus">
-      <HintPath>..\..\..\lib\Netduino SDK\v4.2\SecretLabs.NETMF.Hardware.NetduinoPlus.dll</HintPath>
-    </Reference>
+    <Reference Include="SecretLabs.NETMF.Hardware.NetduinoPlus, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
-    <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX">
-      <HintPath>..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
+    <Reference Include="Toolbox.NETMF.Hardware.WiFlyGSX, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\.NET Micro Framework Toolbox\v4.3\Toolbox.NETMF.Hardware.WiFlyGSX.dll</HintPath>
     </Reference>
-    <Reference Include="Toolbox.NETMF.NET.Core">
-      <HintPath>..\..\..\lib\.NET Micro Framework Toolbox\v4.2\Toolbox.NETMF.NET.Core.dll</HintPath>
+    <Reference Include="Toolbox.NETMF.NET.Core, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\.NET Micro Framework Toolbox\v4.3\Toolbox.NETMF.NET.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

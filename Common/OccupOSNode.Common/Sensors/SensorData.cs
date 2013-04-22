@@ -33,7 +33,6 @@ namespace OccupOS.CommonLibrary.Sensors
         public float SoundDb;
         public float VibrationHz;
         public float Windspeed;
-        public int RefNum;
     }
 
     public enum ConnectionStatus
