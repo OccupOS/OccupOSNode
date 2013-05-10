@@ -16,6 +16,7 @@ namespace GadgeteerDemo
 
     using Microsoft.SPOT;
 
+    using OccupOS.CommonLibrary;
     using OccupOS.CommonLibrary.Sensors;
 
     public partial class Program
