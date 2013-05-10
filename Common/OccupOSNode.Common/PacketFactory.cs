@@ -127,10 +127,9 @@ namespace OccupOS.CommonLibrary
                     {
                         jsonfragment = jsonfragment + ",";
                     }
-                }
-
-                jsonfragment = jsonfragment + "\"" + POLLTIME_ID + "\":\""
+                    jsonfragment = jsonfragment + "\"" + POLLTIME_ID + "\":\""
                                             + dataobj.PollTime.ToString("dd'/'MM'/'yyyy hh':'mm':'ss") + "\"";
+                }
                 string[] artefacts = new string[sensortype.GetInterfaces().Length];
                 foreach (Type iface in sensortype.GetInterfaces())
                 {
