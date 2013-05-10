@@ -6,13 +6,18 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.CommonLibrary.NetworkControllers
 {
     public abstract class EthernetNetworkController : NetworkController
     {
-        public EthernetNetworkController() : base(null, 0) { }
+        protected EthernetNetworkController()
+            : base(null, 0)
+        {
+        }
 
-        public EthernetNetworkController(string HostName, ushort Port) : base(HostName, Port) { }
+        protected EthernetNetworkController(string hostName, ushort port)
+            : base(hostName, port)
+        {
+        }
     }
 }

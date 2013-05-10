@@ -10,12 +10,13 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 {
     using System;
     using System.Collections;
-    using System.Threading;
+
     using OccupOS.CommonLibrary.Sensors;
 
     public class HardwareController
     {
         private readonly ArrayList sensorDataBuffer;
+
         private readonly ArrayList sensors;
 
         public HardwareController()
@@ -26,18 +27,23 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public void AddSensor(Sensor sensor)
         {
-            if (sensor == null) {
-                    throw new NullReferenceException();
-                }
-            lock (sensors) {
+            if (sensor == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            lock (this.sensors)
+            {
                 this.sensors.Add(sensor);
             }
         }
 
         public void AddSensorReadings(SensorData[] data)
         {
-            if (data != null && data.Length > 0) {
-                lock (sensorDataBuffer) {
+            if (data != null && data.Length > 0)
+            {
+                lock (this.sensorDataBuffer)
+                {
                     this.sensorDataBuffer.Add(data);
                 }
             }
@@ -46,12 +52,16 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         public ArrayList GetAllSensors()
         {
             var matches = new ArrayList();
-            lock (sensors) {
-                foreach (object sensor in this.sensors) {
-                    if (sensor is Sensor) {
+            lock (this.sensors)
+            {
+                foreach (object sensor in this.sensors)
+                {
+                    if (sensor is Sensor)
+                    {
                         matches.Add(sensor);
                     }
                 }
+
                 return matches;
             }
         }
@@ -59,27 +69,38 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         public ArrayList GetAllSensors(Type stype)
         {
             var matches = new ArrayList();
-            lock (sensors) {
-                foreach (object sensor in this.sensors) {
-                    if (sensor is Sensor) {
-                        if (sensor.GetType() == stype) {
+            lock (this.sensors)
+            {
+                foreach (object sensor in this.sensors)
+                {
+                    if (sensor is Sensor)
+                    {
+                        if (sensor.GetType() == stype)
+                        {
                             matches.Add(sensor);
                         }
                     }
                 }
+
                 return matches;
             }
         }
 
         public Sensor GetSensor(int index)
         {
-            if (index < 0 || index > this.sensors.Count - 1) {
-                    throw new IndexOutOfRangeException();
-                }
-            lock (sensors) {
-                if (this.sensors[index] is Sensor) {
+            if (index < 0 || index > this.sensors.Count - 1)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            lock (this.sensors)
+            {
+                if (this.sensors[index] is Sensor)
+                {
                     return (Sensor)this.sensors[index];
-                } else {
+                }
+                else
+                {
                     throw new ArgumentNullException();
                 }
             }
@@ -87,7 +108,8 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public int GetSensorCount()
         {
-            lock (sensors) {
+            lock (this.sensors)
+            {
                 return this.sensors.Count;
             }
         }
@@ -95,34 +117,48 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         public int GetSensorCount(Type stype)
         {
             int count = 0;
-            lock (sensors) {
-                foreach (object sensor in this.sensors) {
-                    if (sensor is Sensor) {
-                        if (sensor.GetType() == stype) {
+            lock (this.sensors)
+            {
+                foreach (object sensor in this.sensors)
+                {
+                    if (sensor is Sensor)
+                    {
+                        if (sensor.GetType() == stype)
+                        {
                             count++;
                         }
                     }
                 }
             }
+
             return count;
         }
 
-        public int GetSensorDataBufferCount() {
-            lock (sensorDataBuffer) {
+        public int GetSensorDataBufferCount()
+        {
+            lock (this.sensorDataBuffer)
+            {
                 return this.sensorDataBuffer.Count;
             }
         }
 
         public SensorData[] GetSensorReadings(int index)
         {
-            lock (sensorDataBuffer) {
-                if (index <= this.sensorDataBuffer.Count - 1) {
-                    if (this.sensorDataBuffer[index] is SensorData[]) {
+            lock (this.sensorDataBuffer)
+            {
+                if (index <= this.sensorDataBuffer.Count - 1)
+                {
+                    if (this.sensorDataBuffer[index] is SensorData[])
+                    {
                         return (SensorData[])this.sensorDataBuffer[index];
-                    } else {
+                    }
+                    else
+                    {
                         throw new ArgumentNullException();
                     }
-                } else {
+                }
+                else
+                {
                     throw new IndexOutOfRangeException();
                 }
             }
@@ -130,16 +166,23 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public SensorData[] PollSensorReadings(int index)
         {
-            lock (sensorDataBuffer) {
-                if (index <= this.sensorDataBuffer.Count - 1) {
-                    if (this.sensorDataBuffer[index] is SensorData[]) {
+            lock (this.sensorDataBuffer)
+            {
+                if (index <= this.sensorDataBuffer.Count - 1)
+                {
+                    if (this.sensorDataBuffer[index] is SensorData[])
+                    {
                         var data = (SensorData[])this.sensorDataBuffer[index];
                         this.sensorDataBuffer.RemoveAt(index);
                         return data;
-                    } else {
+                    }
+                    else
+                    {
                         throw new ArgumentNullException();
                     }
-                } else {
+                }
+                else
+                {
                     throw new IndexOutOfRangeException();
                 }
             }
@@ -147,10 +190,14 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public void RemoveSensor(int index)
         {
-            lock (sensors) {
-                if (index <= this.sensors.Count - 1) {
+            lock (this.sensors)
+            {
+                if (index <= this.sensors.Count - 1)
+                {
                     this.sensors.RemoveAt(index);
-                } else {
+                }
+                else
+                {
                     throw new IndexOutOfRangeException();
                 }
             }
@@ -159,15 +206,20 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         public void RemoveSensorByID(int id)
         {
             int sensornum = 0;
-            lock (sensors) {
-                for (int k = 0; k < this.sensors.Count; k++) {
+            lock (this.sensors)
+            {
+                for (int k = 0; k < this.sensors.Count; k++)
+                {
                     var sensor = this.sensors[sensornum];
-                    if (sensor is Sensor) {
-                        if (id == ((Sensor)sensor).ID) {
+                    if (sensor is Sensor)
+                    {
+                        if (id == ((Sensor)sensor).ID)
+                        {
                             this.sensors.Remove(sensor);
                             sensornum--;
                         }
                     }
+
                     sensornum++;
                 }
             }
@@ -175,10 +227,14 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         public void RemoveSensorReadings(int index)
         {
-            lock (sensorDataBuffer) {
-                if (index <= this.sensorDataBuffer.Count - 1) {
+            lock (this.sensorDataBuffer)
+            {
+                if (index <= this.sensorDataBuffer.Count - 1)
+                {
                     this.sensorDataBuffer.RemoveAt(index);
-                } else {
+                }
+                else
+                {
                     throw new IndexOutOfRangeException();
                 }
             }

@@ -6,7 +6,6 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
 
 namespace OccupOSNode

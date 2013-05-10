@@ -6,14 +6,9 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOSNode
 {
-    using System;
-
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-    using OccupOS.CommonLibrary.Sensors;
 
     [TestClass]
     public class ProgramTests

@@ -6,7 +6,6 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
 
 namespace OccupOSNode.NetworkControllers
@@ -22,9 +21,15 @@ namespace OccupOSNode.NetworkControllers
     {
         private Socket socket;
 
-        public FullEthernetNetworkController() : base(null, 0) { }
+        public FullEthernetNetworkController()
+            : base(null, 0)
+        {
+        }
 
-        public FullEthernetNetworkController(string Hostname, ushort Port) : base(Hostname, Port) { }
+        public FullEthernetNetworkController(string Hostname, ushort Port)
+            : base(Hostname, Port)
+        {
+        }
 
         public override void ConnectToSocket(string hostName, ushort port)
         {
@@ -46,7 +51,7 @@ namespace OccupOSNode.NetworkControllers
             }
 
             IPEndPoint remoteEndPoint = new IPEndPoint(hostAddress, port);
-            
+
             this.socket = new Socket(hostAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             this.socket.Connect(remoteEndPoint);
             this.socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
@@ -68,12 +73,12 @@ namespace OccupOSNode.NetworkControllers
             {
                 throw new NullReferenceException();
             }
-            
+
             try
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(data);
                 this.socket.Send(buffer);
-            } 
+            }
             catch (ObjectDisposedException e)
             {
                 this.socket = null;

@@ -6,32 +6,23 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOSNode.Micro
 {
-    using System;
-
-    using Microsoft.SPOT.Hardware;
-
-    using OccupOS.CommonLibrary;
-    using OccupOS.CommonLibrary.Sensors;
-    using OccupOS.CommonLibrary.NodeControllers;
     using OccupOSNode.Micro.HardwareControllers.Netduino;
     using OccupOSNode.Micro.NetworkControllers.Netduino;
-    using SecretLabs.NETMF.Hardware.NetduinoPlus;
-    using System.Threading;
 
     public class Program
     {
         public static void Main()
         {
-            //var networkController = new NetduinoWirelessNetworkController("192.168.0.3", 1333, "virginmedia6963974", "cssuvjcs");
+            // var networkController = new NetduinoWirelessNetworkController("192.168.0.3", 1333, "virginmedia6963974", "cssuvjcs");
             var networkController = new NetduinoEthernetController("192.168.0.3", 1333);
-            NetduinoEthernetController.UpdateTimeFromNtpServer("time.nist.gov", 1); 
+            NetduinoEthernetController.UpdateTimeFromNtpServer("time.nist.gov", 1);
             var controller = new NetduinoNodeController(0, new NetduinoHardwareController(), networkController);
             controller.EnableDynamicListening();
-            //Thread.Sleep(10000);
-            //controller.DisableDynamicListening();
+
+            // Thread.Sleep(10000);
+            // controller.DisableDynamicListening();
             controller.Start(60000, 30000, 40);
         }
     }

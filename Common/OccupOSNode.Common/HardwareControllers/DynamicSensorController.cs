@@ -6,27 +6,27 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-
-
 namespace OccupOS.CommonLibrary.HardwareControllers
 {
     using System;
     using System.Collections;
     using System.Reflection;
     using System.Threading;
+
     using OccupOS.CommonLibrary.Sensors;
 
     public class DynamicSensorController
     {
-        private ManualResetEvent event_waiter = new ManualResetEvent(false);
-        private HardwareController hw_controller = null;
         private Assembly assembly;
+
+        private ManualResetEvent eventWaiter = new ManualResetEvent(false);
+
+        private HardwareController hardwareController = null;
 
         public DynamicSensorController(HardwareController hardwareController, Assembly assembly)
         {
             this.Enabled = false;
-            this.hw_controller = hardwareController;
+            this.hardwareController = hardwareController;
             this.assembly = assembly;
         }
 
@@ -40,7 +40,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
         public void Enable()
         {
             this.Enabled = true;
-            this.event_waiter.Set();
+            this.eventWaiter.Set();
         }
 
         public void Run()
@@ -49,13 +49,14 @@ namespace OccupOS.CommonLibrary.HardwareControllers
             {
                 if (!this.Enabled)
                 {
-                    this.event_waiter.WaitOne();
+                    this.eventWaiter.WaitOne();
                 }
                 else
                 {
                     this.UpdateDynamicSensors();
                 }
-                System.Threading.Thread.Sleep(500);
+
+                Thread.Sleep(500);
             }
         }
 
@@ -68,9 +69,12 @@ namespace OccupOS.CommonLibrary.HardwareControllers
                 {
                     Sensor newsensor =
                         constructor.Invoke(
-                            new object[] { this.FindLowestNumID(this.hw_controller.GetAllSensors(stype), stype, 0) }) as
+                            new object[]
+                                {
+                                   this.FindLowestNumID(this.hardwareController.GetAllSensors(stype), stype, 0) 
+                                }) as
                         Sensor;
-                    this.hw_controller.AddSensor(newsensor);
+                    this.hardwareController.AddSensor(newsensor);
                     if (newsensor is IDynamicSensor)
                     {
                         ((IDynamicSensor)newsensor).Connect();
@@ -81,22 +85,22 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         private void DisposeInactives(Type stype)
         {
-            ArrayList actives = this.hw_controller.GetAllSensors(stype);
-            foreach (Sensor current_active in actives)
+            ArrayList actives = this.hardwareController.GetAllSensors(stype);
+            foreach (Sensor currentActive in actives)
             {
                 try
                 {
-                    if (current_active is IDynamicSensor)
+                    if (currentActive is IDynamicSensor)
                     {
-                        if (((IDynamicSensor)current_active).GetConnectionStatus() == ConnectionStatus.Disconnected)
+                        if (((IDynamicSensor)currentActive).GetConnectionStatus() == ConnectionStatus.Disconnected)
                         {
-                            this.DisposeSensor(current_active);
+                            this.DisposeSensor(currentActive);
                         }
                     }
                 }
                 catch (SensorNotFoundException)
                 {
-                    this.DisposeSensor(current_active);
+                    this.DisposeSensor(currentActive);
                 }
             }
         }
@@ -108,7 +112,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
                 ((IDynamicSensor)sensor).Disconnect();
             }
 
-            this.hw_controller.RemoveSensorByID(sensor.ID);
+            this.hardwareController.RemoveSensorByID(sensor.ID);
         }
 
         private int FindLowestNumID(ArrayList sensorlist, Type stype, int startID)
@@ -116,9 +120,9 @@ namespace OccupOS.CommonLibrary.HardwareControllers
             // This method preferably needs to check whole database instead
             if (sensorlist.Count > 0)
             {
-                foreach (Sensor current_active in sensorlist)
+                foreach (Sensor currentActive in sensorlist)
                 {
-                    if (startID.ToString().Equals(current_active.ID))
+                    if (startID.ToString().Equals(currentActive.ID.ToString()))
                     {
                         this.FindLowestNumID(sensorlist, stype, startID + 1);
                     }
@@ -130,7 +134,7 @@ namespace OccupOS.CommonLibrary.HardwareControllers
 
         private void UpdateDynamicSensors()
         {
-            foreach (var type in assembly.GetTypes())
+            foreach (var type in this.assembly.GetTypes())
             {
                 if (type.IsClass)
                 {
@@ -142,18 +146,18 @@ namespace OccupOS.CommonLibrary.HardwareControllers
                             if (constructor != null)
                             {
                                 IDynamicSensor dsensor = constructor.Invoke(new object[] { -1 }) as IDynamicSensor;
-                                int sensors_store = this.hw_controller.GetSensorCount(type);
+                                int sensors_store = this.hardwareController.GetSensorCount(type);
                                 int max_sensors = dsensor.GetMaxSensors();
                                 if (sensors_store < max_sensors || max_sensors < 0)
                                 {
-                                    int sensors_connected = dsensor.GetDeviceCount();
-                                    if (sensors_connected > sensors_store)
+                                    int sensorsConnected = dsensor.GetDeviceCount();
+                                    if (sensorsConnected > sensors_store)
                                     {
-                                        this.CreateSensor(type, sensors_connected - sensors_store);
+                                        this.CreateSensor(type, sensorsConnected - sensors_store);
                                     }
                                     else
                                     {
-                                        if (sensors_connected < sensors_store)
+                                        if (sensorsConnected < sensors_store)
                                         {
                                             this.DisposeInactives(type);
                                         }

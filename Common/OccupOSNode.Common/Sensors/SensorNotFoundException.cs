@@ -6,12 +6,10 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.CommonLibrary.Sensors
 {
     using System;
 
-    // [Serializable]
     public class SensorNotFoundException : Exception
     {
         public SensorNotFoundException()
@@ -27,8 +25,5 @@ namespace OccupOS.CommonLibrary.Sensors
             : base(message, inner)
         {
         }
-
-        /* No System.Runtime.Serialization for micro framework?
-        protected SensorNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context) {} */
     }
 }

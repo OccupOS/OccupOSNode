@@ -6,7 +6,6 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.CommonLibrary.Sensors
 {
     using System;
@@ -14,35 +13,55 @@ namespace OccupOS.CommonLibrary.Sensors
     public struct Position
     {
         public float Depth;
+
         public int X;
+
         public int Y;
     }
 
     public class SensorData
     {
-        public Sensor SensorType;
-        public DateTime ReadTime;
-        public DateTime PollTime;
         public float AnalogLight;
+
         public int EntityCount;
+
         public Position[] EntityPositions;
+
         public float Humidity;
-        public float Pressure;
-        public float Temperature;
+
+        public DateTime PollTime;
+
         public float PowerWatt;
+
+        public float Pressure;
+
+        public DateTime ReadTime;
+
+        public Sensor SensorType;
+
         public float SoundDb;
+
+        public float Temperature;
+
         public float VibrationHz;
+
         public float Windspeed;
     }
 
     public enum ConnectionStatus
     {
-        Connected,
-        Disconnected,
-        Connecting,
-        Disconnecting,
-        Error,
-        Unknown,
+        Connected, 
+
+        Disconnected, 
+
+        Connecting, 
+
+        Disconnecting, 
+
+        Error, 
+
+        Unknown, 
+
         Inapplicable
     }
 }

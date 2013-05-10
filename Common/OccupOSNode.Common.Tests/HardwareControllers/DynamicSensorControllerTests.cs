@@ -6,7 +6,6 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.Common.Tests
 {
     using System.Reflection;
@@ -22,7 +21,8 @@ namespace OccupOS.Common.Tests
         public void ControllerDisabledByDefault()
         {
             var hardwareController = new HardwareController();
-            var dynamicSensorController = new DynamicSensorController(hardwareController, Assembly.GetAssembly(this.GetType()));
+            var dynamicSensorController = new DynamicSensorController(
+                hardwareController, Assembly.GetAssembly(this.GetType()));
 
             Assert.AreEqual(false, dynamicSensorController.Enabled);
         }
@@ -31,7 +31,8 @@ namespace OccupOS.Common.Tests
         public void DisableController()
         {
             var hardwareController = new HardwareController();
-            var dynamicSensorController = new DynamicSensorController(hardwareController, Assembly.GetAssembly(this.GetType()));
+            var dynamicSensorController = new DynamicSensorController(
+                hardwareController, Assembly.GetAssembly(this.GetType()));
 
             dynamicSensorController.Enable();
             dynamicSensorController.Disable();
@@ -43,7 +44,8 @@ namespace OccupOS.Common.Tests
         public void EnableController()
         {
             var hardwareController = new HardwareController();
-            var dynamicSensorController = new DynamicSensorController(hardwareController, Assembly.GetAssembly(this.GetType()));
+            var dynamicSensorController = new DynamicSensorController(
+                hardwareController, Assembly.GetAssembly(this.GetType()));
 
             dynamicSensorController.Enable();
 

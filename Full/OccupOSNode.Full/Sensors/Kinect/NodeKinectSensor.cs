@@ -6,7 +6,6 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Full.Tests")]
 
 namespace OccupOSNode.Sensors.Kinect
@@ -21,7 +20,9 @@ namespace OccupOSNode.Sensors.Kinect
     internal class NodeKinectSensor : Sensor, ISoundSensor, IEntityPositionSensor, IEntityCountSensor, IDynamicSensor
     {
         private const int MAX_AUTO_CONNECTION_ATTEMPTS = 10;
+
         private const int MAX_TIME_DIFFERENCE = 200;
+
         private const int QUEUE_MAX_LENGTH = 6;
 
         private KinectSensor ksensor;
@@ -112,8 +113,8 @@ namespace OccupOSNode.Sensors.Kinect
         {
             var sensorData = new SensorData
                                  {
-                                     SensorType = this,
-                                     ReadTime = DateTime.Now,
+                                     SensorType = this, 
+                                     ReadTime = DateTime.Now, 
                                      EntityCount = this.GetEntityCount(), 
                                      EntityPositions = this.GetEntityPositions()
                                  };
@@ -343,6 +344,7 @@ namespace OccupOSNode.Sensors.Kinect
         private struct SynchedFrames
         {
             public DepthImageFrame d_frame;
+
             public SkeletonFrame s_frame;
         }
     }

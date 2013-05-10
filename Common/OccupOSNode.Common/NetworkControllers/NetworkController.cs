@@ -6,16 +6,16 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.CommonLibrary.NetworkControllers
 {
     using System;
 
     public abstract class NetworkController
     {
-        public NetworkController(string HostName, ushort Port) {
-            this.HostName = HostName;
-            this.Port = Port;
+        protected NetworkController(string hostName, ushort port)
+        {
+            this.HostName = hostName;
+            this.Port = port;
         }
 
         public string HostName { get; protected set; }
@@ -24,11 +24,16 @@ namespace OccupOS.CommonLibrary.NetworkControllers
 
         public abstract void ConnectToSocket(string hostName, ushort port);
 
-        public void ConnectToSocket() {
-            if (HostName != null)
-                ConnectToSocket(HostName, Port);
+        public void ConnectToSocket()
+        {
+            if (this.HostName != null)
+            {
+                this.ConnectToSocket(this.HostName, this.Port);
+            }
             else
+            {
                 throw new ArgumentNullException("Default HostName and Port arguments have not specified");
+            }
         }
 
         public abstract void DisconnectFromSocket();

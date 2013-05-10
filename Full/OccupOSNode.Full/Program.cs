@@ -6,23 +6,18 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OccupOSNode.Tests")]
 
 namespace OccupOSNode
 {
-    using System;
-    using System.Threading;
-    using OccupOS.CommonLibrary;
-    using OccupOS.CommonLibrary.Sensors;
     using OccupOS.CommonLibrary.HardwareControllers;
+
     using OccupOSNode.NetworkControllers;
-    using OccupOSNode.Sensors.Kinect;
-    using System.Collections.Generic;
 
-    internal class Program {
-        private static void Main(string[] args) {
-
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
             var networkController = new FullEthernetNetworkController("192.168.0.3", 1333);
             FullNodeController nodeController = new FullNodeController(0, new HardwareController(), networkController);
             nodeController.Start(5000, 5000, 40);

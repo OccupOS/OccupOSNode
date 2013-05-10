@@ -6,21 +6,20 @@
 //   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OccupOS.CommonLibrary.NetworkControllers
 {
     using System;
 
     public abstract class WirelessNetworkController : NetworkController
     {
-        public WirelessNetworkController(string HostName, ushort Port, string SSID, string Password)
-            : base(HostName, Port)
+        protected WirelessNetworkController(string hostName, ushort port, string ssid, string password)
+            : base(hostName, port)
         {
-            this.SSID = SSID;
-            this.Password = Password;
+            this.SSID = ssid;
+            this.Password = password;
         }
 
-        public WirelessNetworkController()
+        protected WirelessNetworkController()
             : base(null, 0)
         {
             this.SSID = null;
@@ -31,7 +30,7 @@ namespace OccupOS.CommonLibrary.NetworkControllers
 
         public string SSID { get; protected set; }
 
-        public abstract void ConnectToWiFi(string SSID, string Password);
+        public abstract void ConnectToWiFi(string ssid, string password);
 
         public void ConnectToWiFi()
         {

@@ -13,22 +13,25 @@ namespace GadgeteerDemo
 {
     using System;
     using System.Threading;
-    using GHI.Premium.Net;
+
     using Microsoft.SPOT;
+
     using OccupOS.CommonLibrary.Sensors;
 
     public partial class Program
     {
         private readonly GT.Timer timer = new GT.Timer(2000);
-        private GadgeteerSensor sensor;
+
         private GadgeteerWiFiNetworkController networkController;
+
+        private GadgeteerSensor sensor;
 
         // This method is run when the mainboard is powered up or reset. 
         private void ProgramStarted()
         {
             Microsoft.SPOT.Hardware.Utility.SetLocalTime(DateTime.Now);
-            this.sensor = new GadgeteerSensor(10); //id 10
-            this.networkController = new GadgeteerWiFiNetworkController(wifi_RS21);
+            this.sensor = new GadgeteerSensor(10); // id 10
+            this.networkController = new GadgeteerWiFiNetworkController(this.wifi_RS21);
             this.networkController.ConnectToWiFi("2WIRE487", "0046056798");
             this.networkController.ConnectToSocket("192.168.1.65", 1333);
 
@@ -40,37 +43,44 @@ namespace GadgeteerDemo
 
         private void timer_Tick(GT.Timer timer)
         {
-            sensor.SetAnalogLightValue((int)this.lightSensor.ReadLightSensorPercentage());
-            Debug.Print("Sending data: AnalogLight - " + sensor.GetAnalogLightValue());
+            this.sensor.SetAnalogLightValue((int)this.lightSensor.ReadLightSensorPercentage());
+            Debug.Print("Sending data: AnalogLight - " + this.sensor.GetAnalogLightValue());
 
-            SensorData[] databundle = new SensorData[1] { sensor.GetData() };
-            string packet = PacketFactory.SerializeJSON(2, databundle); //node id 2
+            SensorData[] databundle = new[] { this.sensor.GetData() };
+            string packet = PacketFactory.SerializeJSON(2, databundle); // node id 2
             this.networkController.SendData(packet);
 
             Thread.Sleep(10000);
         }
     }
 
-    public class GadgeteerSensor : Sensor, ILightSensor {
-
+    public class GadgeteerSensor : Sensor, ILightSensor
+    {
         private float lightvalue = 0;
 
-        public GadgeteerSensor(int id) : base(id) { }
+        public GadgeteerSensor(int id)
+            : base(id)
+        {
+        }
 
-        public override SensorData GetData() {
-            var sensorData = new SensorData {
-                SensorType = this,
-                ReadTime = DateTime.Now,
-                AnalogLight = GetAnalogLightValue()
-            };
+        public float GetAnalogLightValue()
+        {
+            return this.lightvalue;
+        }
+
+        public override SensorData GetData()
+        {
+            var sensorData = new SensorData
+                                 {
+                                     SensorType = this, 
+                                     ReadTime = DateTime.Now, 
+                                     AnalogLight = this.GetAnalogLightValue()
+                                 };
             return sensorData;
         }
 
-        public float GetAnalogLightValue() {
-            return lightvalue;
-        }
-
-        public void SetAnalogLightValue(float lightvalue) {
+        public void SetAnalogLightValue(float lightvalue)
+        {
             this.lightvalue = lightvalue;
         }
     }

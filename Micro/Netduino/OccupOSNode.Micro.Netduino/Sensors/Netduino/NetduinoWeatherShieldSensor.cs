@@ -1,65 +1,97 @@
-﻿using System;
-using OccupOS.CommonLibrary.Sensors;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NetduinoWeatherShieldSensor.cs" company="OccupOS">
+//   This file is part of OccupOS.
+//   OccupOS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//   OccupOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+//   You should have received a copy of the GNU General Public License along with OccupOS.  If not, see <http://www.gnu.org/licenses/>.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-namespace OccupOSNode.Micro.Sensors.Netduino {
+namespace OccupOSNode.Micro.Sensors.Netduino
+{
+    using System;
+
+    using OccupOS.CommonLibrary.Sensors;
+
     using SecretLabs.NETMF.Hardware.NetduinoPlus;
 
-    internal class NetduinoWeatherShieldSensor : Sensor, IHumiditySensor, IPressureSensor, ITemperatureSensor, IDynamicSensor {
+    internal class NetduinoWeatherShieldSensor : Sensor, 
+                                                 IHumiditySensor, 
+                                                 IPressureSensor, 
+                                                 ITemperatureSensor, 
+                                                 IDynamicSensor
+    {
         private readonly NetduinoWeatherShieldDriver driver;
+
         private byte[] data;
 
-        private float humidity, pressure, temp;
+        private float humidity;
+
+        private float pressure;
+
+        private float temp;
 
         public NetduinoWeatherShieldSensor(int id)
-            : base(id) {
-                driver = new NetduinoWeatherShieldDriver(Pins.GPIO_PIN_D7, Pins.GPIO_PIN_D2, NetduinoWeatherShieldDriver.DEFAULTADDRESS);
-            data = new byte[4];
+            : base(id)
+        {
+            this.driver = new NetduinoWeatherShieldDriver(
+                Pins.GPIO_PIN_D7, Pins.GPIO_PIN_D2, NetduinoWeatherShieldDriver.DEFAULTADDRESS);
+            this.data = new byte[4];
+        }
+
+        public void Connect()
+        {
+        }
+
+        public void Disconnect()
+        {
+        }
+
+        public ConnectionStatus GetConnectionStatus()
+        {
+            return this.driver.echo(0x55) == 0x55 ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
+        }
+
+        public override SensorData GetData()
+        {
+            var sensorData = new SensorData
+                                 {
+                                     SensorType = this, 
+                                     ReadTime = DateTime.Now, 
+                                     Humidity = this.GetHumidity(), 
+                                     Pressure = this.GetPressure(), 
+                                     Temperature = this.GetTemperature()
+                                 };
+            return sensorData;
+        }
+
+        public int GetDeviceCount()
+        {
+            // Maximum of 1 device per Netduino node
+            return this.GetConnectionStatus() == ConnectionStatus.Connected ? 1 : 0;
         }
 
         public float GetHumidity()
         {
-            humidity = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.HUMIDITY);
-            return humidity;
+            this.humidity = this.driver.readAveragedValue(NetduinoWeatherShieldDriver.units.HUMIDITY);
+            return this.humidity;
+        }
+
+        public int GetMaxSensors()
+        {
+            return 1;
         }
 
         public float GetPressure()
         {
-            pressure = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.PRESSURE);
-            return pressure;
+            this.pressure = this.driver.readAveragedValue(NetduinoWeatherShieldDriver.units.PRESSURE);
+            return this.pressure;
         }
 
         public float GetTemperature()
         {
-            temp = driver.readAveragedValue(NetduinoWeatherShieldDriver.units.TEMPERATURE);
-            return temp;
+            this.temp = this.driver.readAveragedValue(NetduinoWeatherShieldDriver.units.TEMPERATURE);
+            return this.temp;
         }
-
-        public override SensorData GetData() {
-            var sensorData = new SensorData {
-                SensorType = this,
-                ReadTime = DateTime.Now,
-                Humidity = GetHumidity(),
-                Pressure = GetPressure(),
-                Temperature = GetTemperature()
-            };
-            return sensorData;
-        }
-
-        public ConnectionStatus GetConnectionStatus() {
-            return driver.echo(0x55) == 0x55 ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
-        }
-
-        public int GetMaxSensors() {
-            return 1;
-        }
-
-        public int GetDeviceCount() {
-            //Maximum of 1 device per Netduino node
-            return GetConnectionStatus() == ConnectionStatus.Connected ? 1 : 0;
-            }
-
-        //no additional dynamic connection/disconnection actions are necessary
-        public void Connect() { }
-        public void Disconnect() { }
     }
 }

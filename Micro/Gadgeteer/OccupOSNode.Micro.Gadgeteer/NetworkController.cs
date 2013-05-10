@@ -23,6 +23,7 @@ namespace GadgeteerDemo
     public class GadgeteerWiFiNetworkController : WirelessNetworkController
     {
         private Socket socket;
+
         private WiFi_RS21 wiFiSensor;
 
         public GadgeteerWiFiNetworkController(WiFi_RS21 wiFiSensor)
